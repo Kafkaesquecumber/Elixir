@@ -36,7 +36,7 @@ namespace Elixir.Internal.LevelManagment
             UnloadLevel();
             if (!levelType.IsSubclassOf(typeof(Level)))
             {
-                throw new SgeException($"Failed to load level: {levelType.Name} does not derive from { typeof(Level).Name }");
+                throw new ElixirException($"Failed to load level: {levelType.Name} does not derive from { typeof(Level).Name }");
             }
 
             Level = (Level)Activator.CreateInstance(levelType);

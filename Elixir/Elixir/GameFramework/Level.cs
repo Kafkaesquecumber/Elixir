@@ -102,7 +102,7 @@ namespace Elixir.GameFramework
             {
                 if (!actor.PendingDestruction)
                 {
-                    throw new SgeException("Attempting to remove an actor that is not PendingDestruction, this should not be possible");
+                    throw new ElixirException("Attempting to remove an actor that is not PendingDestruction, this should not be possible");
                 }
                 // This is legal in this case because PendingDestruction is true
                 actor.Parent = null;

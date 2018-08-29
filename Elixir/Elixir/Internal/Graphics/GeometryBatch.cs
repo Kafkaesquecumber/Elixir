@@ -52,7 +52,7 @@ namespace Elixir.Internal.Graphics
         {
             if(!_begun)
             {
-                throw new SgeException("Vertices may not be added before Begin is called");
+                throw new ElixirException("Vertices may not be added before Begin is called");
             }
             _vertices.Add(vertex);
         }
@@ -72,7 +72,7 @@ namespace Elixir.Internal.Graphics
         {
             if(!_begun)
             {
-                throw new SgeException("End may not be called before Begin is called");
+                throw new ElixirException("End may not be called before Begin is called");
             }
             
             Vertex[] vertices = _vertices.ToArray(); //TODO: Optimize to be an array in the first place

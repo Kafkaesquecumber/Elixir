@@ -137,29 +137,29 @@ namespace Elixir
         {
             if (_initCalled)
             {
-                throw new SgeException("Initialize was already called previously and may not be called more than once");
+                throw new ElixirException("Initialize was already called previously and may not be called more than once");
             }
 
             _initCalled = true;
 
             if (gameInstanceType == null)
             {
-                throw new SgeException($"{nameof(gameInstanceType)} may not be null");
+                throw new ElixirException($"{nameof(gameInstanceType)} may not be null");
             }
 
             if (!gameInstanceType.IsSubclassOf(typeof(GameInstance)))
             {
-                throw new SgeException($"{nameof(gameInstanceType)} does not derive from {typeof(GameInstance).Name}");
+                throw new ElixirException($"{nameof(gameInstanceType)} does not derive from {typeof(GameInstance).Name}");
             }
 
             if (initialLevelType == null)
             {
-                throw new SgeException($"{nameof(initialLevelType)} may not be null");
+                throw new ElixirException($"{nameof(initialLevelType)} may not be null");
             }
 
             if (!initialLevelType.IsSubclassOf(typeof(Level)))
             {
-                throw new SgeException($"{nameof(initialLevelType)} does not derive from {nameof(Level)}");
+                throw new ElixirException($"{nameof(initialLevelType)} does not derive from {nameof(Level)}");
             }
 
             AllowGameInstanceInstantiation = true;
@@ -224,7 +224,7 @@ namespace Elixir
             Level level = LevelManager.Level;
             if (level == null)
             {
-                throw new SgeException("No level was loaded while creating the actor");
+                throw new ElixirException("No level was loaded while creating the actor");
             }
             level.AddActor(newActor);
 
@@ -276,7 +276,7 @@ namespace Elixir
         {
             if (!_initCalled)
             {
-                throw new SgeException("Engine has not been initialized, call initialize first");
+                throw new ElixirException("Engine has not been initialized, call initialize first");
             }
         }
     }

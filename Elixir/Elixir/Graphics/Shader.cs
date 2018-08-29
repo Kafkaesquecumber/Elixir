@@ -66,7 +66,7 @@ namespace Elixir.Graphics
         {
             if (!File.Exists(pixelShaderFile))
             {
-                throw new SgeException($"No shader file exists in path '{pixelShaderFile}'");
+                throw new ElixirException($"No shader file exists in path '{pixelShaderFile}'");
             }
 
             PixelShaderString = File.ReadAllText(pixelShaderFile);

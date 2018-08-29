@@ -37,7 +37,7 @@ namespace Elixir.GameFramework
 
                 if(value == null && !PendingDestruction)
                 {
-                    throw new SgeException("Actor must have a parent, call Unparent to parent the actor to the level root actor");
+                    throw new ElixirException("Actor must have a parent, call Unparent to parent the actor to the level root actor");
                 }
 
                 if(value == this || value == _parent)

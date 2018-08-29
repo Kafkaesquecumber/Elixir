@@ -26,12 +26,12 @@ namespace Elixir.Input
         {
             if (Engine.Get.Settings.Input.ActionBindings.Count(x => x.Id == inputActionId) == 0)
             {
-                throw new SgeException($"No action binding exists in input settings with id '{inputActionId}'");
+                throw new ElixirException($"No action binding exists in input settings with id '{inputActionId}'");
             }
 
             if (InputActionEvents.ContainsKey(inputActionId))
             {
-                throw new SgeException($"Failed to bind '{inputActionId}', can not bind to the same input action multiple times for the same actor");
+                throw new ElixirException($"Failed to bind '{inputActionId}', can not bind to the same input action multiple times for the same actor");
             }
             InputActionEvents.Add(inputActionId, eventHandler);
         }
@@ -45,12 +45,12 @@ namespace Elixir.Input
         {
             if (Engine.Get.Settings.Input.AxisBindings.Count(x => x.Id == inputAxisId) == 0)
             {
-                throw new SgeException($"No axis binding exists in input settings with id '{inputAxisId}'");
+                throw new ElixirException($"No axis binding exists in input settings with id '{inputAxisId}'");
             }
 
             if (InputAxisEvents.ContainsKey(inputAxisId))
             {
-                throw new SgeException($"Failed to bind '{inputAxisId}', can not bind to the same input axis multiple times for the same actor");
+                throw new ElixirException($"Failed to bind '{inputAxisId}', can not bind to the same input axis multiple times for the same actor");
             }
             InputAxisEvents.Add(inputAxisId, eventHandler);
         }

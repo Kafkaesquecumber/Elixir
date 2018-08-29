@@ -30,13 +30,13 @@ namespace Elixir.Internal.Interface
             Type type = GetInterfaceType(interfaceType);
             if(type == null)
             {
-                throw new SgeException("No interface type found for " + interfaceType);
+                throw new ElixirException("No interface type found for " + interfaceType);
             }
 
             Interface instance = (Interface)Activator.CreateInstance(type);
             if(instance == null)
             {
-                throw new SgeException("Failed to create instance of interface for " + type.Name);
+                throw new ElixirException("Failed to create instance of interface for " + type.Name);
             }
             return instance;
         }

@@ -19,7 +19,7 @@ namespace Elixir.GameFramework
         {
             if (!Engine.Get.AllowGameInstanceInstantiation)
             {
-                throw new SgeException("A game instance should not be created manually, the engine will create it when you call Engine.Initialize");
+                throw new ElixirException("A game instance should not be created manually, the engine will create it when you call Engine.Initialize");
             }
         }
 

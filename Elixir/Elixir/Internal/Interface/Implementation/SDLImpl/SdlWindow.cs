@@ -27,7 +27,7 @@ namespace Elixir.Internal.Interface.Implementation.SDLImpl
         {
             if (SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) < 0)
             {
-                throw new SgeException($"Failed to initialize SDL: {SDL.SDL_GetError()}");
+                throw new ElixirException($"Failed to initialize SDL: {SDL.SDL_GetError()}");
             }
 
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -43,7 +43,7 @@ namespace Elixir.Internal.Interface.Implementation.SDLImpl
             
             if (NativeWindowHandle == IntPtr.Zero)
             {
-                throw new SgeException($"Failed to open SDL window: {SDL.SDL_GetError()}");
+                throw new ElixirException($"Failed to open SDL window: {SDL.SDL_GetError()}");
             }
 
             _isOpen = true;

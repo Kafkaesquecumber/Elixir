@@ -26,7 +26,7 @@ namespace Elixir.Input
             {
                 if (value.Any(key => key == Key.Unknown))
                 {
-                    throw new SgeException($"Can not create an {nameof(InputActionBinding)} using {nameof(Key)}.{nameof(Key.Unknown)}");
+                    throw new ElixirException($"Can not create an {nameof(InputActionBinding)} using {nameof(Key)}.{nameof(Key.Unknown)}");
                 }
 
                 _keys = value;

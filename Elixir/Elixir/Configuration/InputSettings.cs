@@ -28,7 +28,7 @@ namespace Elixir.Configuration
             {
                 if (value.GroupBy(x => x.Id).Any(y => y.Count() > 1))
                 {
-                    throw new SgeException($"Duplicate {nameof(InputActionBinding)} id's are not allowed");
+                    throw new ElixirException($"Duplicate {nameof(InputActionBinding)} id's are not allowed");
                 }
 
                 _actionBindings = value;
@@ -46,7 +46,7 @@ namespace Elixir.Configuration
             {
                 if (value.GroupBy(x => x.Id).Any(y => y.Count() > 1))
                 {
-                    throw new SgeException($"Duplicate {nameof(InputAxisBinding)} id's are not allowed");
+                    throw new ElixirException($"Duplicate {nameof(InputAxisBinding)} id's are not allowed");
                 }
 
                 _axisBindings = value;

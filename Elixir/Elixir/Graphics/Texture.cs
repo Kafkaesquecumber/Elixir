@@ -28,7 +28,7 @@ namespace Elixir.Graphics
         {
             if (!File.Exists(file))
             {
-                throw new SgeException($"No texture file exists in path {file}");
+                throw new ElixirException($"No texture file exists in path {file}");
             }
 
             Interface = (TextureInterface)InterfaceManager.CreateInterface(InterfaceType.Texture);
@@ -107,7 +107,7 @@ namespace Elixir.Graphics
         {
             if (rgbaBytes.Length != (Size.X * Size.Y * 4))
             {
-                throw new SgeException("Color array length does not match texture dimensions * 4");
+                throw new ElixirException("Color array length does not match texture dimensions * 4");
             }
             Interface.Update(rgbaBytes, Size.X, Size.Y, 0, 0);
         }
@@ -120,7 +120,7 @@ namespace Elixir.Graphics
         {
             if (pixels.Length != (Size.X * Size.Y))
             {
-                throw new SgeException("Color array length does not match texture dimensions");
+                throw new ElixirException("Color array length does not match texture dimensions");
             }
             Update(pixels.ToRgbaBytes());
         }
