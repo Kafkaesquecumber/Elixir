@@ -1,0 +1,1163 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Elixir</name>
+    </assembly>
+    <members>
+        <member name="P:Elixir.Configuration.GeneralSettings.TargetFps">
+            <summary>
+            <para>The desired frames per second</para>
+            <para>This is an approximation, actual fps may vary</para>
+            <para>0 means unlimited</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.Configuration.InputSettings.ActionBindings">
+            <summary>
+            The input action bindings
+            </summary>
+        </member>
+        <member name="P:Elixir.Configuration.InputSettings.AxisBindings">
+            <summary>
+            The input axis bindings
+            </summary>
+        </member>
+        <member name="M:Elixir.Configuration.InputSettings.GetDeadzoneForAxis(Elixir.Input.InputAxis)">
+            <summary>
+            The deadzone for a specified axis
+            </summary>
+            <param name="axis"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Elixir.Configuration.Settings.Save(System.String)">
+            <summary>
+            Serialize the settings to an XML file
+            </summary>
+            <param name="settingsPath"></param>
+        </member>
+        <member name="M:Elixir.Configuration.Settings.FromFile(System.String)">
+            <summary>
+            Load the settings from an XML file
+            </summary>
+            <param name="settingsFile">The XML file which contains the settings</param>
+        </member>
+        <member name="P:Elixir.Configuration.VideoSettings.Width">
+            <summary>
+            The width of the window
+            </summary>
+        </member>
+        <member name="P:Elixir.Configuration.VideoSettings.Height">
+            <summary>
+            The height of the window
+            </summary>
+        </member>
+        <member name="P:Elixir.Configuration.VideoSettings.Title">
+            <summary>
+            The title of the window
+            </summary>
+        </member>
+        <member name="P:Elixir.Configuration.VideoSettings.VSync">
+            <summary>
+            Whether or not the window should use vertical synchronization
+            </summary>
+        </member>
+        <member name="M:Elixir.Diagnostics.Debugger.Info(System.Object)">
+            <summary>
+            <para>Log an information message (something non-problematic)</para>
+            <para>Will not be included in the error log file</para>
+            </summary>
+            <param name="infoMessage"></param>
+        </member>
+        <member name="M:Elixir.Diagnostics.Debugger.Warning(System.Object)">
+            <summary>
+            <para>Log a warning message (something potentially problematic)</para>
+            <para>Will be included in the error log file</para>
+            </summary>
+            <param name="warningMessage"></param>
+        </member>
+        <member name="M:Elixir.Diagnostics.Debugger.Error(System.Object)">
+            <summary>
+            <para>Log an error message (something critically problematic)</para>
+            <para>Will be included in the error log file</para>
+            </summary>
+            <param name="errorMessage"></param>
+        </member>
+        <member name="T:Elixir.Diagnostics.LogType">
+            <summary>
+            The type of log message
+            </summary>
+        </member>
+        <member name="F:Elixir.Diagnostics.LogType.Info">
+            <summary>
+            An info log is non-problematic message
+            </summary>
+        </member>
+        <member name="F:Elixir.Diagnostics.LogType.Warning">
+            <summary>
+            A warning log is a message about something which is could cause issues
+            </summary>
+        </member>
+        <member name="F:Elixir.Diagnostics.LogType.Error">
+            <summary>
+            An error log is a message about something that is a critical, application breaking issue
+            </summary>
+        </member>
+        <member name="P:Elixir.Diagnostics.Statistics.Fps">
+            <summary>
+            The current frame rate 
+            </summary>
+        </member>
+        <member name="T:Elixir.Engine">
+            <summary>
+            The service provider for all engine features
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.Get">
+            <summary>
+            Get the engine singleton
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.Settings">
+            <summary>
+            Contains all project-specific engine settings
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.Stats">
+            <summary>
+            Engine statistics
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.GameInstance">
+            <summary>
+            The game instance
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.Debug">
+            <summary>
+            Debug utility
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.Content">
+            <summary>
+            <para>Loads and caches content files</para>
+            <para>When loading content, the content loader will first check if this file was loaded previously</para>
+            <para>If it is present in the content cache it will return the cached content, otherwise it will load it and add it to the content cache</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.Graphics">
+            <summary>
+            Contains rendering-related functionality
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.Viewport">
+            <summary>
+            The viewport of the window
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.WindowHandle">
+            <summary>
+            The handle for the native window
+            </summary>
+        </member>
+        <member name="P:Elixir.Engine.CurrentLevel">
+            <summary>
+            The currently loaded level
+            </summary>
+        </member>
+        <member name="M:Elixir.Engine.Initialize``2">
+            <summary>
+            Initializes all modules and loads the initial level
+            </summary>
+            <typeparam name="TGameInstanceType">The type of your custom game instance (create a class and inherit from GameInstance)</typeparam>
+            <typeparam name="TInitialLevelType">The type of your custom level to load as the first level (create a class and inherit from Level)</typeparam>
+        </member>
+        <member name="M:Elixir.Engine.Initialize(System.Type,System.Type)">
+            <summary>
+            Initializes all modules and loads the initial level
+            </summary>
+            <param name="gameInstanceType">The type of your custom game instance (create a class and inherit from GameInstance)</param>
+            <param name="initialLevelType">The type of your custom level to load as the first level (create a class and inherit from Level)</param>
+        </member>
+        <member name="M:Elixir.Engine.LoadLevel``1">
+            <summary>
+            Load a new level and unload the current one
+            </summary>
+            <typeparam name="TLevel">The level type</typeparam>
+        </member>
+        <member name="M:Elixir.Engine.LoadLevel(System.Type)">
+            <summary>
+            Load a new level and unload the current one
+            </summary>
+            <param name="levelType">The level type (must derive from Level)</param>
+        </member>
+        <member name="M:Elixir.Engine.Quit">
+            <summary>
+            Quit the game and close the window
+            </summary>
+        </member>
+        <member name="M:Elixir.Engine.OnActorConstruction(Elixir.GameFramework.Actor)">
+            <summary>
+            Called in the actor constructor
+            </summary>
+            <param name="newActor"></param>
+        </member>
+        <member name="T:Elixir.GameFramework.Actor">
+            <summary>
+            Base class for any object that is part of a level hierarchy and can be transformed
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Name">
+            <summary>
+            The unique name of the actor
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Children">
+            <summary>
+            Enumerates the children for this actor (no sub-children)
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Parent">
+            <summary>
+            Parent the actor to another actor (cannot be null, use Unparent to parent the actor to the level root)
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.SetParentInternal(Elixir.GameFramework.Actor)">
+            <summary>
+            This is only part of the Parent.Set code, Do not call this function from outside the Parent.Set
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.LocalPosition">
+            <summary>
+            The position in local space
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.LocalRotation">
+            <summary>
+            The rotation in local space
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.LocalScale">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Position">
+            <summary>
+            The position in world space
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Rotation">
+            <summary>
+            The rotation in world space
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Scale">
+            <summary>
+            The scale in world space
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Up">
+            <summary>
+            The up vector
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Right">
+            <summary>
+            The right vector
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.LocalMatrix">
+            <summary>
+            The local space matrix
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.WorldMatrix">
+            <summary>
+            The world space matrix
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.InverseWorldMatrix">
+            <summary>
+            The inverse world space matrix
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.InputEnabled">
+            <summary>
+            Wheter or not the actor should receive input events
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.Engine">
+            <summary>
+            A shorthand to the engine singleton
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Actor.InputBinder">
+            <summary>
+            <para>Contains functionality for binding input to function handlers</para>
+            <para>Each actor has it's own input binder</para>
+            </summary>
+        </member>
+        <member name="F:Elixir.GameFramework.Actor.Immutable">
+            <summary>
+            Whether or not the actor can be re-parented or destroyed (internal use only)
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.DoRecursive(System.Action{Elixir.GameFramework.Actor},System.Boolean)">
+            <summary>
+            Performs an action recursively for actors under this actor in the hierarchy (and self if includeSelf = true)
+            </summary>
+            <param name="action"></param>
+            <param name="includeSelf">Wheter or not we should perform this action on ourself as well</param>
+            <returns>The amount of actors the action was operated on</returns>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.Unparent">
+            <summary>
+            Parent the actor to the level root
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.Destroy">
+            <summary>
+            <para>Marks this actor for destroy and it's children recursively</para>
+            <para>Marked actors will be destroyed at the end of the frame</para>
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.ForceDestroy">
+            <summary>
+            Destroy even when immutable (used to unload levels)
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.Initialize">
+            <summary>
+            Initialization happens after the whole level is loaded or immediately if the actor is created after level loading (base call not needed)
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.Tick(System.Single)">
+            <summary>
+            Called every tick
+            </summary>
+            <param name="deltaTime">The elapsed time in seconds since the last tick</param>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.ReceiveInputAction(Elixir.Input.KeyState,Elixir.Input.Key,System.Int32)">
+            <summary>
+            Process an input event if input is enabled for this actor
+            </summary>
+            <param name="keyState"></param>
+            <param name="key">The key that triggered this event</param>
+            <param name="gamepadId">The id of the gamepad that triggered this event (if it is triggered by a gamepad)</param>
+        </member>
+        <member name="M:Elixir.GameFramework.Actor.ReceiveInputAxis(Elixir.Input.InputAxis,System.Single,System.Int32)">
+            <summary>
+            Process an input axis event if input is enabled for this actor
+            </summary>
+            <param name="axis">The axis</param>
+            <param name="value">The value of the axis (can be between 0 and 1 or -1 and 1 depending on the type of axis)</param>
+            <param name="gamepadId">The id of the gamepad that triggered this event (if it is triggered by a gamepad)</param>
+        </member>
+        <member name="P:Elixir.GameFramework.Color.White">
+            <summary>
+            (R=1, G=1, B=1, A=1);
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Color.Black">
+            <summary>
+            (R=0, G=0, B=0, A=1);
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Color.Red">
+            <summary>
+            (R=1, G=0, B=0, A=1);
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Color.Green">
+            <summary>
+            (R=0, G=1, B=0, A=1);
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Color.Blue">
+            <summary>
+            (R=0, G=0, B=1, A=1);
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Color.Transparant">
+            <summary>
+            (R=0, G=0, B=0, A=0);
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Color.ToRgbaBytes">
+            <summary>
+            Create a byte array of rgba values (between 0 and 255)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Elixir.GameFramework.ColorExtensions.ToRgbaBytes(Elixir.GameFramework.Color[])">
+            <summary>
+            <para>Create a byte array of rgba values (between 0 and 255)</para>
+            <para>The byte array will be 4 times the length of the color array</para>
+            </summary>
+            <param name="colors"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Elixir.GameFramework.ContentLoader">
+            <summary>
+            <para>Loads and caches content files</para>
+            <para>When loading content, the content loader will first check if this file was loaded previously</para>
+            <para>If it is present in the content cache it will return the cached content, otherwise it will load it and add it to the content cache</para>
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.ContentLoader.LoadTexture(System.String,Elixir.Graphics.TextureCreateOptions)">
+            <summary>
+            Return loaded or cached texture
+            </summary>
+            <param name="file">The texture file to load</param>
+            <param name="createOptions">The create options</param>
+            <returns></returns>
+        </member>
+        <member name="M:Elixir.GameFramework.ContentLoader.LoadShader(System.String)">
+            <summary>
+            Return loaded or cached shader
+            </summary>
+            <param name="file">The shader file to load</param>
+            <returns></returns>
+        </member>
+        <member name="T:Elixir.GameFramework.DrawableActor">
+            <inheritdoc />
+            <summary>
+            An actor that contains geometry that can be drawn to a render target
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.Opacity">
+            <summary>
+            How transparent this actor is (between 0 and 1)
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.Color">
+            <summary>
+            The RGBA color of this actor
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.FlipX">
+            <summary>
+            Whether or not to flip the actor horizontally
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.FlipY">
+            <summary>
+            Whether or not to flip the actor vertically
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.LocalBounds">
+            <summary>
+            <para>The bounds of this drawable actor in local space</para>
+            <para>Ignores the transformations (translation, rotation ,scale) that are applied</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.Origin">
+            <summary>
+            The normalized origin of the actor (between (0, 0) and (1, 1))
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.BlendMode">
+            <summary>
+            The blending modes to use for this drawable actor
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.Shader">
+            <summary>
+            The shader to use for this drawable actor
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.Texture">
+            <summary>
+            The texture of this drawable actor
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.DrawLayer">
+            <summary>
+            The draw layers manage the order at which the drawable actors are drawn (higher layers will overlap lower layers)
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.GlobalBounds">
+            <summary>
+            <para>The global bounds of this drawable actor</para>
+            <para>Takes into account the transformations (translation, rotation, scale) that are applied</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.LocalBoundsInternal">
+            <summary>
+            Internal use for the Actor base class only
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.DrawableActor.OriginInternal">
+            <summary>
+            Internal use for the Actor base class only
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.DrawableActor.GetVertices">
+            <summary>
+            <para>Defines the geometry of the drawable actor</para>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Elixir.GameFramework.GameInstance">
+            <summary>
+            A game instance is a persistent class that will exist until the program closes
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.GameInstance.Engine">
+            <summary>
+            A shorthand to the engine singleton
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.GameInstance.InitializeSettings">
+            <summary>
+            <para>The engine will obtain it's settings from this call when it initializes</para>
+            <para>Called once before Initialize</para>
+            </summary>  
+            <returns>The settings you want to use for the application</returns>
+        </member>
+        <member name="M:Elixir.GameFramework.GameInstance.Initialize">
+            <summary>
+            Called after the engine modules have been initialized
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.GameInstance.ReceiveLogs(Elixir.Diagnostics.LogType,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Receive engine log messages
+            </summary>
+            <param name="logType">The type of log message</param>
+            <param name="message">The log message</param>
+            <param name="className">The class which invoked this log</param>
+            <param name="methodName">The method in the class which invoked this log</param>
+            <param name="lineNumber">The number of the line in the method that invoked this log</param>
+        </member>
+        <member name="P:Elixir.GameFramework.IntVector2.Zero">
+            <summary>
+            An int vector with X and Y set to 0
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.IntVector2.UnitX">
+            <summary>
+            An int vector with X set to 1 and Y set to 0
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.IntVector2.UnitY">
+            <summary>
+            An int vector with X set to 0 and Y set to 1
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.IntVector2.Unit">
+            <summary>
+            An int vector with X and Y set to 1
+            </summary>
+        </member>
+        <member name="T:Elixir.GameFramework.Level">
+            <summary>
+            A hierarchy of GameObjects
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Level.Engine">
+            <summary>
+            A shorthand to Engine.Get
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Level.Root">
+            <summary>
+            The root actor of the level is immutable and will always exist in the level
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Level.ActorCount">
+            <summary>
+            The total amount of actors in the level (not including the level root)
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Level.DefaultView">
+            <summary>
+            The default view 
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Level.CurrentView">
+            <summary>
+            The currently active view
+            </summary>
+        </member>
+        <member name="F:Elixir.GameFramework.Level.PendingDestroyActors">
+            <summary>
+            Actors to be destroyed at the end of the frame
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Level.BuildHierarchyString">
+            <summary>
+            A string that represents the level hierarchy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Elixir.GameFramework.Level.LoadLevel">
+            <summary>
+            Method for loading objects into the level
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Sprite.#ctor(Elixir.Graphics.Texture)">
+            <inheritdoc />
+        </member>
+        <member name="M:Elixir.GameFramework.Sprite.#ctor(Elixir.Graphics.Texture,Elixir.GameFramework.IntRect)">
+            <inheritdoc />
+        </member>
+        <member name="P:Elixir.GameFramework.Sprite.LocalBounds">
+            <inheritdoc />
+        </member>
+        <member name="M:Elixir.GameFramework.Sprite.GetVertices">
+            <inheritdoc />
+        </member>
+        <member name="T:Elixir.GameFramework.UniqueString">
+            <summary>
+            Ensures there is no other UniqueString with the same string value during the same runtime
+            Adds a postfix to make the string unique to other UniqueStrings
+            </summary>
+        </member>
+        <member name="F:Elixir.GameFramework.UniqueString.String">
+            <summary>
+            The unique string
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.UniqueString.#ctor(System.String)">
+            <summary>
+            Potentially modifies the input str by adding a postfix to ensure it is unique to other UniqueStrings
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="P:Elixir.GameFramework.Vector2.Length">
+            <summary>
+            The length of the vector
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Vector2.LengthSquared">
+            <summary>
+            The square length of the vector (offers better performance than Length)
+            </summary>
+        </member>
+        <member name="M:Elixir.GameFramework.Vector2.Dot(Elixir.GameFramework.Vector2,Elixir.GameFramework.Vector2)">
+            <summary>
+            Calculate the dot product of 2 vectors
+            </summary>
+            <param name="left">Input vector a</param>
+            <param name="right">Input vector b</param>
+            <returns>The dot product</returns>
+        </member>
+        <member name="M:Elixir.GameFramework.Vector2.Lerp(Elixir.GameFramework.Vector2,Elixir.GameFramework.Vector2,System.Single)">
+            <summary>
+            Calculate the linearly interpolated vector
+            </summary>
+            <param name="a">Input vector a</param>
+            <param name="b">Input vector b</param>
+            <param name="alpha">The amount of interpolation</param>
+            <returns>The interpolated vector</returns>
+        </member>
+        <member name="M:Elixir.GameFramework.Vector2.Normalize(Elixir.GameFramework.Vector2)">
+            <summary>
+            Scale the vector to unit length
+            </summary>
+            <param name="vector">The input vector</param>
+            <returns>The normalized vector</returns>
+        </member>
+        <member name="P:Elixir.GameFramework.Vector2.Unit">
+            <summary>
+            A vector2 with X and Y set to 1
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Vector2.UnitX">
+            <summary>
+            A vector2 with X set to 1 and Y set to 0
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Vector2.UnitY">
+            <summary>
+            A vector2 with X set to 0 and Y set to 1
+            </summary>
+        </member>
+        <member name="P:Elixir.GameFramework.Vector2.Zero">
+            <summary>
+            A vector2 with X and Y set to 0
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.Zero">
+            <summary>(0, 0, 0, 0)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.One">
+            <summary>(1, 1, 1, 1)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.SrcColor">
+            <summary>(src.r, src.g, src.b, src.a)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.OneMinusSrcColor">
+            <summary>(1, 1, 1, 1) - (src.r, src.g, src.b, src.a)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.DstColor">
+            <summary>(dst.r, dst.g, dst.b, dst.a)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.OneMinusDstColor">
+            <summary>(1, 1, 1, 1) - (dst.r, dst.g, dst.b, dst.a)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.SrcAlpha">
+            <summary>(src.a, src.a, src.a, src.a)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.OneMinusSrcAlpha">
+            <summary>(1, 1, 1, 1) - (src.a, src.a, src.a, src.a)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.DstAlpha">
+            <summary>(dst.a, dst.a, dst.a, dst.a)</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Factor.OneMinusDstAlpha">
+            <summary>(1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)</summary>
+        </member>
+        <member name="T:Elixir.Graphics.BlendMode.Equation">
+            <summary>
+            Enumeration of the blending equations
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Equation.Add">
+            <summary>Pixel = Src * SrcFactor + Dst * DstFactor</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Equation.Subtract">
+            <summary>Pixel = Src * SrcFactor - Dst * DstFactor</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Alpha">
+            <summary>Blend source and dest according to dest alpha</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Add">
+            <summary>Add source to dest</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.Multiply">
+            <summary>Multiply source and dest</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.None">
+            <summary>Overwrite dest with source</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.ColorSrcFactor">
+            <summary>Source blending factor for the color channels</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.ColorDstFactor">
+            <summary>Destination blending factor for the color channels</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.ColorEquation">
+            <summary>Blending equation for the color channels</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.AlphaSrcFactor">
+            <summary>Source blending factor for the alpha channel</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.AlphaDstFactor">
+            <summary>Destination blending factor for the alpha channel</summary>
+        </member>
+        <member name="F:Elixir.Graphics.BlendMode.AlphaEquation">
+            <summary>Blending equation for the alpha channel</summary>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.#ctor(Elixir.Graphics.BlendMode.Factor,Elixir.Graphics.BlendMode.Factor)">
+            <summary>
+            Construct the blend mode given the factors and equation
+            </summary>
+            <param name="sourceFactor">Specifies how to compute the source factor for the color and alpha channels.</param>
+            <param name="destinationFactor">Specifies how to compute the destination factor for the color and alpha channels.</param>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.#ctor(Elixir.Graphics.BlendMode.Factor,Elixir.Graphics.BlendMode.Factor,Elixir.Graphics.BlendMode.Equation)">
+            <summary>
+            Construct the blend mode given the factors and equation
+            </summary>
+            <param name="sourceFactor">Specifies how to compute the source factor for the color and alpha channels.</param>
+            <param name="destinationFactor">Specifies how to compute the destination factor for the color and alpha channels.</param>
+            <param name="blendEquation">Specifies how to combine the source and destination colors and alpha.</param>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.#ctor(Elixir.Graphics.BlendMode.Factor,Elixir.Graphics.BlendMode.Factor,Elixir.Graphics.BlendMode.Equation,Elixir.Graphics.BlendMode.Factor,Elixir.Graphics.BlendMode.Factor,Elixir.Graphics.BlendMode.Equation)">
+            <summary>
+            Construct the blend mode given the factors and equation
+            </summary>
+            <param name="colorSourceFactor">Specifies how to compute the source factor for the color channels.</param>
+            <param name="colorDestinationFactor">Specifies how to compute the destination factor for the color channels.</param>
+            <param name="colorBlendEquation">Specifies how to combine the source and destination colors.</param>
+            <param name="alphaSourceFactor">Specifies how to compute the source factor.</param>
+            <param name="alphaDestinationFactor">Specifies how to compute the destination factor.</param>
+            <param name="alphaBlendEquation">Specifies how to combine the source and destination alphas.</param>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.op_Equality(Elixir.Graphics.BlendMode,Elixir.Graphics.BlendMode)">
+            <summary>
+            Compare two blend modes and checks if they are equal
+            </summary>
+            <returns>Blend Modes are equal</returns>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.op_Inequality(Elixir.Graphics.BlendMode,Elixir.Graphics.BlendMode)">
+            <summary>
+            Compare two blend modes and checks if they are not equal
+            </summary>
+            <returns>Blend Modes are not equal</returns>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.Equals(System.Object)">
+            <summary>
+            Compare blend mode and object and checks if they are equal
+            </summary>
+            <param name="obj">Object to check</param>
+            <returns>Object and blend mode are equal</returns>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.Equals(Elixir.Graphics.BlendMode)">
+            <summary>
+            Compare two blend modes and checks if they are equal
+            </summary>
+            <param name="other">Blend Mode to check</param>
+            <returns>blend modes are equal</returns>
+        </member>
+        <member name="M:Elixir.Graphics.BlendMode.GetHashCode">
+            <summary>
+            Provide a integer describing the object
+            </summary>
+            <returns>Integer description of the object</returns>
+        </member>
+        <member name="P:Elixir.Graphics.GraphicsDevice.DrawCalls">
+            <summary>
+            <para>The amount of draw calls to the GPU needed to render the level</para>
+            <para>Actors with the same Shader, Texture, BlendMode and DrawLayer will be batched together into the same draw call</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.Graphics.GraphicsDevice.PostProcessingShader">
+            <summary>
+            <para>The shader used to apply full-screen effects</para>
+            <para>It is applied after all drawing is done over the whole screen</para>
+            </summary>
+        </member>
+        <member name="M:Elixir.Graphics.Shader.FromString(System.String)">
+            <summary>
+            Construct a new shader from memory directly
+            </summary>
+            <param name="pixelShaderString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Elixir.Graphics.Shader.#ctor(System.String)">
+            <summary>
+            <para>Create a new shader instance from file</para>
+            <para>Actors with different shader instances will be drawn in different draw calls</para>
+            <para>To reduce draw calls, use the same shader instance for multiple actors</para>
+            </summary>
+            <param name="pixelShaderFile"></param>
+        </member>
+        <member name="M:Elixir.Graphics.Shape.MakeQuad">
+            <summary>
+            Create a vertex array that represents a quad
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Elixir.Graphics.Texture.Size">
+            <summary>
+            The dimensions of the texture
+            </summary>
+        </member>
+        <member name="M:Elixir.Graphics.Texture.#ctor(System.String,Elixir.Graphics.TextureCreateOptions)">
+            <summary>
+            Used by the content loader
+            </summary>
+            <param name="file"></param>
+            <param name="createOptions">The create options</param>
+        </member>
+        <member name="M:Elixir.Graphics.Texture.#ctor(System.Int32,System.Int32,Elixir.Graphics.TextureCreateOptions)">
+            <summary>
+            Create a new texture instance with all white pixels
+            </summary>
+            <param name="width">The width of the texture</param>
+            <param name="height">The height of the texture</param>
+            <param name="createOptions">The create options</param>
+        </member>
+        <member name="M:Elixir.Graphics.Texture.Update(System.Byte[])">
+            <summary>
+            Set the pixel data for the texture
+            </summary>
+            <param name="rgbaBytes">Length should match texture dimensions * 4</param>
+        </member>
+        <member name="M:Elixir.Graphics.Texture.Update(Elixir.GameFramework.Color[])">
+            <summary>
+            Set the pixel data for the texture
+            </summary>
+            <param name="pixels">Length should match texture dimensions</param>
+        </member>
+        <member name="M:Elixir.Graphics.Texture.Update(Elixir.GameFramework.Color)">
+            <summary>
+            Set all pixels in the texture to the given color
+            </summary>
+            <param name="allPixels"></param>
+        </member>
+        <member name="T:Elixir.Graphics.TextureCreateOptions">
+            <summary>
+            The import options to use for the texture
+            </summary>
+        </member>
+        <member name="P:Elixir.Graphics.TextureCreateOptions.Smooth">
+            <summary>
+            <para>FilterMode : Linear</para>
+            <para>WrapMode : ClampToEdge</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.Graphics.TextureCreateOptions.Sharp">
+            <summary>
+            <para>FilterMode : Nearest</para>
+            <para>WrapMode : ClampToEdge</para>
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.TextureCreateOptions.FilterMode">
+            <summary>
+            The way the texture is filtered
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.TextureCreateOptions.WrapMode">
+            <summary>
+            The way the texture is wrapped outside of the texture coordinates
+            </summary>
+        </member>
+        <member name="M:Elixir.Graphics.TextureCreateOptions.#ctor(Elixir.Graphics.TextureFilterMode,Elixir.Graphics.TextureWrapMode)">
+            <summary>
+            Create new texture create options
+            </summary>
+            <param name="filterMode">The way the texture is filtered</param>
+            <param name="wrapMode">The way the texture is wrapped outside of the texture coordinates</param>
+        </member>
+        <member name="F:Elixir.Graphics.TextureFilterMode.Linear">
+            <summary>
+            For smoother textures
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.TextureFilterMode.Nearest">
+            <summary>
+            For pixel-perfect textures
+            </summary>
+        </member>
+        <member name="T:Elixir.Graphics.TextureWrapMode">
+            <summary>
+            The way the texture is sampled outside the coordinate range of 0 to 1
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.TextureWrapMode.Repeat">
+            <summary>
+            The integer part of the coordinate is ignored and a repeated pattern is formed
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.TextureWrapMode.MirroredRepeat">
+            <summary>
+            Same as Repeat but it will be mirrored when the integer part of the coordinate is odd
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.TextureWrapMode.ClampToEdge">
+            <summary>
+            The coordinate will be clamped between 0 and 1
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.TextureWrapMode.ClampToBorder">
+            <summary>
+            The coordinates that fall outside the range will be given a border
+            </summary>
+        </member>
+        <member name="T:Elixir.Graphics.View">
+            <inheritdoc />
+            <summary>
+            <para>A view is used to project the geometry onto the viewport</para>
+            <para>It contains the projection matrix which is used in the vertex shaders to transform the vertices to view-space</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.Graphics.View.ProjectionMatrix">
+            <summary>
+            The projection matrix of the current view is passed to the vertex shaders to transform the vertices to view-space
+            </summary>
+        </member>
+        <member name="P:Elixir.Graphics.View.Center">
+            <summary>
+            The center of the view
+            </summary>
+        </member>
+        <member name="T:Elixir.Input.InputActionBinding">
+            <summary>
+            Binding an id to an array of keys
+            </summary>
+        </member>
+        <member name="P:Elixir.Input.InputActionBinding.Id">
+            <summary>
+            The identifier for this input binding
+            </summary>
+        </member>
+        <member name="P:Elixir.Input.InputActionBinding.Keys">
+            <summary>
+            The keys associated with this input binding
+            </summary>
+        </member>
+        <member name="T:Elixir.Input.InputAxisScalePair">
+            <summary>
+            An axis and a scale for the value of that axis
+            </summary>
+        </member>
+        <member name="P:Elixir.Input.InputAxisScalePair.Axis">
+            <summary>
+            The axis
+            </summary>
+        </member>
+        <member name="P:Elixir.Input.InputAxisScalePair.Scale">
+            <summary>
+            The value by which to multiply the axis value
+            </summary>
+        </member>
+        <member name="T:Elixir.Input.InputAxisBinding">
+            <summary>
+            Binding an id to an axis
+            </summary>
+        </member>
+        <member name="P:Elixir.Input.InputAxisBinding.Id">
+            <summary>
+            The identifier for this input axis binding
+            </summary>
+        </member>
+        <member name="P:Elixir.Input.InputAxisBinding.AxisScalePairs">
+            <summary>
+            The pairs contain the axes and the scales by which to multiply their values
+            </summary>
+        </member>
+        <member name="M:Elixir.Input.InputBinder.BindAction(System.String,Elixir.Input.InputBinder.InputActionEvent)">
+            <summary>
+            Bind an input action to a function that handles the input event
+            </summary>
+            <param name="inputActionId">The id of the input action binding</param>
+            <param name="eventHandler">The function that will handle this input action event</param>
+        </member>
+        <member name="M:Elixir.Input.InputBinder.BindAxis(System.String,Elixir.Input.InputBinder.InputAxisEvent)">
+            <summary>
+            Bind an input axis to a function that handles the input event
+            </summary>
+            <param name="inputAxisId">The id of the input axis binding</param>
+            <param name="eventHandler">The function that will handle this input axis event</param>
+        </member>
+        <member name="M:Elixir.Input.InputBinder.UnbindAction(System.String)">
+            <summary>
+            Unbind a specific action (does nothing if the action is not bound)
+            </summary>
+            <param name="inputActionId"></param>
+        </member>
+        <member name="M:Elixir.Input.InputBinder.UnbindAxis(System.String)">
+            <summary>
+            Unbind a specific axis (does nothing if the axis is not bound)
+            </summary>
+            <param name="inputAxisId"></param>
+        </member>
+        <member name="M:Elixir.Input.InputBinder.UnbindAllActions">
+            <summary>
+            Unbind all actions
+            </summary>
+        </member>
+        <member name="M:Elixir.Input.InputBinder.UnbindAllAxes">
+            <summary>
+            Unbind all axes
+            </summary>
+        </member>
+        <member name="M:Elixir.Input.InputBinder.UnbindAll">
+            <summary>
+            Unbind all actions and axes
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadRightThumbstick">
+            <summary>
+            The "press" of the thumbstick
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadLeftThumbstick">
+            <summary>
+            The "press" of the thumbstick
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadRightThumbstickX">
+            <summary>
+            Triggered when the thumbstick's X-axis reaches a threshold
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadRightThumbstickY">
+            <summary>
+            Triggered when the thumbstick's Y-axis reaches a threshold
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadLeftThumbstickX">
+            <summary>
+            Triggered when the thumbstick's X-axis reaches a threshold
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadLeftThumbstickY">
+            <summary>
+            Triggered when the thumbstick's Y-axis reaches a threshold
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadRightTrigger">
+            <summary>
+            Triggered when the trigger axis has reached a threshold
+            </summary>
+        </member>
+        <member name="F:Elixir.Input.Key.GamepadLeftTrigger">
+            <summary>
+            Triggered when the trigger axis has reached a threshold
+            </summary>
+        </member>
+        <member name="M:Elixir.Internal.Interface.TextureInterface.LockTexture">
+            <summary>
+            Return the pointer to the pixel data, call UnlockTexture when you are done using it!
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Elixir.Internal.Interface.TextureInterface.UnlockTexture">
+            <summary>
+            Free the previously locked pointer
+            </summary>
+        </member>
+        <member name="T:Elixir.Internal.LevelManagment.LevelManager">
+            <summary>
+            Manages loading and unloading of levels
+            </summary>
+        </member>
+        <member name="P:Elixir.Internal.LevelManagment.LevelManager.Level">
+            <summary>
+            The level currently loaded 
+            </summary>
+        </member>
+        <member name="M:Elixir.Internal.LevelManagment.LevelManager.LoadLevel``1">
+            <summary>
+            Unload the current level and load the new level
+            </summary>
+            <typeparam name="T">The type of the level to load</typeparam>
+        </member>
+        <member name="M:Elixir.Internal.LevelManagment.LevelManager.LoadLevel(System.Type)">
+            <summary>
+            Unload the current level and load the new level
+            </summary>
+            <param name="levelType">The type of the level to load</param>
+        </member>
+        <member name="T:Elixir.Utils.MathEx">
+            <summary>
+            Additional math utility methods to extend System.Math
+            </summary>
+        </member>
+        <member name="M:Elixir.Utils.MathEx.FastSin(System.Single)">
+            <summary>
+            Fast sine using a precomputed lookup table
+            </summary>
+            <param name="radians"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Elixir.Utils.MathEx.FastCos(System.Single)">
+            <summary>
+            Fast cosine using a precomputed lookup table
+            </summary>
+            <param name="radians"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SDL2.SDL.SDL_GetNumTouchDevices">
+            \brief Get the number of registered touch devices.
+        </member>
+        <member name="M:SDL2.SDL.SDL_GetTouchDevice(System.Int32)">
+            \brief Get the touch ID with the given index, or 0 if the index is invalid.
+        </member>
+        <member name="M:SDL2.SDL.SDL_GetNumTouchFingers(System.Int64)">
+            \brief Get the number of active fingers for a given touch device.
+        </member>
+        <member name="M:SDL2.SDL.SDL_GetTouchFinger(System.Int64,System.Int32)">
+            \brief Get the finger object of the given touch, with the given index.
+            Returns pointer to SDL_Finger.
+        </member>
+    </members>
+</doc>
