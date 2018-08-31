@@ -206,11 +206,11 @@ namespace Elixir.Graphics
             {
                 if (renderProgram.Texture != null)
                 {
-                    texture = renderProgram.Texture.TextureGLHandle;
+                    texture = renderProgram.Texture.Handle;
                 }
                 else
                 {
-                    texture = Engine.Get.DefaultContent.TextureWhite32x32.TextureGLHandle;
+                    texture = Engine.Get.DefaultContent.TextureWhite32x32.Handle;
                 }
             }
 

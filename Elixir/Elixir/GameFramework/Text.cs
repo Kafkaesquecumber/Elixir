@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Runtime.InteropServices;
 using Elixir.Graphics;
 using Elixir.Internal;
 using OpenTK.Graphics.OpenGL;
+using SharpFont;
 using Font = Elixir.Graphics.Font;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using TextureWrapMode = Elixir.Graphics.TextureWrapMode;
@@ -25,99 +28,118 @@ namespace Elixir.GameFramework
         {
             Style = TextStyle.Normal;
             Font = font;
-            Texture = Font.GlyphTexture;
+
+            string testString = "Hello";
+            Texture = new Texture(8000, 1000, Color.Transparant, TextureCreateOptions.Sharp);
+
+            List<Surface> surfaces = new List<Surface>();
+            for (int i = 0; i < testString.Length; i++)
+            {
+                Glyph glyph = Font.FontFace.GetGlyph(testString[i], 16.0f);
+                
+                Surface fontSurface = new Surface
+                {
+                    Bits = Marshal.AllocHGlobal(glyph.RenderWidth * glyph.RenderHeight),
+                    Width = glyph.RenderWidth,
+                    Height = glyph.RenderHeight,
+                    Pitch = glyph.RenderWidth
+                };
+
+                glyph.RenderTo(fontSurface);
+
+                int width = fontSurface.Width;
+                int height = fontSurface.Height;
+                int len = width * height;
+                byte[] data = new byte[len];
+                Marshal.Copy(fontSurface.Bits, data, 0, len);
+                byte[] pixels = new byte[len * 4];
+
+                int index = 0;
+                for (int j = 0; j < len; j++)
+                {
+                    byte c = data[j];
+                    pixels[index++] = 255;
+                    pixels[index++] = 255;
+                    pixels[index++] = 255;
+                    pixels[index++] = c;
+                }
+                
+                Texture.Update(pixels, width, height, (width * i), 0);
+                
+                Marshal.FreeHGlobal(fontSurface.Bits);
+            }
             
+            
+
+            //Texture.NativeTexture.Save("FT.png");
+
             String = text;
         }
 
         private FloatRect _localBounds;
         public override FloatRect LocalBounds
         {
-            get => _localBounds;
+            get
+            {
+                if (Texture == null)
+                {
+                    return FloatRect.Zero;
+                }
+                return new FloatRect(0, 0, Texture.Size.X, Texture.Size.Y);
+            }
         }
 
         protected internal override Vertex[] GetVertices()
         {
-            Vertex[] vertices = new Vertex[String.Length * 4];
+            Vertex[] vertices = new Vertex[4];
 
-            float offsetX = 0.0f;
-            float offsetY = 0.0f;
+            Matrix mat = WorldMatrix;
+            vertices[0].Position = mat * new Vector2(0.0f, 0.0f);
+            vertices[1].Position = mat * new Vector2(LocalBounds.Width, 0.0f);
+            vertices[2].Position = mat * new Vector2(LocalBounds.Width, LocalBounds.Height);
+            vertices[3].Position = mat * new Vector2(0.0f, LocalBounds.Height);
 
-            for (int i = 0; i < String.Length; i++)
+            int textureWidth = Texture.Size.X;
+            int textureHeight = Texture.Size.Y;
+
+            // Set vertex texture coordinates
+            vertices[0].TexCoords.X = LocalBounds.X / textureWidth;
+            vertices[0].TexCoords.Y = LocalBounds.Y / textureHeight;
+            vertices[1].TexCoords.X = (LocalBounds.X + LocalBounds.Width) / textureWidth;
+            vertices[1].TexCoords.Y = LocalBounds.Y / textureHeight;
+            vertices[2].TexCoords.X = (LocalBounds.X + LocalBounds.Width) / textureWidth;
+            vertices[2].TexCoords.Y = (LocalBounds.Y + LocalBounds.Height) / textureHeight;
+            vertices[3].TexCoords.X = LocalBounds.X / textureWidth;
+            vertices[3].TexCoords.Y = (LocalBounds.Y + LocalBounds.Height) / textureHeight;
+
+            // Apply flips
+            if (FlipX)
             {
-                char glyph = String[i];
-                FloatRect glyphRect = Font.GetGlyphSourceRect(glyph);
+                Vector2 v0 = vertices[0].TexCoords;
+                vertices[0].TexCoords = vertices[1].TexCoords;
+                vertices[1].TexCoords = v0;
 
-                if (glyph == ' ')
-                {
-                    glyphRect.Width = Font.SpaceWidth;
-                }
-                else if (glyph == '\t')
-                {
-                    glyphRect.Width = Font.SpaceWidth * 4.0f;
-                }
+                Vector2 v3 = vertices[3].TexCoords;
+                vertices[3].TexCoords = vertices[2].TexCoords;
+                vertices[2].TexCoords = v3;
+            }
+            if (FlipY)
+            {
+                Vector2 v0 = vertices[0].TexCoords;
+                vertices[0].TexCoords = vertices[3].TexCoords;
+                vertices[3].TexCoords = v0;
 
-                int iv0 = (i * 4) + 0;
-                int iv1 = (i * 4) + 1;
-                int iv2 = (i * 4) + 2;
-                int iv3 = (i * 4) + 3;
-
-                float skew = Font.CreateOptions.StyleFlags.HasFlag(FontStyleFlags.Italic) ? 12.0f : 0.0f;
-                float vertexOffsetY = 0.0f;
-
-                Matrix mat = WorldMatrix;
-                vertices[iv0].Position = mat * new Vector2(offsetX + skew, vertexOffsetY);
-                vertices[iv1].Position = mat * new Vector2(offsetX + glyphRect.Width + skew, vertexOffsetY);
-                vertices[iv2].Position = mat * new Vector2(offsetX + glyphRect.Width, glyphRect.Height + vertexOffsetY);
-                vertices[iv3].Position = mat * new Vector2(offsetX, glyphRect.Height + vertexOffsetY);
-
-                int textureWidth = Texture.Size.X;
-                int textureHeight = Texture.Size.Y;
-                
-                // Set vertex texture coordinates
-                vertices[iv0].TexCoords.X = glyphRect.X / textureWidth;
-                vertices[iv0].TexCoords.Y = glyphRect.Y / textureHeight;
-                vertices[iv1].TexCoords.X = (glyphRect.X + glyphRect.Width) / textureWidth;
-                vertices[iv1].TexCoords.Y = glyphRect.Y / textureHeight;
-                vertices[iv2].TexCoords.X = (glyphRect.X + glyphRect.Width) / textureWidth;
-                vertices[iv2].TexCoords.Y = (glyphRect.Y + glyphRect.Height) / textureHeight;
-                vertices[iv3].TexCoords.X = glyphRect.X / textureWidth;
-                vertices[iv3].TexCoords.Y = (glyphRect.Y + glyphRect.Height) / textureHeight;
-
-                // Apply flips
-                if (FlipX) // TODO: Should flip whole thing not per char
-                {
-                    Vector2 v0 = vertices[iv0].TexCoords;
-                    vertices[iv0].TexCoords = vertices[iv1].TexCoords;
-                    vertices[iv1].TexCoords = v0;
-
-                    Vector2 v3 = vertices[iv3].TexCoords;
-                    vertices[iv3].TexCoords = vertices[iv2].TexCoords;
-                    vertices[iv2].TexCoords = v3;
-                }
-                if (FlipY) // TODO: Should flip whole thing not per char
-                {
-                    Vector2 v0 = vertices[iv0].TexCoords;
-                    vertices[iv0].TexCoords = vertices[iv3].TexCoords;
-                    vertices[iv3].TexCoords = v0;
-
-                    Vector2 v1 = vertices[iv1].TexCoords;
-                    vertices[iv1].TexCoords = vertices[iv2].TexCoords;
-                    vertices[iv2].TexCoords = v1;
-                }
-
-                // Set vertex colors
-                vertices[iv0].Color = Color;
-                vertices[iv1].Color = Color;
-                vertices[iv2].Color = Color;
-                vertices[iv3].Color = Color;
-
-                offsetX += glyphRect.Width;
-                offsetY = Math.Max(offsetY, glyphRect.Height);
+                Vector2 v1 = vertices[1].TexCoords;
+                vertices[1].TexCoords = vertices[2].TexCoords;
+                vertices[2].TexCoords = v1;
             }
 
-            _localBounds = new FloatRect(0, 0, offsetX, offsetY); // TODO: Doesnt work?
-            
+            // Set vertex colors
+            vertices[0].Color = Color;
+            vertices[1].Color = Color;
+            vertices[2].Color = Color;
+            vertices[3].Color = Color;
+
             return vertices;
         }
     }

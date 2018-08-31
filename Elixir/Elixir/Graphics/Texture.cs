@@ -19,42 +19,27 @@ namespace Elixir.Graphics
         /// <summary>
         /// The dimensions of the texture
         /// </summary>
-        public IntVector2 Size => new IntVector2(NativeTexture.Size.Width, NativeTexture.Size.Height);
+        public IntVector2 Size { get; private set; }
         
-        internal int TextureGLHandle { get; private set; }
-
-        internal override bool IsDisposed => NativeTexture == null;
-
-        internal Bitmap NativeTexture;
-
         /// <summary>
-        /// Used by the content loader
+        /// The OpenGL handle
         /// </summary>
-        /// <param name="file"></param>
-        /// <param name="createOptions">The create options</param>
-        internal Texture(string file, TextureCreateOptions createOptions)
-        {
-            if (!File.Exists(file))
-            {
-                throw new ElixirException($"No texture file exists in path {file}");
-            }
+        internal int Handle { get; private set; }
 
-            NativeTexture = new Bitmap(Image.FromFile(file));
-            LoadTextureGL(createOptions);
-        }
-
+        internal override bool IsDisposed => Handle == 0;
+        
+        private TextureCreateOptions _createOptions;
+        
         /// <summary>
         /// Create a new texture instance with all white pixels
         /// </summary>
         /// <param name="width">The width of the texture</param>
         /// <param name="height">The height of the texture</param>
-        /// <param name="color">The color of all pixels in the texture</param>
         /// <param name="createOptions">The create options</param>
-        public Texture(int width, int height, Color color, TextureCreateOptions createOptions)
+        public Texture(int width, int height, TextureCreateOptions createOptions)
         {
-            NativeTexture = new Bitmap(width, height);
-            Update(color);
-            LoadTextureGL(createOptions);
+            Size = new IntVector2(width, height);
+            LoadTexture();
         }
 
         private IntPtr GetPixelDataPointer()
@@ -67,21 +52,78 @@ namespace Elixir.Graphics
             return dataPtr;
         }
 
-        internal void LoadTextureGL(TextureCreateOptions createOptions)
+        internal void LoadTexture()
         {
-            IntPtr dataPtr = GetPixelDataPointer();
-
-            TextureGLHandle = GL.GenTexture();
+            byte[] bytes = Enumerable.Repeat<byte>(255, Size.X * Size.Y * 4).ToArray();
+            
+            Handle = GL.GenTexture();
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, TextureGLHandle);
+            GL.BindTexture(TextureTarget.Texture2D, Handle);
             
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Size.X, Size.Y, 0, 
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, dataPtr);
+                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bytes);
             
+            ApplyTextureParameters();
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+        
+        /// <summary>
+        /// Update the texture using bytes
+        /// </summary>
+        /// <param name="pixels">The pixels to be submitted to the texture</param>
+        /// <param name="width">The width of the sub-texture to submit</param>
+        /// <param name="height">The height of the sub-texture to submit</param>
+        /// <param name="x">The x location in the texture to begin submitting from</param>
+        /// <param name="y">The y location in the texture to begin submitting from</param>
+        public void Update(byte[] pixels, int width, int height, int x, int y)
+        {
+            if (pixels.Length > 0 && Handle != 0)
+            {
+                GL.BindTexture(TextureTarget.Texture2D, Handle);
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
+                ApplyTextureParameters();
+                
+                // Flush to make sure the new texture data will be up-to-date immediately
+                GL.Flush();
+            }
+        }
+
+        /// <summary>
+        /// Update the texture using rgba colors
+        /// </summary>
+        /// <param name="pixels">The color pixels to be submitted to the texture</param>
+        /// <param name="width">The width of the sub-texture to submit</param>
+        /// <param name="height">The height of the sub-texture to submit</param>
+        /// <param name="x">The x location in the texture to begin submitting from</param>
+        /// <param name="y">The y location in the texture to begin submitting from</param>
+        public void Update(IEnumerable<Color> pixels, int width, int height, int x, int y)
+        {
+            Color[] colors = pixels as Color[] ?? pixels.ToArray();
+            Update(colors.ToRgbaBytes(), width, height, x, y);
+        }
+
+        /// <summary>
+        /// Update all the pixels in the texture to a single color
+        /// </summary>
+        /// <param name="allPixels">The color for all the pixels in the texture</param>
+        public void Update(Color allPixels)
+        {
+            Color[] colors = Enumerable.Repeat(allPixels, Size.X * Size.Y).ToArray();
+            Update(colors.ToRgbaBytes(), Size.X, Size.Y, 0, 0);
+        }
+        
+        public void Dispose()
+        {
+            GL.DeleteTexture(Handle);
+        }
+
+        private void ApplyTextureParameters()
+        {
             int wrap;
             int filter;
 
-            switch (createOptions.FilterMode)
+            switch (_createOptions.FilterMode)
             {
                 case TextureFilterMode.Linear:
                     filter = (int)TextureMinFilter.Linear;
@@ -93,10 +135,10 @@ namespace Elixir.Graphics
                     throw new ArgumentOutOfRangeException();
             }
 
-            switch (createOptions.WrapMode)
+            switch (_createOptions.WrapMode)
             {
                 case TextureWrapMode.Repeat:
-                    wrap = (int) OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat;
+                    wrap = (int)OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat;
                     break;
                 case TextureWrapMode.MirroredRepeat:
                     wrap = (int)OpenTK.Graphics.OpenGL.TextureWrapMode.MirroredRepeat;
@@ -115,59 +157,6 @@ namespace Elixir.Graphics
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, wrap);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, filter);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, filter);
-
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-        }
-
-        /// <summary>
-        /// Set the pixel data for the texture
-        /// </summary>
-        /// <param name="rgbaBytes">Length should match texture dimensions * 4</param>
-        public void Update(byte[] rgbaBytes)
-        {
-            if (rgbaBytes.Length != (Size.X * Size.Y * 4))
-            {
-                throw new ElixirException("Color array length does not match texture dimensions * 4");
-            }
-
-            BitmapData data = NativeTexture.LockBits(new Rectangle(0, 0, Size.X, Size.Y),
-                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            
-            
-            Marshal.Copy(rgbaBytes, 0, data.Scan0, rgbaBytes.Length);
-            
-            NativeTexture.UnlockBits(data);
-        }
-        
-        /// <summary>
-        /// Set the pixel data for the texture
-        /// </summary>
-        /// <param name="pixels">Count should match texture dimensions</param>
-        public void Update(IEnumerable<Color> pixels)
-        {
-            Color[] colors = pixels as Color[] ?? pixels.ToArray();
-            if (colors.Length != (Size.X * Size.Y))
-            {
-                throw new ElixirException("Color array length does not match texture dimensions");
-            }
-            Update(colors.ToRgbaBytes());
-        }
-
-        /// <summary>
-        /// Set all pixels in the texture to the given color
-        /// </summary>
-        /// <param name="allPixels"></param>
-        public void Update(Color allPixels)
-        {
-            Color[] colors = Enumerable.Repeat(allPixels, Size.X * Size.Y).ToArray();
-            Update(colors);
-        }
-        
-        public void Dispose()
-        {
-            GL.DeleteTexture(TextureGLHandle);
-            NativeTexture?.Dispose();
-            NativeTexture = null;
         }
     }
 }
