@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Elixir.GameFramework;
 using Elixir.Graphics;
 using OpenTK.Graphics.OpenGL;

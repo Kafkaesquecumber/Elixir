@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Elixir.GameFramework;
 using Elixir.Input;

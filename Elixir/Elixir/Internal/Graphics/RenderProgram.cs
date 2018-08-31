@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Elixir.Graphics;
 
 namespace Elixir.Internal.Graphics

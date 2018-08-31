@@ -1,9 +1,11 @@
-﻿namespace Elixir.Graphics
+﻿using System;
+
+namespace Elixir.Graphics
 {
     /// <summary>
-    /// The import options to use for the texture
+    /// The create options to use for the texture
     /// </summary>
-    public struct TextureCreateOptions
+    public struct TextureCreateOptions : IEquatable<TextureCreateOptions>
     {
         /// <summary>
         /// <para>FilterMode : Linear</para>
@@ -36,6 +38,40 @@
         {
             FilterMode = filterMode;
             WrapMode = wrapMode;
+        }
+
+        public bool Equals(TextureCreateOptions other)
+        {
+            return FilterMode == other.FilterMode && WrapMode == other.WrapMode;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is TextureCreateOptions && Equals((TextureCreateOptions) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((int) FilterMode * 397) ^ (int) WrapMode;
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"(Filter: {FilterMode}, Wrap: {WrapMode})";
+        }
+
+        public static bool operator ==(TextureCreateOptions left, TextureCreateOptions right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TextureCreateOptions left, TextureCreateOptions right)
+        {
+            return !left.Equals(right);
         }
     }
 }

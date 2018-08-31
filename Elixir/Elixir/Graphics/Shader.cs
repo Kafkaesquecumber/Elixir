@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Elixir.Graphics
 {
-    public class Shader : ILoadableContent
+    public class Shader : LoadableContent
     {
         // vertex shader in-attributes
         internal const string VertInPositionName  = "_position";
@@ -52,7 +52,8 @@ namespace Elixir.Graphics
         
         public string PixelShaderString { get; private set; }
 
-        private bool _disposed;
+        // We dont dispose shaders
+        internal override bool IsDisposed => false;
 
         private Shader() { }
 
@@ -137,17 +138,7 @@ namespace Elixir.Graphics
 
             return valid;
         }
-
-        public void Dispose()
-        {
-            _disposed = true;
-        }
-
-        public bool IsDisposed()
-        {
-            return _disposed;
-        }
-
+        
         internal static string VertexShaderString =
         $@"
         #version 150 core
@@ -178,5 +169,7 @@ namespace Elixir.Graphics
         {{ 
             {FragOutName} = texture(textureSampler, {VertOutFragInTexCoordName}.xy) * {VertOutFragInColorName};
         }}";
+
+        
     }
 }

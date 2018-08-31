@@ -1,4 +1,4 @@
-﻿using Elixir.Graphics;
+using Elixir.Graphics;
 
 namespace Elixir.Internal.Graphics
 {

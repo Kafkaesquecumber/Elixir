@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace Elixir.GameFramework
 {
@@ -128,22 +131,24 @@ namespace Elixir.GameFramework
     {
         /// <summary>
         /// <para>Create a byte array of rgba values (between 0 and 255)</para>
-        /// <para>The byte array will be 4 times the length of the color array</para>
+        /// <para>The byte array will be 4 times the length of the color collection</para>
         /// </summary>
         /// <param name="colors"></param>
         /// <returns></returns>
-        public static byte[] ToRgbaBytes(this Color[] colors)
+        public static byte[] ToRgbaBytes(this IEnumerable<Color> colors)
         {
-            byte[] bytes = new byte[colors.Length * 4];
+            byte[] bytes = new byte[colors.Count() * 4];
             int j = 0;
-            for (int i = 0; i < colors.Length; i++, j+=4)
-            {
-                bytes[j + 0] = (byte)(colors[0].R * 255);
-                bytes[j + 1] = (byte)(colors[0].G * 255);
-                bytes[j + 2] = (byte)(colors[0].B * 255);
-                bytes[j + 3] = (byte)(colors[0].A * 255);
-            }
 
+            foreach (Color color in colors)
+            {
+                bytes[j + 0] = (byte)(color.R * 255);
+                bytes[j + 1] = (byte)(color.G * 255);
+                bytes[j + 2] = (byte)(color.B * 255);
+                bytes[j + 3] = (byte)(color.A * 255);
+                j += 4;
+            }
+            
             return bytes;
         }
     }

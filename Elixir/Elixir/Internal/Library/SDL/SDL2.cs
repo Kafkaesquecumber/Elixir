@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace SDL2
 {
-	public static class SDL
+	internal static class SDL
 	{
 		#region SDL2# Variables
 
@@ -107,12 +107,12 @@ namespace SDL2
 
 		#region SDL_stdinc.h
 
-		public static uint SDL_FOURCC(byte A, byte B, byte C, byte D)
+		internal static uint SDL_FOURCC(byte A, byte B, byte C, byte D)
 		{
 			return (uint) (A | (B << 8) | (C << 16) | (D << 24));
 		}
 
-		public enum SDL_bool
+		internal enum SDL_bool
 		{
 			SDL_FALSE = 0,
 			SDL_TRUE = 1
@@ -158,21 +158,21 @@ namespace SDL2
 
 		/* mem refers to a void*, IntPtr to an SDL_RWops* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_RWFromMem(IntPtr mem, int size);
+		internal static extern IntPtr SDL_RWFromMem(IntPtr mem, int size);
 
 		#endregion
 
 		#region SDL_main.h
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetMainReady();
+		internal static extern void SDL_SetMainReady();
 
 		/* This is used as a function pointer to a C main() function for SDL_WinRTRunApp() */
-		public delegate int SDL_WinRT_mainFunction(int argc, IntPtr[] argv);
+		internal delegate int SDL_WinRT_mainFunction(int argc, IntPtr[] argv);
 
 		/* Use this function with UWP to call your C# Main() function! */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_WinRTRunApp(
+		internal static extern int SDL_WinRTRunApp(
 			SDL_WinRT_mainFunction mainFunction,
 			IntPtr reserved
 		);
@@ -196,19 +196,19 @@ namespace SDL2
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_Init(uint flags);
+		internal static extern int SDL_Init(uint flags);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_InitSubSystem(uint flags);
+		internal static extern int SDL_InitSubSystem(uint flags);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_Quit();
+		internal static extern void SDL_Quit();
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_QuitSubSystem(uint flags);
+		internal static extern void SDL_QuitSubSystem(uint flags);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_WasInit(uint flags);
+		internal static extern uint SDL_WasInit(uint flags);
 
 		#endregion
 
@@ -216,7 +216,7 @@ namespace SDL2
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetPlatform", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetPlatform();
-		public static string SDL_GetPlatform()
+		internal static string SDL_GetPlatform()
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetPlatform());
 		}
@@ -344,7 +344,7 @@ namespace SDL2
 		public const string SDL_HINT_WINDOWS_INTRESOURCE_ICON_SMALL =
 			"SDL_WINDOWS_INTRESOURCE_ICON_SMALL";
 
-		public enum SDL_HintPriority
+		internal enum SDL_HintPriority
 		{
 			SDL_HINT_DEFAULT,
 			SDL_HINT_NORMAL,
@@ -352,11 +352,11 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_ClearHints();
+		internal static extern void SDL_ClearHints();
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetHint", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetHint(byte[] name);
-		public static string SDL_GetHint(string name)
+		internal static string SDL_GetHint(string name)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GetHint(
@@ -370,7 +370,7 @@ namespace SDL2
 			byte[] name,
 			byte[] value
 		);
-		public static SDL_bool SDL_SetHint(string name, string value)
+		internal static SDL_bool SDL_SetHint(string name, string value)
 		{
 			return INTERNAL_SDL_SetHint(
 				UTF8_ToNative(name),
@@ -384,7 +384,7 @@ namespace SDL2
 			byte[] value,
 			SDL_HintPriority priority
 		);
-		public static SDL_bool SDL_SetHintWithPriority(
+		internal static SDL_bool SDL_SetHintWithPriority(
 			string name,
 			string value,
 			SDL_HintPriority priority
@@ -402,7 +402,7 @@ namespace SDL2
 			byte[] name,
 			SDL_bool default_value
 		);
-		public static SDL_bool SDL_GetHintBoolean(
+		internal static SDL_bool SDL_GetHintBoolean(
 			string name,
 			SDL_bool default_value
 		) {
@@ -417,11 +417,11 @@ namespace SDL2
 		#region SDL_error.h
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_ClearError();
+		internal static extern void SDL_ClearError();
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetError", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetError();
-		public static string SDL_GetError()
+		internal static string SDL_GetError()
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetError());
 		}
@@ -429,7 +429,7 @@ namespace SDL2
 		/* Use string.Format for arglists */
 		[DllImport(nativeLibName, EntryPoint = "SDL_SetError", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void INTERNAL_SDL_SetError(byte[] fmtAndArglist);
-		public static void SDL_SetError(string fmtAndArglist)
+		internal static void SDL_SetError(string fmtAndArglist)
 		{
 			INTERNAL_SDL_SetError(
 				UTF8_ToNative(fmtAndArglist)
@@ -474,7 +474,7 @@ namespace SDL2
 		public const int SDL_LOG_CATEGORY_CUSTOM = 19;
 		/* End nameless enum SDL_LOG_CATEGORY */
 
-		public enum SDL_LogPriority
+		internal enum SDL_LogPriority
 		{
 			SDL_LOG_PRIORITY_VERBOSE = 1,
 			SDL_LOG_PRIORITY_DEBUG,
@@ -487,7 +487,7 @@ namespace SDL2
 
 		/* userdata refers to a void*, message to a const char* */
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate void SDL_LogOutputFunction(
+		internal delegate void SDL_LogOutputFunction(
 			IntPtr userdata,
 			int category,
 			SDL_LogPriority priority,
@@ -497,7 +497,7 @@ namespace SDL2
 		/* Use string.Format for arglists */
 		[DllImport(nativeLibName, EntryPoint = "SDL_Log", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void INTERNAL_SDL_Log(byte[] fmtAndArglist);
-		public static void SDL_Log(string fmtAndArglist)
+		internal static void SDL_Log(string fmtAndArglist)
 		{
 			INTERNAL_SDL_Log(
 				UTF8_ToNative(fmtAndArglist)
@@ -510,7 +510,7 @@ namespace SDL2
 			int category,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogVerbose(
+		internal static void SDL_LogVerbose(
 			int category,
 			string fmtAndArglist
 		) {
@@ -526,7 +526,7 @@ namespace SDL2
 			int category,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogDebug(
+		internal static void SDL_LogDebug(
 			int category,
 			string fmtAndArglist
 		) {
@@ -542,7 +542,7 @@ namespace SDL2
 			int category,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogInfo(
+		internal static void SDL_LogInfo(
 			int category,
 			string fmtAndArglist
 		) {
@@ -558,7 +558,7 @@ namespace SDL2
 			int category,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogWarn(
+		internal static void SDL_LogWarn(
 			int category,
 			string fmtAndArglist
 		) {
@@ -574,7 +574,7 @@ namespace SDL2
 			int category,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogError(
+		internal static void SDL_LogError(
 			int category,
 			string fmtAndArglist
 		) {
@@ -590,7 +590,7 @@ namespace SDL2
 			int category,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogCritical(
+		internal static void SDL_LogCritical(
 			int category,
 			string fmtAndArglist
 		) {
@@ -607,7 +607,7 @@ namespace SDL2
 			SDL_LogPriority priority,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogMessage(
+		internal static void SDL_LogMessage(
 			int category,
 			SDL_LogPriority priority,
 			string fmtAndArglist
@@ -626,7 +626,7 @@ namespace SDL2
 			SDL_LogPriority priority,
 			byte[] fmtAndArglist
 		);
-		public static void SDL_LogMessageV(
+		internal static void SDL_LogMessageV(
 			int category,
 			SDL_LogPriority priority,
 			string fmtAndArglist
@@ -639,23 +639,23 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_LogPriority SDL_LogGetPriority(
+		internal static extern SDL_LogPriority SDL_LogGetPriority(
 			int category
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_LogSetPriority(
+		internal static extern void SDL_LogSetPriority(
 			int category,
 			SDL_LogPriority priority
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_LogSetAllPriority(
+		internal static extern void SDL_LogSetAllPriority(
 			SDL_LogPriority priority
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_LogResetPriorities();
+		internal static extern void SDL_LogResetPriorities();
 
 		/* userdata refers to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
@@ -663,7 +663,7 @@ namespace SDL2
 			out IntPtr callback,
 			out IntPtr userdata
 		);
-		public static void SDL_LogGetOutputFunction(
+		internal static void SDL_LogGetOutputFunction(
 			out SDL_LogOutputFunction callback,
 			out IntPtr userdata
 		) {
@@ -687,7 +687,7 @@ namespace SDL2
 
 		/* userdata refers to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_LogSetOutputFunction(
+		internal static extern void SDL_LogSetOutputFunction(
 			SDL_LogOutputFunction callback,
 			IntPtr userdata
 		);
@@ -697,7 +697,7 @@ namespace SDL2
 		#region SDL_messagebox.h
 
 		[Flags]
-		public enum SDL_MessageBoxFlags : uint
+		internal enum SDL_MessageBoxFlags : uint
 		{
 			SDL_MESSAGEBOX_ERROR =		0x00000010,
 			SDL_MESSAGEBOX_WARNING =	0x00000020,
@@ -705,7 +705,7 @@ namespace SDL2
 		}
 
 		[Flags]
-		public enum SDL_MessageBoxButtonFlags : uint
+		internal enum SDL_MessageBoxButtonFlags : uint
 		{
 			SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT = 0x00000001,
 			SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT = 0x00000002
@@ -720,7 +720,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MessageBoxButtonData
+		internal struct SDL_MessageBoxButtonData
 		{
 			public SDL_MessageBoxButtonFlags flags;
 			public int buttonid;
@@ -728,12 +728,12 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MessageBoxColor
+		internal struct SDL_MessageBoxColor
 		{
 			public byte r, g, b;
 		}
 
-		public enum SDL_MessageBoxColorType
+		internal enum SDL_MessageBoxColorType
 		{
 			SDL_MESSAGEBOX_COLOR_BACKGROUND,
 			SDL_MESSAGEBOX_COLOR_TEXT,
@@ -744,7 +744,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MessageBoxColorScheme
+		internal struct SDL_MessageBoxColorScheme
 		{
 			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = (int)SDL_MessageBoxColorType.SDL_MESSAGEBOX_COLOR_MAX)]
 				public SDL_MessageBoxColor[] colors;
@@ -763,7 +763,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MessageBoxData
+		internal struct SDL_MessageBoxData
 		{
 			public SDL_MessageBoxFlags flags;
 			public IntPtr window;				/* Parent window, can be NULL */
@@ -790,7 +790,7 @@ namespace SDL2
 			return mem;
 		}
 
-		public static unsafe int SDL_ShowMessageBox([In()] ref SDL_MessageBoxData messageboxdata, out int buttonid)
+		internal static unsafe int SDL_ShowMessageBox([In()] ref SDL_MessageBoxData messageboxdata, out int buttonid)
 		{
 			var data = new INTERNAL_SDL_MessageBoxData()
 			{
@@ -844,7 +844,7 @@ namespace SDL2
 			byte[] message,
 			IntPtr window
 		);
-		public static int SDL_ShowSimpleMessageBox(
+		internal static int SDL_ShowSimpleMessageBox(
 			SDL_MessageBoxFlags flags,
 			string title,
 			string message,
@@ -870,55 +870,55 @@ namespace SDL2
 		public const int SDL_MINOR_VERSION =	0;
 		public const int SDL_PATCHLEVEL =	8;
 
-		public static readonly int SDL_COMPILEDVERSION = SDL_VERSIONNUM(
+		internal static readonly int SDL_COMPILEDVERSION = SDL_VERSIONNUM(
 			SDL_MAJOR_VERSION,
 			SDL_MINOR_VERSION,
 			SDL_PATCHLEVEL
 		);
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_version
+		internal struct SDL_version
 		{
 			public byte major;
 			public byte minor;
 			public byte patch;
 		}
 
-		public static void SDL_VERSION(out SDL_version x)
+		internal static void SDL_VERSION(out SDL_version x)
 		{
 			x.major = SDL_MAJOR_VERSION;
 			x.minor = SDL_MINOR_VERSION;
 			x.patch = SDL_PATCHLEVEL;
 		}
 
-		public static int SDL_VERSIONNUM(int X, int Y, int Z)
+		internal static int SDL_VERSIONNUM(int X, int Y, int Z)
 		{
 			return (X * 1000) + (Y * 100) + Z;
 		}
 
-		public static bool SDL_VERSION_ATLEAST(int X, int Y, int Z)
+		internal static bool SDL_VERSION_ATLEAST(int X, int Y, int Z)
 		{
 			return (SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X, Y, Z));
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetVersion(out SDL_version ver);
+		internal static extern void SDL_GetVersion(out SDL_version ver);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetRevision", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetRevision();
-		public static string SDL_GetRevision()
+		internal static string SDL_GetRevision()
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetRevision());
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetRevisionNumber();
+		internal static extern int SDL_GetRevisionNumber();
 
 		#endregion
 
 		#region SDL_video.h
 
-		public enum SDL_GLattr
+		internal enum SDL_GLattr
 		{
 			SDL_GL_RED_SIZE,
 			SDL_GL_GREEN_SIZE,
@@ -950,7 +950,7 @@ namespace SDL2
 		}
 
 		[Flags]
-		public enum SDL_GLprofile
+		internal enum SDL_GLprofile
 		{
 			SDL_GL_CONTEXT_PROFILE_CORE				= 0x0001,
 			SDL_GL_CONTEXT_PROFILE_COMPATIBILITY	= 0x0002,
@@ -958,7 +958,7 @@ namespace SDL2
 		}
 
 		[Flags]
-		public enum SDL_GLcontext
+		internal enum SDL_GLcontext
 		{
 			SDL_GL_CONTEXT_DEBUG_FLAG				= 0x0001,
 			SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG	= 0x0002,
@@ -966,7 +966,7 @@ namespace SDL2
 			SDL_GL_CONTEXT_RESET_ISOLATION_FLAG		= 0x0008
 		}
 
-		public enum SDL_WindowEventID : byte
+		internal enum SDL_WindowEventID : byte
 		{
 			SDL_WINDOWEVENT_NONE,
 			SDL_WINDOWEVENT_SHOWN,
@@ -989,7 +989,7 @@ namespace SDL2
 		}
 
 		[Flags]
-		public enum SDL_WindowFlags : uint
+		internal enum SDL_WindowFlags : uint
 		{
 			SDL_WINDOW_FULLSCREEN =		0x00000001,
 			SDL_WINDOW_OPENGL =		0x00000002,
@@ -1016,7 +1016,7 @@ namespace SDL2
 		}
 
 		/* Only available in 2.0.4 */
-		public enum SDL_HitTestResult
+		internal enum SDL_HitTestResult
 		{
 			SDL_HITTEST_NORMAL,		/* Region is normal. No special properties. */
 			SDL_HITTEST_DRAGGABLE,		/* Region can drag entire window. */
@@ -1035,28 +1035,28 @@ namespace SDL2
 		public const int SDL_WINDOWPOS_UNDEFINED =	0x1FFF0000;
 		public const int SDL_WINDOWPOS_CENTERED =	0x2FFF0000;
 
-		public static int SDL_WINDOWPOS_UNDEFINED_DISPLAY(int X)
+		internal static int SDL_WINDOWPOS_UNDEFINED_DISPLAY(int X)
 		{
 			return (SDL_WINDOWPOS_UNDEFINED_MASK | X);
 		}
 
-		public static bool SDL_WINDOWPOS_ISUNDEFINED(int X)
+		internal static bool SDL_WINDOWPOS_ISUNDEFINED(int X)
 		{
 			return (X & 0xFFFF0000) == SDL_WINDOWPOS_UNDEFINED_MASK;
 		}
 
-		public static int SDL_WINDOWPOS_CENTERED_DISPLAY(int X)
+		internal static int SDL_WINDOWPOS_CENTERED_DISPLAY(int X)
 		{
 			return (SDL_WINDOWPOS_CENTERED_MASK | X);
 		}
 
-		public static bool SDL_WINDOWPOS_ISCENTERED(int X)
+		internal static bool SDL_WINDOWPOS_ISCENTERED(int X)
 		{
 			return (X & 0xFFFF0000) == SDL_WINDOWPOS_CENTERED_MASK;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_DisplayMode
+		internal struct SDL_DisplayMode
 		{
 			public uint format;
 			public int w;
@@ -1068,7 +1068,7 @@ namespace SDL2
 		/* win refers to an SDL_Window*, area to a cosnt SDL_Point*, data to a void* */
 		/* Only available in 2.0.4 */
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate SDL_HitTestResult SDL_HitTest(IntPtr win, IntPtr area, IntPtr data);
+		internal delegate SDL_HitTestResult SDL_HitTest(IntPtr win, IntPtr area, IntPtr data);
 
 		/* IntPtr refers to an SDL_Window* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_CreateWindow", CallingConvention = CallingConvention.Cdecl)]
@@ -1080,7 +1080,7 @@ namespace SDL2
 			int h,
 			SDL_WindowFlags flags
 		);
-		public static IntPtr SDL_CreateWindow(
+		internal static IntPtr SDL_CreateWindow(
 			string title,
 			int x,
 			int y,
@@ -1097,7 +1097,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window*, renderer to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_CreateWindowAndRenderer(
+		internal static extern int SDL_CreateWindowAndRenderer(
 			int width,
 			int height,
 			SDL_WindowFlags window_flags,
@@ -1107,61 +1107,61 @@ namespace SDL2
 
 		/* data refers to some native window type, IntPtr to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateWindowFrom(IntPtr data);
+		internal static extern IntPtr SDL_CreateWindowFrom(IntPtr data);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_DestroyWindow(IntPtr window);
+		internal static extern void SDL_DestroyWindow(IntPtr window);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_DisableScreenSaver();
+		internal static extern void SDL_DisableScreenSaver();
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_EnableScreenSaver();
+		internal static extern void SDL_EnableScreenSaver();
 
 		/* IntPtr refers to an SDL_DisplayMode. Just use closest. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetClosestDisplayMode(
+		internal static extern IntPtr SDL_GetClosestDisplayMode(
 			int displayIndex,
 			ref SDL_DisplayMode mode,
 			out SDL_DisplayMode closest
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetCurrentDisplayMode(
+		internal static extern int SDL_GetCurrentDisplayMode(
 			int displayIndex,
 			out SDL_DisplayMode mode
 		);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetCurrentVideoDriver", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetCurrentVideoDriver();
-		public static string SDL_GetCurrentVideoDriver()
+		internal static string SDL_GetCurrentVideoDriver()
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetCurrentVideoDriver());
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetDesktopDisplayMode(
+		internal static extern int SDL_GetDesktopDisplayMode(
 			int displayIndex,
 			out SDL_DisplayMode mode
 		);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetDisplayName(int index);
-		public static string SDL_GetDisplayName(int index)
+		internal static string SDL_GetDisplayName(int index)
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetDisplayName(index));
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetDisplayBounds(
+		internal static extern int SDL_GetDisplayBounds(
 			int displayIndex,
 			out SDL_Rect rect
 		);
 
 		/* This function is only available in 2.0.4 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetDisplayDPI(
+		internal static extern int SDL_GetDisplayDPI(
 			int displayIndex,
 			out float ddpi,
 			out float hdpi,
@@ -1169,7 +1169,7 @@ namespace SDL2
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetDisplayMode(
+		internal static extern int SDL_GetDisplayMode(
 			int displayIndex,
 			int modeIndex,
 			out SDL_DisplayMode mode
@@ -1177,41 +1177,41 @@ namespace SDL2
 
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetDisplayUsableBounds(
+		internal static extern int SDL_GetDisplayUsableBounds(
 			int displayIndex,
 			out SDL_Rect rect
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumDisplayModes(
+		internal static extern int SDL_GetNumDisplayModes(
 			int displayIndex
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumVideoDisplays();
+		internal static extern int SDL_GetNumVideoDisplays();
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumVideoDrivers();
+		internal static extern int SDL_GetNumVideoDrivers();
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetVideoDriver", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetVideoDriver(
 			int index
 		);
-		public static string SDL_GetVideoDriver(int index)
+		internal static string SDL_GetVideoDriver(int index)
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetVideoDriver(index));
 		}
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern float SDL_GetWindowBrightness(
+		internal static extern float SDL_GetWindowBrightness(
 			IntPtr window
 		);
 
 		/* window refers to an SDL_Window* */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowOpacity(
+		internal static extern int SDL_SetWindowOpacity(
 			IntPtr window,
 			float opacity
 		);
@@ -1219,7 +1219,7 @@ namespace SDL2
 		/* window refers to an SDL_Window* */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetWindowOpacity(
+		internal static extern int SDL_GetWindowOpacity(
 			IntPtr window,
 			out float out_opacity
 		);
@@ -1227,7 +1227,7 @@ namespace SDL2
 		/* modal_window and parent_window refer to an SDL_Window*s */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowModalFor(
+		internal static extern int SDL_SetWindowModalFor(
 			IntPtr modal_window,
 			IntPtr parent_window
 		);
@@ -1235,7 +1235,7 @@ namespace SDL2
 		/* window refers to an SDL_Window* */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowInputFocus(IntPtr window);
+		internal static extern int SDL_SetWindowInputFocus(IntPtr window);
 
 		/* window refers to an SDL_Window*, IntPtr to a void* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetWindowData", CallingConvention = CallingConvention.Cdecl)]
@@ -1243,7 +1243,7 @@ namespace SDL2
 			IntPtr window,
 			byte[] name
 		);
-		public static IntPtr SDL_GetWindowData(
+		internal static IntPtr SDL_GetWindowData(
 			IntPtr window,
 			string name
 		) {
@@ -1255,28 +1255,28 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetWindowDisplayIndex(
+		internal static extern int SDL_GetWindowDisplayIndex(
 			IntPtr window
 		);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetWindowDisplayMode(
+		internal static extern int SDL_GetWindowDisplayMode(
 			IntPtr window,
 			out SDL_DisplayMode mode
 		);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_GetWindowFlags(IntPtr window);
+		internal static extern uint SDL_GetWindowFlags(IntPtr window);
 
 		/* IntPtr refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetWindowFromID(uint id);
+		internal static extern IntPtr SDL_GetWindowFromID(uint id);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetWindowGammaRamp(
+		internal static extern int SDL_GetWindowGammaRamp(
 			IntPtr window,
 			[Out()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
 				ushort[] red,
@@ -1288,21 +1288,21 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_GetWindowGrab(IntPtr window);
+		internal static extern SDL_bool SDL_GetWindowGrab(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_GetWindowID(IntPtr window);
+		internal static extern uint SDL_GetWindowID(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_GetWindowPixelFormat(
+		internal static extern uint SDL_GetWindowPixelFormat(
 			IntPtr window
 		);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetWindowMaximumSize(
+		internal static extern void SDL_GetWindowMaximumSize(
 			IntPtr window,
 			out int max_w,
 			out int max_h
@@ -1310,7 +1310,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetWindowMinimumSize(
+		internal static extern void SDL_GetWindowMinimumSize(
 			IntPtr window,
 			out int min_w,
 			out int min_h
@@ -1318,7 +1318,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetWindowPosition(
+		internal static extern void SDL_GetWindowPosition(
 			IntPtr window,
 			out int x,
 			out int y
@@ -1326,7 +1326,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetWindowSize(
+		internal static extern void SDL_GetWindowSize(
 			IntPtr window,
 			out int w,
 			out int h
@@ -1334,14 +1334,14 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_Surface*, window to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetWindowSurface(IntPtr window);
+		internal static extern IntPtr SDL_GetWindowSurface(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetWindowTitle", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetWindowTitle(
 			IntPtr window
 		);
-		public static string SDL_GetWindowTitle(IntPtr window)
+		internal static string SDL_GetWindowTitle(IntPtr window)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GetWindowTitle(window)
@@ -1350,7 +1350,7 @@ namespace SDL2
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GL_BindTexture(
+		internal static extern int SDL_GL_BindTexture(
 			IntPtr texture,
 			out float texw,
 			out float texh
@@ -1358,18 +1358,18 @@ namespace SDL2
 
 		/* IntPtr and window refer to an SDL_GLContext and SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GL_CreateContext(IntPtr window);
+		internal static extern IntPtr SDL_GL_CreateContext(IntPtr window);
 
 		/* context refers to an SDL_GLContext */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GL_DeleteContext(IntPtr context);
+		internal static extern void SDL_GL_DeleteContext(IntPtr context);
 
 		/* IntPtr refers to a function pointer */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GL_GetProcAddress", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GL_GetProcAddress(
 			byte[] proc
 		);
-		public static IntPtr SDL_GL_GetProcAddress(string proc)
+		internal static IntPtr SDL_GL_GetProcAddress(string proc)
 		{
 			return INTERNAL_SDL_GL_GetProcAddress(
 				UTF8_ToNative(proc)
@@ -1378,13 +1378,13 @@ namespace SDL2
 
 		/* IntPtr refers to a function pointer, proc to a const char* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GL_GetProcAddress", CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GL_GetProcAddress(IntPtr proc);
+		internal static extern IntPtr SDL_GL_GetProcAddress(IntPtr proc);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GL_ExtensionSupported", CallingConvention = CallingConvention.Cdecl)]
 		private static extern SDL_bool INTERNAL_SDL_GL_ExtensionSupported(
 			byte[] extension
 		);
-		public static SDL_bool SDL_GL_ExtensionSupported(string extension)
+		internal static SDL_bool SDL_GL_ExtensionSupported(string extension)
 		{
 			return INTERNAL_SDL_GL_ExtensionSupported(
 				UTF8_ToNative(extension)
@@ -1393,47 +1393,47 @@ namespace SDL2
 
 		/* Only available in SDL 2.0.2 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GL_ResetAttributes();
+		internal static extern void SDL_GL_ResetAttributes();
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GL_GetAttribute(
+		internal static extern int SDL_GL_GetAttribute(
 			SDL_GLattr attr,
 			out int value
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GL_GetSwapInterval();
+		internal static extern int SDL_GL_GetSwapInterval();
 
 		/* window and context refer to an SDL_Window* and SDL_GLContext */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GL_MakeCurrent(
+		internal static extern int SDL_GL_MakeCurrent(
 			IntPtr window,
 			IntPtr context
 		);
 
 		/* IntPtr refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GL_GetCurrentWindow();
+		internal static extern IntPtr SDL_GL_GetCurrentWindow();
 
 		/* IntPtr refers to an SDL_Context */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GL_GetCurrentContext();
+		internal static extern IntPtr SDL_GL_GetCurrentContext();
 
 		/* window refers to an SDL_Window*, This function is only available in SDL 2.0.1 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GL_GetDrawableSize(
+		internal static extern void SDL_GL_GetDrawableSize(
 			IntPtr window,
 			out int w,
 			out int h
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GL_SetAttribute(
+		internal static extern int SDL_GL_SetAttribute(
 			SDL_GLattr attr,
 			int value
 		);
 		
-		public static int SDL_GL_SetAttribute(
+		internal static int SDL_GL_SetAttribute(
 			SDL_GLattr attr,
 			SDL_GLprofile profile
 		) {
@@ -1441,42 +1441,42 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GL_SetSwapInterval(int interval);
+		internal static extern int SDL_GL_SetSwapInterval(int interval);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GL_SwapWindow(IntPtr window);
+		internal static extern void SDL_GL_SwapWindow(IntPtr window);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GL_UnbindTexture(IntPtr texture);
+		internal static extern int SDL_GL_UnbindTexture(IntPtr texture);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_HideWindow(IntPtr window);
+		internal static extern void SDL_HideWindow(IntPtr window);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_IsScreenSaverEnabled();
-
-		/* window refers to an SDL_Window* */
-		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_MaximizeWindow(IntPtr window);
+		internal static extern SDL_bool SDL_IsScreenSaverEnabled();
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_MinimizeWindow(IntPtr window);
+		internal static extern void SDL_MaximizeWindow(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_RaiseWindow(IntPtr window);
+		internal static extern void SDL_MinimizeWindow(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_RestoreWindow(IntPtr window);
+		internal static extern void SDL_RaiseWindow(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowBrightness(
+		internal static extern void SDL_RestoreWindow(IntPtr window);
+
+		/* window refers to an SDL_Window* */
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int SDL_SetWindowBrightness(
 			IntPtr window,
 			float brightness
 		);
@@ -1488,7 +1488,7 @@ namespace SDL2
 			byte[] name,
 			IntPtr userdata
 		);
-		public static IntPtr SDL_SetWindowData(
+		internal static IntPtr SDL_SetWindowData(
 			IntPtr window,
 			string name,
 			IntPtr userdata
@@ -1502,21 +1502,21 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowDisplayMode(
+		internal static extern int SDL_SetWindowDisplayMode(
 			IntPtr window,
 			ref SDL_DisplayMode mode
 		);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowFullscreen(
+		internal static extern int SDL_SetWindowFullscreen(
 			IntPtr window,
 			uint flags
 		);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowGammaRamp(
+		internal static extern int SDL_SetWindowGammaRamp(
 			IntPtr window,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
 				ushort[] red,
@@ -1528,21 +1528,21 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowGrab(
+		internal static extern void SDL_SetWindowGrab(
 			IntPtr window,
 			SDL_bool grabbed
 		);
 
 		/* window refers to an SDL_Window*, icon to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowIcon(
+		internal static extern void SDL_SetWindowIcon(
 			IntPtr window,
 			IntPtr icon
 		);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowMaximumSize(
+		internal static extern void SDL_SetWindowMaximumSize(
 			IntPtr window,
 			int max_w,
 			int max_h
@@ -1550,7 +1550,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowMinimumSize(
+		internal static extern void SDL_SetWindowMinimumSize(
 			IntPtr window,
 			int min_w,
 			int min_h
@@ -1558,7 +1558,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowPosition(
+		internal static extern void SDL_SetWindowPosition(
 			IntPtr window,
 			int x,
 			int y
@@ -1566,7 +1566,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowSize(
+		internal static extern void SDL_SetWindowSize(
 			IntPtr window,
 			int w,
 			int h
@@ -1574,14 +1574,14 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowBordered(
+		internal static extern void SDL_SetWindowBordered(
 			IntPtr window,
 			SDL_bool bordered
 		);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetWindowBordersSize(
+		internal static extern int SDL_GetWindowBordersSize(
 			IntPtr window,
 			out int top,
 			out int left,
@@ -1592,7 +1592,7 @@ namespace SDL2
 		/* window refers to an SDL_Window* */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetWindowResizable(
+		internal static extern void SDL_SetWindowResizable(
 			IntPtr window,
 			SDL_bool resizable
 		);
@@ -1603,7 +1603,7 @@ namespace SDL2
 			IntPtr window,
 			byte[] title
 		);
-		public static void SDL_SetWindowTitle(
+		internal static void SDL_SetWindowTitle(
 			IntPtr window,
 			string title
 		) {
@@ -1615,15 +1615,15 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_ShowWindow(IntPtr window);
+		internal static extern void SDL_ShowWindow(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_UpdateWindowSurface(IntPtr window);
+		internal static extern int SDL_UpdateWindowSurface(IntPtr window);
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_UpdateWindowSurfaceRects(
+		internal static extern int SDL_UpdateWindowSurfaceRects(
 			IntPtr window,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
 				SDL_Rect[] rects,
@@ -1634,7 +1634,7 @@ namespace SDL2
 		private static extern int INTERNAL_SDL_VideoInit(
 			byte[] driver_name
 		);
-		public static int SDL_VideoInit(string driver_name)
+		internal static int SDL_VideoInit(string driver_name)
 		{
 			return INTERNAL_SDL_VideoInit(
 				UTF8_ToNative(driver_name)
@@ -1642,12 +1642,12 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_VideoQuit();
+		internal static extern void SDL_VideoQuit();
 
 		/* window refers to an SDL_Window*, callback_data to a void* */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetWindowHitTest(
+		internal static extern int SDL_SetWindowHitTest(
 			IntPtr window,
 			SDL_HitTest callback,
 			IntPtr callback_data
@@ -1656,14 +1656,14 @@ namespace SDL2
 		/* IntPtr refers to an SDL_Window* */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetGrabbedWindow();
+		internal static extern IntPtr SDL_GetGrabbedWindow();
 
 		#endregion
 
 		#region SDL_blendmode.h
 
 		[Flags]
-		public enum SDL_BlendMode
+		internal enum SDL_BlendMode
 		{
 			SDL_BLENDMODE_NONE =	0x00000000,
 			SDL_BLENDMODE_BLEND =	0x00000001,
@@ -1672,7 +1672,7 @@ namespace SDL2
 			SDL_BLENDMODE_INVALID =	0x7FFFFFFF
 		}
 
-		public enum SDL_BlendOperation
+		internal enum SDL_BlendOperation
 		{
 			SDL_BLENDOPERATION_ADD		= 0x1,
 			SDL_BLENDOPERATION_SUBTRACT	= 0x2,
@@ -1681,7 +1681,7 @@ namespace SDL2
 			SDL_BLENDOPERATION_MAXIMUM	= 0x5
 		}
 
-		public enum SDL_BlendFactor
+		internal enum SDL_BlendFactor
 		{
 			SDL_BLENDFACTOR_ZERO			= 0x1,
 			SDL_BLENDFACTOR_ONE			= 0x2,
@@ -1697,7 +1697,7 @@ namespace SDL2
 
 		/* Only available in 2.0.6 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_BlendMode SDL_ComposeCustomBlendMode(
+		internal static extern SDL_BlendMode SDL_ComposeCustomBlendMode(
 			SDL_BlendFactor srcColorFactor,
 			SDL_BlendFactor dstColorFactor,
 			SDL_BlendOperation colorOperation,
@@ -1715,7 +1715,7 @@ namespace SDL2
 		private static extern int INTERNAL_SDL_Vulkan_LoadLibrary(
 			byte[] path
 		);
-		public static int SDL_Vulkan_LoadLibrary(string path)
+		internal static int SDL_Vulkan_LoadLibrary(string path)
 		{
 			return INTERNAL_SDL_Vulkan_LoadLibrary(
 				UTF8_ToNative(path)
@@ -1724,17 +1724,17 @@ namespace SDL2
 
 		/* Only available in 2.0.6 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_Vulkan_GetVkGetInstanceProcAddr();
+		internal static extern IntPtr SDL_Vulkan_GetVkGetInstanceProcAddr();
 
 		/* Only available in 2.0.6 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_Vulkan_UnloadLibrary();
+		internal static extern void SDL_Vulkan_UnloadLibrary();
 
 		/* window refers to an SDL_Window*, pNames to a const char**.
 		 * Only available in 2.0.6.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_Vulkan_GetInstanceExtensions(
+		internal static extern SDL_bool SDL_Vulkan_GetInstanceExtensions(
 			IntPtr window,
 			out uint pCount,
 			IntPtr[] pNames
@@ -1746,7 +1746,7 @@ namespace SDL2
 		 * Only available in 2.0.6.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_Vulkan_CreateSurface(
+		internal static extern SDL_bool SDL_Vulkan_CreateSurface(
 			IntPtr window,
 			IntPtr instance,
 			out IntPtr surface
@@ -1756,7 +1756,7 @@ namespace SDL2
 		 * Only available in 2.0.6.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_Vulkan_GetDrawableSize(
+		internal static extern void SDL_Vulkan_GetDrawableSize(
 			IntPtr window,
 			out int w,
 			out int h
@@ -1767,7 +1767,7 @@ namespace SDL2
 		#region SDL_render.h
 
 		[Flags]
-		public enum SDL_RendererFlags : uint
+		internal enum SDL_RendererFlags : uint
 		{
 			SDL_RENDERER_SOFTWARE =		0x00000001,
 			SDL_RENDERER_ACCELERATED =	0x00000002,
@@ -1776,14 +1776,14 @@ namespace SDL2
 		}
 
 		[Flags]
-		public enum SDL_RendererFlip
+		internal enum SDL_RendererFlip
 		{
 			SDL_FLIP_NONE =		0x00000000,
 			SDL_FLIP_HORIZONTAL =	0x00000001,
 			SDL_FLIP_VERTICAL =	0x00000002
 		}
 
-		public enum SDL_TextureAccess
+		internal enum SDL_TextureAccess
 		{
 			SDL_TEXTUREACCESS_STATIC,
 			SDL_TEXTUREACCESS_STREAMING,
@@ -1791,7 +1791,7 @@ namespace SDL2
 		}
 
 		[Flags]
-		public enum SDL_TextureModulate
+		internal enum SDL_TextureModulate
 		{
 			SDL_TEXTUREMODULATE_NONE =		0x00000000,
 			SDL_TEXTUREMODULATE_HORIZONTAL =	0x00000001,
@@ -1811,7 +1811,7 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_Renderer*, window to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateRenderer(
+		internal static extern IntPtr SDL_CreateRenderer(
 			IntPtr window,
 			int index,
 			SDL_RendererFlags flags
@@ -1819,11 +1819,11 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_Renderer*, surface to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateSoftwareRenderer(IntPtr surface);
+		internal static extern IntPtr SDL_CreateSoftwareRenderer(IntPtr surface);
 
 		/* IntPtr refers to an SDL_Texture*, renderer to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateTexture(
+		internal static extern IntPtr SDL_CreateTexture(
 			IntPtr renderer,
 			uint format,
 			int access,
@@ -1836,32 +1836,32 @@ namespace SDL2
 		 * surface refers to an SDL_Surface*
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateTextureFromSurface(
+		internal static extern IntPtr SDL_CreateTextureFromSurface(
 			IntPtr renderer,
 			IntPtr surface
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_DestroyRenderer(IntPtr renderer);
+		internal static extern void SDL_DestroyRenderer(IntPtr renderer);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_DestroyTexture(IntPtr texture);
+		internal static extern void SDL_DestroyTexture(IntPtr texture);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumRenderDrivers();
+		internal static extern int SDL_GetNumRenderDrivers();
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetRenderDrawBlendMode(
+		internal static extern int SDL_GetRenderDrawBlendMode(
 			IntPtr renderer,
 			out SDL_BlendMode blendMode
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetRenderDrawColor(
+		internal static extern int SDL_GetRenderDrawColor(
 			IntPtr renderer,
 			out byte r,
 			out byte g,
@@ -1870,25 +1870,25 @@ namespace SDL2
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetRenderDriverInfo(
+		internal static extern int SDL_GetRenderDriverInfo(
 			int index,
 			out SDL_RendererInfo info
 		);
 
 		/* IntPtr refers to an SDL_Renderer*, window to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetRenderer(IntPtr window);
+		internal static extern IntPtr SDL_GetRenderer(IntPtr window);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetRendererInfo(
+		internal static extern int SDL_GetRendererInfo(
 			IntPtr renderer,
 			out SDL_RendererInfo info
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetRendererOutputSize(
+		internal static extern int SDL_GetRendererOutputSize(
 			IntPtr renderer,
 			out int w,
 			out int h
@@ -1896,21 +1896,21 @@ namespace SDL2
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetTextureAlphaMod(
+		internal static extern int SDL_GetTextureAlphaMod(
 			IntPtr texture,
 			out byte alpha
 		);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetTextureBlendMode(
+		internal static extern int SDL_GetTextureBlendMode(
 			IntPtr texture,
 			out SDL_BlendMode blendMode
 		);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetTextureColorMod(
+		internal static extern int SDL_GetTextureColorMod(
 			IntPtr texture,
 			out byte r,
 			out byte g,
@@ -1919,7 +1919,7 @@ namespace SDL2
 
 		/* texture refers to an SDL_Texture*, pixels to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_LockTexture(
+		internal static extern int SDL_LockTexture(
 			IntPtr texture,
 			ref SDL_Rect rect,
 			out IntPtr pixels,
@@ -1932,7 +1932,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero to be passed for rect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_LockTexture(
+		internal static extern int SDL_LockTexture(
 			IntPtr texture,
 			IntPtr rect,
 			out IntPtr pixels,
@@ -1941,7 +1941,7 @@ namespace SDL2
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_QueryTexture(
+		internal static extern int SDL_QueryTexture(
 			IntPtr texture,
 			out uint format,
 			out int access,
@@ -1951,11 +1951,11 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderClear(IntPtr renderer);
+		internal static extern int SDL_RenderClear(IntPtr renderer);
 
 		/* renderer refers to an SDL_Renderer*, texture to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopy(
+		internal static extern int SDL_RenderCopy(
 			IntPtr renderer,
 			IntPtr texture,
 			ref SDL_Rect srcrect,
@@ -1968,7 +1968,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopy(
+		internal static extern int SDL_RenderCopy(
 			IntPtr renderer,
 			IntPtr texture,
 			IntPtr srcrect,
@@ -1981,7 +1981,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for dstrect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopy(
+		internal static extern int SDL_RenderCopy(
 			IntPtr renderer,
 			IntPtr texture,
 			ref SDL_Rect srcrect,
@@ -1994,7 +1994,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for both SDL_Rects.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopy(
+		internal static extern int SDL_RenderCopy(
 			IntPtr renderer,
 			IntPtr texture,
 			IntPtr srcrect,
@@ -2003,7 +2003,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer*, texture to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			ref SDL_Rect srcrect,
@@ -2019,7 +2019,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			IntPtr srcrect,
@@ -2035,7 +2035,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for dstrect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			ref SDL_Rect srcrect,
@@ -2051,7 +2051,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for center.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			ref SDL_Rect srcrect,
@@ -2068,7 +2068,7 @@ namespace SDL2
 		 * srcrect and dstrect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			IntPtr srcrect,
@@ -2085,7 +2085,7 @@ namespace SDL2
 		 * srcrect and center.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			IntPtr srcrect,
@@ -2102,7 +2102,7 @@ namespace SDL2
 		 * dstrect and center.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			ref SDL_Rect srcrect,
@@ -2119,7 +2119,7 @@ namespace SDL2
 		 * three parameters.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderCopyEx(
+		internal static extern int SDL_RenderCopyEx(
 			IntPtr renderer,
 			IntPtr texture,
 			IntPtr srcrect,
@@ -2131,7 +2131,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderDrawLine(
+		internal static extern int SDL_RenderDrawLine(
 			IntPtr renderer,
 			int x1,
 			int y1,
@@ -2141,7 +2141,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderDrawLines(
+		internal static extern int SDL_RenderDrawLines(
 			IntPtr renderer,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
 				SDL_Point[] points,
@@ -2150,7 +2150,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderDrawPoint(
+		internal static extern int SDL_RenderDrawPoint(
 			IntPtr renderer,
 			int x,
 			int y
@@ -2158,7 +2158,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderDrawPoints(
+		internal static extern int SDL_RenderDrawPoints(
 			IntPtr renderer,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
 				SDL_Point[] points,
@@ -2167,7 +2167,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderDrawRect(
+		internal static extern int SDL_RenderDrawRect(
 			IntPtr renderer,
 			ref SDL_Rect rect
 		);
@@ -2176,14 +2176,14 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for rect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderDrawRect(
+		internal static extern int SDL_RenderDrawRect(
 			IntPtr renderer,
 			IntPtr rect
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderDrawRects(
+		internal static extern int SDL_RenderDrawRects(
 			IntPtr renderer,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
 				SDL_Rect[] rects,
@@ -2192,7 +2192,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderFillRect(
+		internal static extern int SDL_RenderFillRect(
 			IntPtr renderer,
 			ref SDL_Rect rect
 		);
@@ -2201,14 +2201,14 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for rect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderFillRect(
+		internal static extern int SDL_RenderFillRect(
 			IntPtr renderer,
 			IntPtr rect
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderFillRects(
+		internal static extern int SDL_RenderFillRects(
 			IntPtr renderer,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
 				SDL_Rect[] rects,
@@ -2217,14 +2217,14 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_RenderGetClipRect(
+		internal static extern void SDL_RenderGetClipRect(
 			IntPtr renderer,
 			out SDL_Rect rect
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_RenderGetLogicalSize(
+		internal static extern void SDL_RenderGetLogicalSize(
 			IntPtr renderer,
 			out int w,
 			out int h
@@ -2232,7 +2232,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_RenderGetScale(
+		internal static extern void SDL_RenderGetScale(
 			IntPtr renderer,
 			out float scaleX,
 			out float scaleY
@@ -2240,18 +2240,18 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderGetViewport(
+		internal static extern int SDL_RenderGetViewport(
 			IntPtr renderer,
 			out SDL_Rect rect
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_RenderPresent(IntPtr renderer);
+		internal static extern void SDL_RenderPresent(IntPtr renderer);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderReadPixels(
+		internal static extern int SDL_RenderReadPixels(
 			IntPtr renderer,
 			ref SDL_Rect rect,
 			uint format,
@@ -2261,7 +2261,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderSetClipRect(
+		internal static extern int SDL_RenderSetClipRect(
 			IntPtr renderer,
 			ref SDL_Rect rect
 		);
@@ -2270,14 +2270,14 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for rect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderSetClipRect(
+		internal static extern int SDL_RenderSetClipRect(
 			IntPtr renderer,
 			IntPtr rect
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderSetLogicalSize(
+		internal static extern int SDL_RenderSetLogicalSize(
 			IntPtr renderer,
 			int w,
 			int h
@@ -2285,7 +2285,7 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderSetScale(
+		internal static extern int SDL_RenderSetScale(
 			IntPtr renderer,
 			float scaleX,
 			float scaleY
@@ -2294,28 +2294,28 @@ namespace SDL2
 		/* renderer refers to an SDL_Renderer* */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderSetIntegerScale(
+		internal static extern int SDL_RenderSetIntegerScale(
 			IntPtr renderer,
 			SDL_bool enable
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_RenderSetViewport(
+		internal static extern int SDL_RenderSetViewport(
 			IntPtr renderer,
 			ref SDL_Rect rect
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetRenderDrawBlendMode(
+		internal static extern int SDL_SetRenderDrawBlendMode(
 			IntPtr renderer,
 			SDL_BlendMode blendMode
 		);
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetRenderDrawColor(
+		internal static extern int SDL_SetRenderDrawColor(
 			IntPtr renderer,
 			byte r,
 			byte g,
@@ -2325,28 +2325,28 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer*, texture to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetRenderTarget(
+		internal static extern int SDL_SetRenderTarget(
 			IntPtr renderer,
 			IntPtr texture
 		);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetTextureAlphaMod(
+		internal static extern int SDL_SetTextureAlphaMod(
 			IntPtr texture,
 			byte alpha
 		);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetTextureBlendMode(
+		internal static extern int SDL_SetTextureBlendMode(
 			IntPtr texture,
 			SDL_BlendMode blendMode
 		);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetTextureColorMod(
+		internal static extern int SDL_SetTextureColorMod(
 			IntPtr texture,
 			byte r,
 			byte g,
@@ -2355,11 +2355,11 @@ namespace SDL2
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_UnlockTexture(IntPtr texture);
+		internal static extern void SDL_UnlockTexture(IntPtr texture);
 
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_UpdateTexture(
+		internal static extern int SDL_UpdateTexture(
 			IntPtr texture,
 			ref SDL_Rect rect,
 			IntPtr pixels,
@@ -2368,7 +2368,7 @@ namespace SDL2
 		
 		/* texture refers to an SDL_Texture* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_UpdateTexture(
+		internal static extern int SDL_UpdateTexture(
 			IntPtr texture,
 			IntPtr rect,
 			IntPtr pixels,
@@ -2377,29 +2377,29 @@ namespace SDL2
 
 		/* renderer refers to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_RenderTargetSupported(
+		internal static extern SDL_bool SDL_RenderTargetSupported(
 			IntPtr renderer
 		);
 
 		/* IntPtr refers to an SDL_Texture*, renderer to an SDL_Renderer* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetRenderTarget(IntPtr renderer);
+		internal static extern IntPtr SDL_GetRenderTarget(IntPtr renderer);
 
 		/* renderer refers to an SDL_Renderer* */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_RenderIsClipEnabled(IntPtr renderer);
+		internal static extern SDL_bool SDL_RenderIsClipEnabled(IntPtr renderer);
 
 		#endregion
 
 		#region SDL_pixels.h
 
-		public static uint SDL_DEFINE_PIXELFOURCC(byte A, byte B, byte C, byte D)
+		internal static uint SDL_DEFINE_PIXELFOURCC(byte A, byte B, byte C, byte D)
 		{
 			return SDL_FOURCC(A, B, C, D);
 		}
 
-		public static uint SDL_DEFINE_PIXELFORMAT(
+		internal static uint SDL_DEFINE_PIXELFORMAT(
 			SDL_PIXELTYPE_ENUM type,
 			SDL_PIXELORDER_ENUM order,
 			SDL_PACKEDLAYOUT_ENUM layout,
@@ -2416,32 +2416,32 @@ namespace SDL2
 			);
 		}
 
-		public static byte SDL_PIXELFLAG(uint X)
+		internal static byte SDL_PIXELFLAG(uint X)
 		{
 			return (byte) ((X >> 28) & 0x0F);
 		}
 
-		public static byte SDL_PIXELTYPE(uint X)
+		internal static byte SDL_PIXELTYPE(uint X)
 		{
 			return (byte) ((X >> 24) & 0x0F);
 		}
 
-		public static byte SDL_PIXELORDER(uint X)
+		internal static byte SDL_PIXELORDER(uint X)
 		{
 			return (byte) ((X >> 20) & 0x0F);
 		}
 
-		public static byte SDL_PIXELLAYOUT(uint X)
+		internal static byte SDL_PIXELLAYOUT(uint X)
 		{
 			return (byte) ((X >> 16) & 0x0F);
 		}
 
-		public static byte SDL_BITSPERPIXEL(uint X)
+		internal static byte SDL_BITSPERPIXEL(uint X)
 		{
 			return (byte) ((X >> 8) & 0xFF);
 		}
 
-		public static byte SDL_BYTESPERPIXEL(uint X)
+		internal static byte SDL_BYTESPERPIXEL(uint X)
 		{
 			if (SDL_ISPIXELFORMAT_FOURCC(X))
 			{
@@ -2456,7 +2456,7 @@ namespace SDL2
 			return (byte) (X & 0xFF);
 		}
 
-		public static bool SDL_ISPIXELFORMAT_INDEXED(uint format)
+		internal static bool SDL_ISPIXELFORMAT_INDEXED(uint format)
 		{
 			if (SDL_ISPIXELFORMAT_FOURCC(format))
 			{
@@ -2471,7 +2471,7 @@ namespace SDL2
 			);
 		}
 
-		public static bool SDL_ISPIXELFORMAT_ALPHA(uint format)
+		internal static bool SDL_ISPIXELFORMAT_ALPHA(uint format)
 		{
 			if (SDL_ISPIXELFORMAT_FOURCC(format))
 			{
@@ -2487,12 +2487,12 @@ namespace SDL2
 			);
 		}
 
-		public static bool SDL_ISPIXELFORMAT_FOURCC(uint format)
+		internal static bool SDL_ISPIXELFORMAT_FOURCC(uint format)
 		{
 			return (format == 0) && (SDL_PIXELFLAG(format) != 1);
 		}
 
-		public enum SDL_PIXELTYPE_ENUM
+		internal enum SDL_PIXELTYPE_ENUM
 		{
 			SDL_PIXELTYPE_UNKNOWN,
 			SDL_PIXELTYPE_INDEX1,
@@ -2508,7 +2508,7 @@ namespace SDL2
 			SDL_PIXELTYPE_ARRAYF32
 		}
 
-		public enum SDL_PIXELORDER_ENUM
+		internal enum SDL_PIXELORDER_ENUM
 		{
 			/* BITMAPORDER */
 			SDL_BITMAPORDER_NONE,
@@ -2534,7 +2534,7 @@ namespace SDL2
 			SDL_ARRAYORDER_ABGR
 		}
 
-		public enum SDL_PACKEDLAYOUT_ENUM
+		internal enum SDL_PACKEDLAYOUT_ENUM
 		{
 			SDL_PACKEDLAYOUT_NONE,
 			SDL_PACKEDLAYOUT_332,
@@ -2547,240 +2547,240 @@ namespace SDL2
 			SDL_PACKEDLAYOUT_1010102
 		}
 
-		public static readonly uint SDL_PIXELFORMAT_UNKNOWN = 0;
-		public static readonly uint SDL_PIXELFORMAT_INDEX1LSB =
+		internal static readonly uint SDL_PIXELFORMAT_UNKNOWN = 0;
+		internal static readonly uint SDL_PIXELFORMAT_INDEX1LSB =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_INDEX1,
 				SDL_PIXELORDER_ENUM.SDL_BITMAPORDER_4321,
 				0,
 				1, 0
 			);
-		public static readonly uint SDL_PIXELFORMAT_INDEX1MSB =
+		internal static readonly uint SDL_PIXELFORMAT_INDEX1MSB =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_INDEX1,
 				SDL_PIXELORDER_ENUM.SDL_BITMAPORDER_1234,
 				0,
 				1, 0
 			);
-		public static readonly uint SDL_PIXELFORMAT_INDEX4LSB =
+		internal static readonly uint SDL_PIXELFORMAT_INDEX4LSB =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_INDEX4,
 				SDL_PIXELORDER_ENUM.SDL_BITMAPORDER_4321,
 				0,
 				4, 0
 			);
-		public static readonly uint SDL_PIXELFORMAT_INDEX4MSB =
+		internal static readonly uint SDL_PIXELFORMAT_INDEX4MSB =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_INDEX4,
 				SDL_PIXELORDER_ENUM.SDL_BITMAPORDER_1234,
 				0,
 				4, 0
 			);
-		public static readonly uint SDL_PIXELFORMAT_INDEX8 =
+		internal static readonly uint SDL_PIXELFORMAT_INDEX8 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_INDEX8,
 				0,
 				0,
 				8, 1
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGB332 =
+		internal static readonly uint SDL_PIXELFORMAT_RGB332 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED8,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_XRGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_332,
 				8, 1
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGB444 =
+		internal static readonly uint SDL_PIXELFORMAT_RGB444 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_XRGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_4444,
 				12, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGB555 =
+		internal static readonly uint SDL_PIXELFORMAT_RGB555 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_XRGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_1555,
 				15, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGR555 =
+		internal static readonly uint SDL_PIXELFORMAT_BGR555 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_INDEX1,
 				SDL_PIXELORDER_ENUM.SDL_BITMAPORDER_4321,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_1555,
 				15, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_ARGB4444 =
+		internal static readonly uint SDL_PIXELFORMAT_ARGB4444 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_ARGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_4444,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGBA4444 =
+		internal static readonly uint SDL_PIXELFORMAT_RGBA4444 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_RGBA,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_4444,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_ABGR4444 =
+		internal static readonly uint SDL_PIXELFORMAT_ABGR4444 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_ABGR,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_4444,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGRA4444 =
+		internal static readonly uint SDL_PIXELFORMAT_BGRA4444 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_BGRA,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_4444,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_ARGB1555 =
+		internal static readonly uint SDL_PIXELFORMAT_ARGB1555 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_ARGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_1555,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGBA5551 =
+		internal static readonly uint SDL_PIXELFORMAT_RGBA5551 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_RGBA,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_5551,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_ABGR1555 =
+		internal static readonly uint SDL_PIXELFORMAT_ABGR1555 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_ABGR,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_1555,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGRA5551 =
+		internal static readonly uint SDL_PIXELFORMAT_BGRA5551 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_BGRA,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_5551,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGB565 =
+		internal static readonly uint SDL_PIXELFORMAT_RGB565 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_XRGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_565,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGR565 =
+		internal static readonly uint SDL_PIXELFORMAT_BGR565 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED16,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_XBGR,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_565,
 				16, 2
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGB24 =
+		internal static readonly uint SDL_PIXELFORMAT_RGB24 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_ARRAYU8,
 				SDL_PIXELORDER_ENUM.SDL_ARRAYORDER_RGB,
 				0,
 				24, 3
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGR24 =
+		internal static readonly uint SDL_PIXELFORMAT_BGR24 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_ARRAYU8,
 				SDL_PIXELORDER_ENUM.SDL_ARRAYORDER_BGR,
 				0,
 				24, 3
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGB888 =
+		internal static readonly uint SDL_PIXELFORMAT_RGB888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_XRGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				24, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGBX8888 =
+		internal static readonly uint SDL_PIXELFORMAT_RGBX8888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_RGBX,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				24, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGR888 =
+		internal static readonly uint SDL_PIXELFORMAT_BGR888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_XBGR,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				24, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGRX8888 =
+		internal static readonly uint SDL_PIXELFORMAT_BGRX8888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_BGRX,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				24, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_ARGB8888 =
+		internal static readonly uint SDL_PIXELFORMAT_ARGB8888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_ARGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				32, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_RGBA8888 =
+		internal static readonly uint SDL_PIXELFORMAT_RGBA8888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_RGBA,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				32, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_ABGR8888 =
+		internal static readonly uint SDL_PIXELFORMAT_ABGR8888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_ABGR,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				32, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_BGRA8888 =
+		internal static readonly uint SDL_PIXELFORMAT_BGRA8888 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_BGRA,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_8888,
 				32, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_ARGB2101010 =
+		internal static readonly uint SDL_PIXELFORMAT_ARGB2101010 =
 			SDL_DEFINE_PIXELFORMAT(
 				SDL_PIXELTYPE_ENUM.SDL_PIXELTYPE_PACKED32,
 				SDL_PIXELORDER_ENUM.SDL_PACKEDORDER_ARGB,
 				SDL_PACKEDLAYOUT_ENUM.SDL_PACKEDLAYOUT_2101010,
 				32, 4
 			);
-		public static readonly uint SDL_PIXELFORMAT_YV12 =
+		internal static readonly uint SDL_PIXELFORMAT_YV12 =
 			SDL_DEFINE_PIXELFOURCC(
 				(byte) 'Y', (byte) 'V', (byte) '1', (byte) '2'
 			);
-		public static readonly uint SDL_PIXELFORMAT_IYUV =
+		internal static readonly uint SDL_PIXELFORMAT_IYUV =
 			SDL_DEFINE_PIXELFOURCC(
 				(byte) 'I', (byte) 'Y', (byte) 'U', (byte) 'V'
 			);
-		public static readonly uint SDL_PIXELFORMAT_YUY2 =
+		internal static readonly uint SDL_PIXELFORMAT_YUY2 =
 			SDL_DEFINE_PIXELFOURCC(
 				(byte) 'Y', (byte) 'U', (byte) 'Y', (byte) '2'
 			);
-		public static readonly uint SDL_PIXELFORMAT_UYVY =
+		internal static readonly uint SDL_PIXELFORMAT_UYVY =
 			SDL_DEFINE_PIXELFOURCC(
 				(byte) 'U', (byte) 'Y', (byte) 'V', (byte) 'Y'
 			);
-		public static readonly uint SDL_PIXELFORMAT_YVYU =
+		internal static readonly uint SDL_PIXELFORMAT_YVYU =
 			SDL_DEFINE_PIXELFOURCC(
 				(byte) 'Y', (byte) 'V', (byte) 'Y', (byte) 'U'
 			);
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_Color
+		internal struct SDL_Color
 		{
 			public byte r;
 			public byte g;
@@ -2789,7 +2789,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_Palette
+		internal struct SDL_Palette
 		{
 			public int ncolors;
 			public IntPtr colors;
@@ -2798,7 +2798,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_PixelFormat
+		internal struct SDL_PixelFormat
 		{
 			public uint format;
 			public IntPtr palette; // SDL_Palette*
@@ -2822,14 +2822,14 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_PixelFormat* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_AllocFormat(uint pixel_format);
+		internal static extern IntPtr SDL_AllocFormat(uint pixel_format);
 
 		/* IntPtr refers to an SDL_Palette* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_AllocPalette(int ncolors);
+		internal static extern IntPtr SDL_AllocPalette(int ncolors);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_CalculateGammaRamp(
+		internal static extern void SDL_CalculateGammaRamp(
 			float gamma,
 			[Out()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
 				ushort[] ramp
@@ -2837,17 +2837,17 @@ namespace SDL2
 
 		/* format refers to an SDL_PixelFormat* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FreeFormat(IntPtr format);
+		internal static extern void SDL_FreeFormat(IntPtr format);
 
 		/* palette refers to an SDL_Palette* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FreePalette(IntPtr palette);
+		internal static extern void SDL_FreePalette(IntPtr palette);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetPixelFormatName", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetPixelFormatName(
 			uint format
 		);
-		public static string SDL_GetPixelFormatName(uint format)
+		internal static string SDL_GetPixelFormatName(uint format)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GetPixelFormatName(format)
@@ -2856,7 +2856,7 @@ namespace SDL2
 
 		/* format refers to an SDL_PixelFormat* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetRGB(
+		internal static extern void SDL_GetRGB(
 			uint pixel,
 			IntPtr format,
 			out byte r,
@@ -2866,7 +2866,7 @@ namespace SDL2
 
 		/* format refers to an SDL_PixelFormat* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetRGBA(
+		internal static extern void SDL_GetRGBA(
 			uint pixel,
 			IntPtr format,
 			out byte r,
@@ -2877,7 +2877,7 @@ namespace SDL2
 
 		/* format refers to an SDL_PixelFormat* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_MapRGB(
+		internal static extern uint SDL_MapRGB(
 			IntPtr format,
 			byte r,
 			byte g,
@@ -2886,7 +2886,7 @@ namespace SDL2
 
 		/* format refers to an SDL_PixelFormat* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_MapRGBA(
+		internal static extern uint SDL_MapRGBA(
 			IntPtr format,
 			byte r,
 			byte g,
@@ -2895,7 +2895,7 @@ namespace SDL2
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_MasksToPixelFormatEnum(
+		internal static extern uint SDL_MasksToPixelFormatEnum(
 			int bpp,
 			uint Rmask,
 			uint Gmask,
@@ -2904,7 +2904,7 @@ namespace SDL2
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_PixelFormatEnumToMasks(
+		internal static extern SDL_bool SDL_PixelFormatEnumToMasks(
 			uint format,
 			out int bpp,
 			out uint Rmask,
@@ -2915,7 +2915,7 @@ namespace SDL2
 
 		/* palette refers to an SDL_Palette* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetPaletteColors(
+		internal static extern int SDL_SetPaletteColors(
 			IntPtr palette,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)]
 				SDL_Color[] colors,
@@ -2925,7 +2925,7 @@ namespace SDL2
 
 		/* format and palette refer to an SDL_PixelFormat* and SDL_Palette* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetPixelFormatPalette(
+		internal static extern int SDL_SetPixelFormatPalette(
 			IntPtr format,
 			IntPtr palette
 		);
@@ -2935,14 +2935,14 @@ namespace SDL2
 		#region SDL_rect.h
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_Point
+		internal struct SDL_Point
 		{
 			public int x;
 			public int y;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_Rect
+		internal struct SDL_Rect
 		{
 			public int x;
 			public int y;
@@ -2951,7 +2951,7 @@ namespace SDL2
 		}
 
 		/* Only available in 2.0.4 */
-		public static SDL_bool SDL_PointInRect(ref SDL_Point p, ref SDL_Rect r)
+		internal static SDL_bool SDL_PointInRect(ref SDL_Point p, ref SDL_Rect r)
 		{
 			return (	(p.x >= r.x) &&
 					(p.x < (r.x + r.w)) &&
@@ -2962,7 +2962,7 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_EnclosePoints(
+		internal static extern SDL_bool SDL_EnclosePoints(
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 1)]
 				SDL_Point[] points,
 			int count,
@@ -2971,20 +2971,20 @@ namespace SDL2
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_HasIntersection(
+		internal static extern SDL_bool SDL_HasIntersection(
 			ref SDL_Rect A,
 			ref SDL_Rect B
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_IntersectRect(
+		internal static extern SDL_bool SDL_IntersectRect(
 			ref SDL_Rect A,
 			ref SDL_Rect B,
 			out SDL_Rect result
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_IntersectRectAndLine(
+		internal static extern SDL_bool SDL_IntersectRectAndLine(
 			ref SDL_Rect rect,
 			ref int X1,
 			ref int Y1,
@@ -2992,14 +2992,14 @@ namespace SDL2
 			ref int Y2
 		);
 
-		public static SDL_bool SDL_RectEmpty(ref SDL_Rect r)
+		internal static SDL_bool SDL_RectEmpty(ref SDL_Rect r)
 		{
 			return ((r.w <= 0) || (r.h <= 0)) ?
 				SDL_bool.SDL_TRUE :
 				SDL_bool.SDL_FALSE;
 		}
 
-		public static SDL_bool SDL_RectEquals(
+		internal static SDL_bool SDL_RectEquals(
 			ref SDL_Rect a,
 			ref SDL_Rect b
 		) {
@@ -3012,7 +3012,7 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_UnionRect(
+		internal static extern void SDL_UnionRect(
 			ref SDL_Rect A,
 			ref SDL_Rect B,
 			out SDL_Rect result
@@ -3028,7 +3028,7 @@ namespace SDL2
 		public const uint SDL_DONTFREE =	0x00000004;
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_Surface
+		internal struct SDL_Surface
 		{
 			public uint flags;
 			public IntPtr format; // SDL_PixelFormat*
@@ -3045,7 +3045,7 @@ namespace SDL2
 		}
 
 		/* surface refers to an SDL_Surface* */
-		public static bool SDL_MUSTLOCK(IntPtr surface)
+		internal static bool SDL_MUSTLOCK(IntPtr surface)
 		{
 			SDL_Surface sur;
 			sur = (SDL_Surface) Marshal.PtrToStructure(
@@ -3057,7 +3057,7 @@ namespace SDL2
 
 		/* src and dst refer to an SDL_Surface* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlit", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitSurface(
+		internal static extern int SDL_BlitSurface(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3070,7 +3070,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlit", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitSurface(
+		internal static extern int SDL_BlitSurface(
 			IntPtr src,
 			IntPtr srcrect,
 			IntPtr dst,
@@ -3083,7 +3083,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for dstrect.
 		 */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlit", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitSurface(
+		internal static extern int SDL_BlitSurface(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3096,7 +3096,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for both SDL_Rects.
 		 */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlit", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitSurface(
+		internal static extern int SDL_BlitSurface(
 			IntPtr src,
 			IntPtr srcrect,
 			IntPtr dst,
@@ -3105,7 +3105,7 @@ namespace SDL2
 
 		/* src and dst refer to an SDL_Surface* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlitScaled", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitScaled(
+		internal static extern int SDL_BlitScaled(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3118,7 +3118,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlitScaled", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitScaled(
+		internal static extern int SDL_BlitScaled(
 			IntPtr src,
 			IntPtr srcrect,
 			IntPtr dst,
@@ -3131,7 +3131,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for dstrect.
 		 */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlitScaled", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitScaled(
+		internal static extern int SDL_BlitScaled(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3144,7 +3144,7 @@ namespace SDL2
 		 * This overload allows for IntPtr.Zero (null) to be passed for both SDL_Rects.
 		 */
 		[DllImport(nativeLibName, EntryPoint = "SDL_UpperBlitScaled", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_BlitScaled(
+		internal static extern int SDL_BlitScaled(
 			IntPtr src,
 			IntPtr srcrect,
 			IntPtr dst,
@@ -3153,7 +3153,7 @@ namespace SDL2
 
 		/* src and dst are void* pointers */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_ConvertPixels(
+		internal static extern int SDL_ConvertPixels(
 			int width,
 			int height,
 			uint src_format,
@@ -3169,7 +3169,7 @@ namespace SDL2
 		 * fmt refers to an SDL_PixelFormat*
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_ConvertSurface(
+		internal static extern IntPtr SDL_ConvertSurface(
 			IntPtr src,
 			IntPtr fmt,
 			uint flags
@@ -3177,7 +3177,7 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_Surface*, src to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_ConvertSurfaceFormat(
+		internal static extern IntPtr SDL_ConvertSurfaceFormat(
 			IntPtr src,
 			uint pixel_format,
 			uint flags
@@ -3185,7 +3185,7 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateRGBSurface(
+		internal static extern IntPtr SDL_CreateRGBSurface(
 			uint flags,
 			int width,
 			int height,
@@ -3198,7 +3198,7 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_Surface*, pixels to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateRGBSurfaceFrom(
+		internal static extern IntPtr SDL_CreateRGBSurfaceFrom(
 			IntPtr pixels,
 			int width,
 			int height,
@@ -3213,7 +3213,7 @@ namespace SDL2
 		/* IntPtr refers to an SDL_Surface* */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateRGBSurfaceWithFormat(
+		internal static extern IntPtr SDL_CreateRGBSurfaceWithFormat(
 			uint flags,
 			int width,
 			int height,
@@ -3224,7 +3224,7 @@ namespace SDL2
 		/* IntPtr refers to an SDL_Surface*, pixels to a void* */
 		/* Available in 2.0.5 or higher */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateRGBSurfaceWithFormatFrom(
+		internal static extern IntPtr SDL_CreateRGBSurfaceWithFormatFrom(
 			IntPtr pixels,
 			int width,
 			int height,
@@ -3235,7 +3235,7 @@ namespace SDL2
 
 		/* dst refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_FillRect(
+		internal static extern int SDL_FillRect(
 			IntPtr dst,
 			ref SDL_Rect rect,
 			uint color
@@ -3245,7 +3245,7 @@ namespace SDL2
 		 * This overload allows passing NULL to rect.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_FillRect(
+		internal static extern int SDL_FillRect(
 			IntPtr dst,
 			IntPtr rect,
 			uint color
@@ -3253,7 +3253,7 @@ namespace SDL2
 
 		/* dst refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_FillRects(
+		internal static extern int SDL_FillRects(
 			IntPtr dst,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
 				SDL_Rect[] rects,
@@ -3263,39 +3263,39 @@ namespace SDL2
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FreeSurface(IntPtr surface);
+		internal static extern void SDL_FreeSurface(IntPtr surface);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GetClipRect(
+		internal static extern void SDL_GetClipRect(
 			IntPtr surface,
 			out SDL_Rect rect
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetColorKey(
+		internal static extern int SDL_GetColorKey(
 			IntPtr surface,
 			out uint key
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetSurfaceAlphaMod(
+		internal static extern int SDL_GetSurfaceAlphaMod(
 			IntPtr surface,
 			out byte alpha
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetSurfaceBlendMode(
+		internal static extern int SDL_GetSurfaceBlendMode(
 			IntPtr surface,
 			out SDL_BlendMode blendMode
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetSurfaceColorMod(
+		internal static extern int SDL_GetSurfaceColorMod(
 			IntPtr surface,
 			out byte r,
 			out byte g,
@@ -3310,7 +3310,7 @@ namespace SDL2
 			IntPtr src,
 			int freesrc
 		);
-		public static IntPtr SDL_LoadBMP(string file)
+		internal static IntPtr SDL_LoadBMP(string file)
 		{
 			IntPtr rwops = INTERNAL_SDL_RWFromFile(file, "rb");
 			return INTERNAL_SDL_LoadBMP_RW(rwops, 1);
@@ -3318,11 +3318,11 @@ namespace SDL2
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_LockSurface(IntPtr surface);
+		internal static extern int SDL_LockSurface(IntPtr surface);
 
 		/* src and dst refer to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_LowerBlit(
+		internal static extern int SDL_LowerBlit(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3331,7 +3331,7 @@ namespace SDL2
 
 		/* src and dst refer to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_LowerBlitScaled(
+		internal static extern int SDL_LowerBlitScaled(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3347,7 +3347,7 @@ namespace SDL2
 			IntPtr src,
 			int freesrc
 		);
-		public static int SDL_SaveBMP(IntPtr surface, string file)
+		internal static int SDL_SaveBMP(IntPtr surface, string file)
 		{
 			IntPtr rwops = INTERNAL_SDL_RWFromFile(file, "wb");
 			return INTERNAL_SDL_SaveBMP_RW(surface, rwops, 1);
@@ -3355,14 +3355,14 @@ namespace SDL2
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_SetClipRect(
+		internal static extern SDL_bool SDL_SetClipRect(
 			IntPtr surface,
 			ref SDL_Rect rect
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetColorKey(
+		internal static extern int SDL_SetColorKey(
 			IntPtr surface,
 			int flag,
 			uint key
@@ -3370,21 +3370,21 @@ namespace SDL2
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetSurfaceAlphaMod(
+		internal static extern int SDL_SetSurfaceAlphaMod(
 			IntPtr surface,
 			byte alpha
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetSurfaceBlendMode(
+		internal static extern int SDL_SetSurfaceBlendMode(
 			IntPtr surface,
 			SDL_BlendMode blendMode
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetSurfaceColorMod(
+		internal static extern int SDL_SetSurfaceColorMod(
 			IntPtr surface,
 			byte r,
 			byte g,
@@ -3393,21 +3393,21 @@ namespace SDL2
 
 		/* surface refers to an SDL_Surface*, palette to an SDL_Palette* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetSurfacePalette(
+		internal static extern int SDL_SetSurfacePalette(
 			IntPtr surface,
 			IntPtr palette
 		);
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetSurfaceRLE(
+		internal static extern int SDL_SetSurfaceRLE(
 			IntPtr surface,
 			int flag
 		);
 
 		/* src and dst refer to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SoftStretch(
+		internal static extern int SDL_SoftStretch(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3416,11 +3416,11 @@ namespace SDL2
 
 		/* surface refers to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_UnlockSurface(IntPtr surface);
+		internal static extern void SDL_UnlockSurface(IntPtr surface);
 
 		/* src and dst refer to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_UpperBlit(
+		internal static extern int SDL_UpperBlit(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3429,7 +3429,7 @@ namespace SDL2
 
 		/* src and dst refer to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_UpperBlitScaled(
+		internal static extern int SDL_UpperBlitScaled(
 			IntPtr src,
 			ref SDL_Rect srcrect,
 			IntPtr dst,
@@ -3438,18 +3438,18 @@ namespace SDL2
 
 		/* surface and IntPtr refer to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_DuplicateSurface(IntPtr surface);
+		internal static extern IntPtr SDL_DuplicateSurface(IntPtr surface);
 
 		#endregion
 
 		#region SDL_clipboard.h
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_HasClipboardText();
+		internal static extern SDL_bool SDL_HasClipboardText();
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetClipboardText", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetClipboardText();
-		public static string SDL_GetClipboardText()
+		internal static string SDL_GetClipboardText()
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetClipboardText());
 		}
@@ -3458,7 +3458,7 @@ namespace SDL2
 		private static extern int INTERNAL_SDL_SetClipboardText(
 			byte[] text
 		);
-		public static int SDL_SetClipboardText(
+		internal static int SDL_SetClipboardText(
 			string text
 		) {
 			return INTERNAL_SDL_SetClipboardText(
@@ -3479,7 +3479,7 @@ namespace SDL2
 		public const int SDL_TEXTINPUTEVENT_TEXT_SIZE = 32;
 
 		/* The types of events that can be delivered. */
-		public enum SDL_EventType : uint
+		internal enum SDL_EventType : uint
 		{
 			SDL_FIRSTEVENT =		0,
 
@@ -3561,7 +3561,7 @@ namespace SDL2
 		}
 
 		/* Only available in 2.0.4 or higher */
-		public enum SDL_MouseWheelDirection : uint
+		internal enum SDL_MouseWheelDirection : uint
 		{
 			SDL_MOUSEWHEEL_NORMAL,
 			SDL_MOUSEWHEEL_FLIPPED
@@ -3569,7 +3569,7 @@ namespace SDL2
 
 		/* Fields shared by every event */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_GenericEvent
+		internal struct SDL_GenericEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3579,7 +3579,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Window state change event data (event.window.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_WindowEvent
+		internal struct SDL_WindowEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3597,7 +3597,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Keyboard button event structure (event.key.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_KeyboardEvent
+		internal struct SDL_KeyboardEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3634,7 +3634,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Mouse motion event structure (event.motion.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MouseMotionEvent
+		internal struct SDL_MouseMotionEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3655,7 +3655,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Mouse button event structure (event.button.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MouseButtonEvent
+		internal struct SDL_MouseButtonEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3672,7 +3672,7 @@ namespace SDL2
 
 		/* Mouse wheel event structure (event.wheel.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MouseWheelEvent
+		internal struct SDL_MouseWheelEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3687,7 +3687,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Joystick axis motion event structure (event.jaxis.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_JoyAxisEvent
+		internal struct SDL_JoyAxisEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3705,7 +3705,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Joystick trackball motion event structure (event.jball.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_JoyBallEvent
+		internal struct SDL_JoyBallEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3723,7 +3723,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Joystick hat position change event struct (event.jhat.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_JoyHatEvent
+		internal struct SDL_JoyHatEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3739,7 +3739,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Joystick button event structure (event.jbutton.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_JoyButtonEvent
+		internal struct SDL_JoyButtonEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3753,7 +3753,7 @@ namespace SDL2
 
 		/* Joystick device event structure (event.jdevice.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_JoyDeviceEvent
+		internal struct SDL_JoyDeviceEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3764,7 +3764,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Game controller axis motion event (event.caxis.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_ControllerAxisEvent
+		internal struct SDL_ControllerAxisEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3782,7 +3782,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Game controller button event (event.cbutton.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_ControllerButtonEvent
+		internal struct SDL_ControllerButtonEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3796,7 +3796,7 @@ namespace SDL2
 
 		/* Game controller device event (event.cdevice.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_ControllerDeviceEvent
+		internal struct SDL_ControllerDeviceEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3809,7 +3809,7 @@ namespace SDL2
 #pragma warning disable 0169
 		/* Audio device event (event.adevice.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_AudioDeviceEvent
+		internal struct SDL_AudioDeviceEvent
 		{
 			public UInt32 type;
 			public UInt32 timestamp;
@@ -3822,7 +3822,7 @@ namespace SDL2
 #pragma warning restore 0169
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_TouchFingerEvent
+		internal struct SDL_TouchFingerEvent
 		{
 			public UInt32 type;
 			public UInt32 timestamp;
@@ -3836,7 +3836,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_MultiGestureEvent
+		internal struct SDL_MultiGestureEvent
 		{
 			public UInt32 type;
 			public UInt32 timestamp;
@@ -3850,7 +3850,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_DollarGestureEvent
+		internal struct SDL_DollarGestureEvent
 		{
 			public UInt32 type;
 			public UInt32 timestamp;
@@ -3866,7 +3866,7 @@ namespace SDL2
 		 * default
 		 */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_DropEvent
+		internal struct SDL_DropEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3875,7 +3875,7 @@ namespace SDL2
 
 		/* The "quit requested" event */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_QuitEvent
+		internal struct SDL_QuitEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3883,7 +3883,7 @@ namespace SDL2
 
 		/* A user defined event (event.user.*) */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_UserEvent
+		internal struct SDL_UserEvent
 		{
 			public UInt32 type;
 			public UInt32 timestamp;
@@ -3895,7 +3895,7 @@ namespace SDL2
 
 		/* A video driver dependent event (event.syswm.*), disabled */
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_SysWMEvent
+		internal struct SDL_SysWMEvent
 		{
 			public SDL_EventType type;
 			public UInt32 timestamp;
@@ -3905,7 +3905,7 @@ namespace SDL2
 		/* General event structure */
 		// C# doesn't do unions, so we do this ugly thing. */
 		[StructLayout(LayoutKind.Explicit)]
-		public struct SDL_Event
+		internal struct SDL_Event
 		{
 			[FieldOffset(0)]
 			public SDL_EventType type;
@@ -3958,16 +3958,16 @@ namespace SDL2
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate int SDL_EventFilter(
+		internal delegate int SDL_EventFilter(
 			IntPtr userdata, // void*
 			IntPtr sdlevent // SDL_Event* event, lolC#
 		);
 
 		/* Pump the event loop, getting events from the input devices*/
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_PumpEvents();
+		internal static extern void SDL_PumpEvents();
 
-		public enum SDL_eventaction
+		internal enum SDL_eventaction
 		{
 			SDL_ADDEVENT,
 			SDL_PEEKEVENT,
@@ -3975,7 +3975,7 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_PeepEvents(
+		internal static extern int SDL_PeepEvents(
 			[Out()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 1)]
 				SDL_Event[] events,
 			int numevents,
@@ -3986,44 +3986,44 @@ namespace SDL2
 
 		/* Checks to see if certain events are in the event queue */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_HasEvent(SDL_EventType type);
+		internal static extern SDL_bool SDL_HasEvent(SDL_EventType type);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_HasEvents(
+		internal static extern SDL_bool SDL_HasEvents(
 			SDL_EventType minType,
 			SDL_EventType maxType
 		);
 
 		/* Clears events from the event queue */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FlushEvent(SDL_EventType type);
+		internal static extern void SDL_FlushEvent(SDL_EventType type);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FlushEvents(
+		internal static extern void SDL_FlushEvents(
 			SDL_EventType min,
 			SDL_EventType max
 		);
 
 		/* Polls for currently pending events */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_PollEvent(out SDL_Event _event);
+		internal static extern int SDL_PollEvent(out SDL_Event _event);
 
 		/* Waits indefinitely for the next event */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_WaitEvent(out SDL_Event _event);
+		internal static extern int SDL_WaitEvent(out SDL_Event _event);
 
 		/* Waits until the specified timeout (in ms) for the next event
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_WaitEventTimeout(out SDL_Event _event, int timeout);
+		internal static extern int SDL_WaitEventTimeout(out SDL_Event _event, int timeout);
 
 		/* Add an event to the event queue */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_PushEvent(ref SDL_Event _event);
+		internal static extern int SDL_PushEvent(ref SDL_Event _event);
 
 		/* userdata refers to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetEventFilter(
+		internal static extern void SDL_SetEventFilter(
 			SDL_EventFilter filter,
 			IntPtr userdata
 		);
@@ -4034,7 +4034,7 @@ namespace SDL2
 			out IntPtr filter,
 			out IntPtr userdata
 		);
-		public static SDL_bool SDL_GetEventFilter(
+		internal static SDL_bool SDL_GetEventFilter(
 			out SDL_EventFilter filter,
 			out IntPtr userdata
 		) {
@@ -4056,21 +4056,21 @@ namespace SDL2
 
 		/* userdata refers to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_AddEventWatch(
+		internal static extern void SDL_AddEventWatch(
 			SDL_EventFilter filter,
 			IntPtr userdata
 		);
 
 		/* userdata refers to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_DelEventWatch(
+		internal static extern void SDL_DelEventWatch(
 			SDL_EventFilter filter,
 			IntPtr userdata
 		);
 
 		/* userdata refers to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FilterEvents(
+		internal static extern void SDL_FilterEvents(
 			SDL_EventFilter filter,
 			IntPtr userdata
 		);
@@ -4083,23 +4083,23 @@ namespace SDL2
 
 		/* This function allows you to enable/disable certain events */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern byte SDL_EventState(SDL_EventType type, int state);
+		internal static extern byte SDL_EventState(SDL_EventType type, int state);
 
 		/* Get the state of an event */
-		public static byte SDL_GetEventState(SDL_EventType type)
+		internal static byte SDL_GetEventState(SDL_EventType type)
 		{
 			return SDL_EventState(type, SDL_QUERY);
 		}
 
 		/* Allocate a set of user-defined events */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_RegisterEvents(int numevents);
+		internal static extern UInt32 SDL_RegisterEvents(int numevents);
 		#endregion
 
 		#region SDL_scancode.h
 
 		/* Scancodes based off USB keyboard page (0x07) */
-		public enum SDL_Scancode
+		internal enum SDL_Scancode
 		{
 			SDL_SCANCODE_UNKNOWN = 0,
 
@@ -4376,7 +4376,7 @@ namespace SDL2
 		#region SDL_keycode.h
 
 		public const int SDLK_SCANCODE_MASK = (1 << 30);
-		public static SDL_Keycode SDL_SCANCODE_TO_KEYCODE(SDL_Scancode X)
+		internal static SDL_Keycode SDL_SCANCODE_TO_KEYCODE(SDL_Scancode X)
 		{
 			return (SDL_Keycode)((int)X | SDLK_SCANCODE_MASK);
 		}
@@ -4385,7 +4385,7 @@ namespace SDL2
 		 * and all of the names are in an anonymous enum. Yeah...
 		 * that's not going to cut it for C#. We'll just put them in an
 		 * enum for now? */
-		public enum SDL_Keycode
+		internal enum SDL_Keycode
 		{
 			SDLK_UNKNOWN = 0,
 
@@ -4654,7 +4654,7 @@ namespace SDL2
 
 		/* Key modifiers (bitfield) */
 		[Flags]
-		public enum SDL_Keymod : ushort
+		internal enum SDL_Keymod : ushort
 		{
 			KMOD_NONE = 0x0000,
 			KMOD_LSHIFT = 0x0001,
@@ -4682,7 +4682,7 @@ namespace SDL2
 		#region SDL_keyboard.h
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_Keysym
+		internal struct SDL_Keysym
 		{
 			public SDL_Scancode scancode;
 			public SDL_Keycode sym;
@@ -4693,36 +4693,36 @@ namespace SDL2
 		/* Get the window which has kbd focus */
 		/* Return type is an SDL_Window pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetKeyboardFocus();
+		internal static extern IntPtr SDL_GetKeyboardFocus();
 
 		/* Get a snapshot of the keyboard state. */
 		/* Return value is a pointer to a UInt8 array */
 		/* Numkeys returns the size of the array if non-null */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetKeyboardState(out int numkeys);
+		internal static extern IntPtr SDL_GetKeyboardState(out int numkeys);
 
 		/* Get the current key modifier state for the keyboard. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_Keymod SDL_GetModState();
+		internal static extern SDL_Keymod SDL_GetModState();
 
 		/* Set the current key modifier state */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetModState(SDL_Keymod modstate);
+		internal static extern void SDL_SetModState(SDL_Keymod modstate);
 
 		/* Get the key code corresponding to the given scancode
 		 * with the current keyboard layout.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_Keycode SDL_GetKeyFromScancode(SDL_Scancode scancode);
+		internal static extern SDL_Keycode SDL_GetKeyFromScancode(SDL_Scancode scancode);
 
 		/* Get the scancode for the given keycode */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_Scancode SDL_GetScancodeFromKey(SDL_Keycode key);
+		internal static extern SDL_Scancode SDL_GetScancodeFromKey(SDL_Keycode key);
 
 		/* Wrapper for SDL_GetScancodeName */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetScancodeName", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetScancodeName(SDL_Scancode scancode);
-		public static string SDL_GetScancodeName(SDL_Scancode scancode)
+		internal static string SDL_GetScancodeName(SDL_Scancode scancode)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GetScancodeName(scancode)
@@ -4734,7 +4734,7 @@ namespace SDL2
 		private static extern SDL_Scancode INTERNAL_SDL_GetScancodeFromName(
 			byte[] name
 		);
-		public static SDL_Scancode SDL_GetScancodeFromName(string name)
+		internal static SDL_Scancode SDL_GetScancodeFromName(string name)
 		{
 			return INTERNAL_SDL_GetScancodeFromName(
 				UTF8_ToNative(name)
@@ -4744,7 +4744,7 @@ namespace SDL2
 		/* Wrapper for SDL_GetKeyName */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetKeyName", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetKeyName(SDL_Keycode key);
-		public static string SDL_GetKeyName(SDL_Keycode key)
+		internal static string SDL_GetKeyName(SDL_Keycode key)
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetKeyName(key));
 		}
@@ -4754,35 +4754,35 @@ namespace SDL2
 		private static extern SDL_Keycode INTERNAL_SDL_GetKeyFromName(
 			byte[] name
 		);
-		public static SDL_Keycode SDL_GetKeyFromName(string name)
+		internal static SDL_Keycode SDL_GetKeyFromName(string name)
 		{
 			return INTERNAL_SDL_GetKeyFromName(UTF8_ToNative(name));
 		}
 
 		/* Start accepting Unicode text input events, show keyboard */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_StartTextInput();
+		internal static extern void SDL_StartTextInput();
 
 		/* Check if unicode input events are enabled */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_IsTextInputActive();
+		internal static extern SDL_bool SDL_IsTextInputActive();
 
 		/* Stop receiving any text input events, hide onscreen kbd */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_StopTextInput();
+		internal static extern void SDL_StopTextInput();
 
 		/* Set the rectangle used for text input, hint for IME */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetTextInputRect(ref SDL_Rect rect);
+		internal static extern void SDL_SetTextInputRect(ref SDL_Rect rect);
 
 		/* Does the platform support an on-screen keyboard? */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_HasScreenKeyboardSupport();
+		internal static extern SDL_bool SDL_HasScreenKeyboardSupport();
 
 		/* Is the on-screen keyboard shown for a given window? */
 		/* window is an SDL_Window pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_IsScreenKeyboardShown(IntPtr window);
+		internal static extern SDL_bool SDL_IsScreenKeyboardShown(IntPtr window);
 
 		#endregion
 
@@ -4793,7 +4793,7 @@ namespace SDL2
 		 */
 
 		/* System cursor types */
-		public enum SDL_SystemCursor
+		internal enum SDL_SystemCursor
 		{
 			SDL_SYSTEM_CURSOR_ARROW,	// Arrow
 			SDL_SYSTEM_CURSOR_IBEAM,	// I-beam
@@ -4813,82 +4813,82 @@ namespace SDL2
 		/* Get the window which currently has mouse focus */
 		/* Return value is an SDL_Window pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetMouseFocus();
+		internal static extern IntPtr SDL_GetMouseFocus();
 
 		/* Get the current state of the mouse */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetMouseState(out int x, out int y);
+		internal static extern UInt32 SDL_GetMouseState(out int x, out int y);
 
 		/* Get the current state of the mouse */
 		/* This overload allows for passing NULL to x */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetMouseState(IntPtr x, out int y);
+		internal static extern UInt32 SDL_GetMouseState(IntPtr x, out int y);
 
 		/* Get the current state of the mouse */
 		/* This overload allows for passing NULL to y */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetMouseState(out int x, IntPtr y);
+		internal static extern UInt32 SDL_GetMouseState(out int x, IntPtr y);
 
 		/* Get the current state of the mouse */
 		/* This overload allows for passing NULL to both x and y */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetMouseState(IntPtr x, IntPtr y);
+		internal static extern UInt32 SDL_GetMouseState(IntPtr x, IntPtr y);
 
 		/* Get the current state of the mouse, in relation to the desktop */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetGlobalMouseState(out int x, out int y);
+		internal static extern UInt32 SDL_GetGlobalMouseState(out int x, out int y);
 
 		/* Get the current state of the mouse, in relation to the desktop */
 		/* Only available in 2.0.4 */
 		/* This overload allows for passing NULL to x */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetGlobalMouseState(IntPtr x, out int y);
+		internal static extern UInt32 SDL_GetGlobalMouseState(IntPtr x, out int y);
 
 		/* Get the current state of the mouse, in relation to the desktop */
 		/* Only available in 2.0.4 */
 		/* This overload allows for passing NULL to y */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetGlobalMouseState(out int x, IntPtr y);
+		internal static extern UInt32 SDL_GetGlobalMouseState(out int x, IntPtr y);
 
 		/* Get the current state of the mouse, in relation to the desktop */
 		/* Only available in 2.0.4 */
 		/* This overload allows for passing NULL to both x and y */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetGlobalMouseState(IntPtr x, IntPtr y);
+		internal static extern UInt32 SDL_GetGlobalMouseState(IntPtr x, IntPtr y);
 
 		/* Get the mouse state with relative coords*/
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetRelativeMouseState(out int x, out int y);
+		internal static extern UInt32 SDL_GetRelativeMouseState(out int x, out int y);
 
 		/* Set the mouse cursor's position (within a window) */
 		/* window is an SDL_Window pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_WarpMouseInWindow(IntPtr window, int x, int y);
+		internal static extern void SDL_WarpMouseInWindow(IntPtr window, int x, int y);
 
 		/* Set the mouse cursor's position in global screen space */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_WarpMouseGlobal(int x, int y);
+		internal static extern int SDL_WarpMouseGlobal(int x, int y);
 
 		/* Enable/Disable relative mouse mode (grabs mouse, rel coords) */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_SetRelativeMouseMode(SDL_bool enabled);
+		internal static extern int SDL_SetRelativeMouseMode(SDL_bool enabled);
 
 		/* Capture the mouse, to track input outside an SDL window */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_CaptureMouse(SDL_bool enabled);
+		internal static extern int SDL_CaptureMouse(SDL_bool enabled);
 
 		/* Query if the relative mouse mode is enabled */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_GetRelativeMouseMode();
+		internal static extern SDL_bool SDL_GetRelativeMouseMode();
 
 		/* Create a cursor from bitmap data (amd mask) in MSB format */
 		/* data and mask are byte arrays, and w must be a multiple of 8 */
 		/* return value is an SDL_Cursor pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateCursor(
+		internal static extern IntPtr SDL_CreateCursor(
 			IntPtr data,
 			IntPtr mask,
 			int w,
@@ -4900,7 +4900,7 @@ namespace SDL2
 		/* Create a cursor from an SDL_Surface */
 		/* IntPtr refers to an SDL_Cursor*, surface to an SDL_Surface* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateColorCursor(
+		internal static extern IntPtr SDL_CreateColorCursor(
 			IntPtr surface,
 			int hot_x,
 			int hot_y
@@ -4909,28 +4909,28 @@ namespace SDL2
 		/* Create a cursor from a system cursor id */
 		/* return value is an SDL_Cursor pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_CreateSystemCursor(SDL_SystemCursor id);
+		internal static extern IntPtr SDL_CreateSystemCursor(SDL_SystemCursor id);
 
 		/* Set the active cursor */
 		/* cursor is an SDL_Cursor pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_SetCursor(IntPtr cursor);
+		internal static extern void SDL_SetCursor(IntPtr cursor);
 
 		/* Return the active cursor */
 		/* return value is an SDL_Cursor pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetCursor();
+		internal static extern IntPtr SDL_GetCursor();
 
 		/* Frees a cursor created with one of the CreateCursor functions */
 		/* cursor in an SDL_Cursor pointer */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FreeCursor(IntPtr cursor);
+		internal static extern void SDL_FreeCursor(IntPtr cursor);
 
 		/* Toggle whether or not the cursor is shown */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_ShowCursor(int toggle);
+		internal static extern int SDL_ShowCursor(int toggle);
 
-		public static uint SDL_BUTTON(uint X)
+		internal static uint SDL_BUTTON(uint X)
 		{
 			// If only there were a better way of doing this in C#
 			return (uint) (1 << ((int) X - 1));
@@ -4941,11 +4941,11 @@ namespace SDL2
 		public const uint SDL_BUTTON_RIGHT =	3;
 		public const uint SDL_BUTTON_X1 =	4;
 		public const uint SDL_BUTTON_X2 =	5;
-		public static readonly UInt32 SDL_BUTTON_LMASK =	SDL_BUTTON(SDL_BUTTON_LEFT);
-		public static readonly UInt32 SDL_BUTTON_MMASK =	SDL_BUTTON(SDL_BUTTON_MIDDLE);
-		public static readonly UInt32 SDL_BUTTON_RMASK =	SDL_BUTTON(SDL_BUTTON_RIGHT);
-		public static readonly UInt32 SDL_BUTTON_X1MASK =	SDL_BUTTON(SDL_BUTTON_X1);
-		public static readonly UInt32 SDL_BUTTON_X2MASK =	SDL_BUTTON(SDL_BUTTON_X2);
+		internal static readonly UInt32 SDL_BUTTON_LMASK =	SDL_BUTTON(SDL_BUTTON_LEFT);
+		internal static readonly UInt32 SDL_BUTTON_MMASK =	SDL_BUTTON(SDL_BUTTON_MIDDLE);
+		internal static readonly UInt32 SDL_BUTTON_RMASK =	SDL_BUTTON(SDL_BUTTON_RIGHT);
+		internal static readonly UInt32 SDL_BUTTON_X1MASK =	SDL_BUTTON(SDL_BUTTON_X1);
+		internal static readonly UInt32 SDL_BUTTON_X2MASK =	SDL_BUTTON(SDL_BUTTON_X2);
 
 		#endregion
 
@@ -4953,7 +4953,7 @@ namespace SDL2
 
 		public const uint SDL_TOUCH_MOUSEID = uint.MaxValue;
 
-		public struct SDL_Finger
+		internal struct SDL_Finger
 		{
 			public long id; // SDL_FingerID
 			public float x;
@@ -4965,26 +4965,26 @@ namespace SDL2
 		 *  \brief Get the number of registered touch devices.
  		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumTouchDevices();
+		internal static extern int SDL_GetNumTouchDevices();
 
 		/**
 		 *  \brief Get the touch ID with the given index, or 0 if the index is invalid.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern long SDL_GetTouchDevice(int index);
+		internal static extern long SDL_GetTouchDevice(int index);
 
 		/**
 		 *  \brief Get the number of active fingers for a given touch device.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumTouchFingers(long touchID);
+		internal static extern int SDL_GetNumTouchFingers(long touchID);
 
 		/**
 		 *  \brief Get the finger object of the given touch, with the given index.
 		 *  Returns pointer to SDL_Finger.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GetTouchFinger(long touchID, int index);
+		internal static extern IntPtr SDL_GetTouchFinger(long touchID, int index);
 
 		#endregion
 
@@ -5000,7 +5000,7 @@ namespace SDL2
 		public const byte SDL_HAT_LEFTUP =	SDL_HAT_LEFT | SDL_HAT_UP;
 		public const byte SDL_HAT_LEFTDOWN =	SDL_HAT_LEFT | SDL_HAT_DOWN;
 
-		public enum SDL_JoystickPowerLevel
+		internal enum SDL_JoystickPowerLevel
 		{
 			SDL_JOYSTICK_POWER_UNKNOWN = -1,
 			SDL_JOYSTICK_POWER_EMPTY,
@@ -5011,7 +5011,7 @@ namespace SDL2
 			SDL_JOYSTICK_POWER_MAX
 		}
 
-		public enum SDL_JoystickType
+		internal enum SDL_JoystickType
 		{
 			SDL_JOYSTICK_TYPE_UNKNOWN,
 			SDL_JOYSTICK_TYPE_GAMECONTROLLER,
@@ -5026,14 +5026,14 @@ namespace SDL2
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_JoystickClose(IntPtr joystick);
+		internal static extern void SDL_JoystickClose(IntPtr joystick);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickEventState(int state);
+		internal static extern int SDL_JoystickEventState(int state);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern short SDL_JoystickGetAxis(
+		internal static extern short SDL_JoystickGetAxis(
 			IntPtr joystick,
 			int axis
 		);
@@ -5042,7 +5042,7 @@ namespace SDL2
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_JoystickGetAxisInitialState(
+		internal static extern SDL_bool SDL_JoystickGetAxisInitialState(
 			IntPtr joystick,
 			int axis,
 			out ushort state
@@ -5050,7 +5050,7 @@ namespace SDL2
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickGetBall(
+		internal static extern int SDL_JoystickGetBall(
 			IntPtr joystick,
 			int ball,
 			out int dx,
@@ -5059,14 +5059,14 @@ namespace SDL2
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern byte SDL_JoystickGetButton(
+		internal static extern byte SDL_JoystickGetButton(
 			IntPtr joystick,
 			int button
 		);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern byte SDL_JoystickGetHat(
+		internal static extern byte SDL_JoystickGetHat(
 			IntPtr joystick,
 			int hat
 		);
@@ -5076,7 +5076,7 @@ namespace SDL2
 		private static extern IntPtr INTERNAL_SDL_JoystickName(
 			IntPtr joystick
 		);
-		public static string SDL_JoystickName(IntPtr joystick)
+		internal static string SDL_JoystickName(IntPtr joystick)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_JoystickName(joystick)
@@ -5087,7 +5087,7 @@ namespace SDL2
 		private static extern IntPtr INTERNAL_SDL_JoystickNameForIndex(
 			int device_index
 		);
-		public static string SDL_JoystickNameForIndex(int device_index)
+		internal static string SDL_JoystickNameForIndex(int device_index)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_JoystickNameForIndex(device_index)
@@ -5096,45 +5096,45 @@ namespace SDL2
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickNumAxes(IntPtr joystick);
+		internal static extern int SDL_JoystickNumAxes(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickNumBalls(IntPtr joystick);
+		internal static extern int SDL_JoystickNumBalls(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickNumButtons(IntPtr joystick);
+		internal static extern int SDL_JoystickNumButtons(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickNumHats(IntPtr joystick);
+		internal static extern int SDL_JoystickNumHats(IntPtr joystick);
 
 		/* IntPtr refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_JoystickOpen(int device_index);
+		internal static extern IntPtr SDL_JoystickOpen(int device_index);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_JoystickUpdate();
+		internal static extern void SDL_JoystickUpdate();
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_NumJoysticks();
+		internal static extern int SDL_NumJoysticks();
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern Guid SDL_JoystickGetDeviceGUID(
+		internal static extern Guid SDL_JoystickGetDeviceGUID(
 			int device_index
 		);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern Guid SDL_JoystickGetGUID(
+		internal static extern Guid SDL_JoystickGetGUID(
 			IntPtr joystick
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_JoystickGetGUIDString(
+		internal static extern void SDL_JoystickGetGUIDString(
 			Guid guid,
 			byte[] pszGUID,
 			int cbGUID
@@ -5144,7 +5144,7 @@ namespace SDL2
 		private static extern Guid INTERNAL_SDL_JoystickGetGUIDFromString(
 			byte[] pchGUID
 		);
-		public static Guid SDL_JoystickGetGUIDFromString(string pchGuid)
+		internal static Guid SDL_JoystickGetGUIDFromString(string pchGuid)
 		{
 			return INTERNAL_SDL_JoystickGetGUIDFromString(
 				UTF8_ToNative(pchGuid)
@@ -5153,63 +5153,63 @@ namespace SDL2
 
 		/* This function is only available in 2.0.6 or higher. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_JoystickGetDeviceVendor(int device_index);
+		internal static extern ushort SDL_JoystickGetDeviceVendor(int device_index);
 
 		/* This function is only available in 2.0.6 or higher. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_JoystickGetDeviceProduct(int device_index);
+		internal static extern ushort SDL_JoystickGetDeviceProduct(int device_index);
 
 		/* This function is only available in 2.0.6 or higher. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_JoystickGetDeviceProductVersion(int device_index);
+		internal static extern ushort SDL_JoystickGetDeviceProductVersion(int device_index);
 
 		/* This function is only available in 2.0.6 or higher. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_JoystickType SDL_JoystickGetDeviceType(int device_index);
+		internal static extern SDL_JoystickType SDL_JoystickGetDeviceType(int device_index);
 
 		/* int refers to an SDL_JoystickID.
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickGetDeviceInstanceID(int device_index);
+		internal static extern int SDL_JoystickGetDeviceInstanceID(int device_index);
 
 		/* joystick refers to an SDL_Joystick*.
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_JoystickGetVendor(IntPtr joystick);
+		internal static extern ushort SDL_JoystickGetVendor(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick*.
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_JoystickGetProduct(IntPtr joystick);
+		internal static extern ushort SDL_JoystickGetProduct(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick*.
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_JoystickGetProductVersion(IntPtr joystick);
+		internal static extern ushort SDL_JoystickGetProductVersion(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick*.
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_JoystickType SDL_JoystickGetType(IntPtr joystick);
+		internal static extern SDL_JoystickType SDL_JoystickGetType(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_JoystickGetAttached(IntPtr joystick);
+		internal static extern SDL_bool SDL_JoystickGetAttached(IntPtr joystick);
 
 		/* int refers to an SDL_JoystickID, joystick to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickInstanceID(IntPtr joystick);
+		internal static extern int SDL_JoystickInstanceID(IntPtr joystick);
 
 		/* joystick refers to an SDL_Joystick*.
 		 * This function is only available in 2.0.4 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_JoystickPowerLevel SDL_JoystickCurrentPowerLevel(
+		internal static extern SDL_JoystickPowerLevel SDL_JoystickCurrentPowerLevel(
 			IntPtr joystick
 		);
 
@@ -5217,21 +5217,21 @@ namespace SDL2
 		 * This function is only available in 2.0.4 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_JoystickFromInstanceID(int joyid);
+		internal static extern IntPtr SDL_JoystickFromInstanceID(int joyid);
 
 		/* Only available in 2.0.7 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_LockJoysticks();
+		internal static extern void SDL_LockJoysticks();
 
 		/* Only available in 2.0.7 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_UnlockJoysticks();
+		internal static extern void SDL_UnlockJoysticks();
 
 		#endregion
 
 		#region SDL_gamecontroller.h
 
-		public enum SDL_GameControllerBindType
+		internal enum SDL_GameControllerBindType
 		{
 			SDL_CONTROLLER_BINDTYPE_NONE,
 			SDL_CONTROLLER_BINDTYPE_BUTTON,
@@ -5239,7 +5239,7 @@ namespace SDL2
 			SDL_CONTROLLER_BINDTYPE_HAT
 		}
 
-		public enum SDL_GameControllerAxis
+		internal enum SDL_GameControllerAxis
 		{
 			SDL_CONTROLLER_AXIS_INVALID = -1,
 			SDL_CONTROLLER_AXIS_LEFTX,
@@ -5251,7 +5251,7 @@ namespace SDL2
 			SDL_CONTROLLER_AXIS_MAX
 		}
 
-		public enum SDL_GameControllerButton
+		internal enum SDL_GameControllerButton
 		{
 			SDL_CONTROLLER_BUTTON_INVALID = -1,
 			SDL_CONTROLLER_BUTTON_A,
@@ -5274,7 +5274,7 @@ namespace SDL2
 
 		// FIXME: I'd rather this somehow be private...
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_GameControllerButtonBind_hat
+		internal struct INTERNAL_GameControllerButtonBind_hat
 		{
 			public int hat;
 			public int hat_mask;
@@ -5282,7 +5282,7 @@ namespace SDL2
 
 		// FIXME: I'd rather this somehow be private...
 		[StructLayout(LayoutKind.Explicit)]
-		public struct INTERNAL_GameControllerButtonBind_union
+		internal struct INTERNAL_GameControllerButtonBind_union
 		{
 			[FieldOffset(0)]
 			public int button;
@@ -5293,7 +5293,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_GameControllerButtonBind
+		internal struct SDL_GameControllerButtonBind
 		{
 			public SDL_GameControllerBindType bindType;
 			public INTERNAL_GameControllerButtonBind_union value;
@@ -5313,7 +5313,7 @@ namespace SDL2
 		private static extern int INTERNAL_SDL_GameControllerAddMapping(
 			byte[] mappingString
 		);
-		public static int SDL_GameControllerAddMapping(
+		internal static int SDL_GameControllerAddMapping(
 			string mappingString
 		) {
 			return INTERNAL_SDL_GameControllerAddMapping(
@@ -5323,12 +5323,12 @@ namespace SDL2
 
 		/* This function is only available in 2.0.6 or higher. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GameControllerNumMappings();
+		internal static extern int SDL_GameControllerNumMappings();
 
 		/* This function is only available in 2.0.6 or higher. */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GameControllerMappingForIndex", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GameControllerMappingForIndex(int mapping_index);
-		public static string SDL_GameControllerMappingForIndex(int mapping_index)
+		internal static string SDL_GameControllerMappingForIndex(int mapping_index)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GameControllerMappingForIndex(
@@ -5343,7 +5343,7 @@ namespace SDL2
 			IntPtr rw,
 			int freerw
 		);
-		public static int SDL_GameControllerAddMappingsFromFile(string file)
+		internal static int SDL_GameControllerAddMappingsFromFile(string file)
 		{
 			IntPtr rwops = INTERNAL_SDL_RWFromFile(file, "rb");
 			return INTERNAL_SDL_GameControllerAddMappingsFromRW(rwops, 1);
@@ -5353,7 +5353,7 @@ namespace SDL2
 		private static extern IntPtr INTERNAL_SDL_GameControllerMappingForGUID(
 			Guid guid
 		);
-		public static string SDL_GameControllerMappingForGUID(Guid guid)
+		internal static string SDL_GameControllerMappingForGUID(Guid guid)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GameControllerMappingForGUID(guid)
@@ -5365,7 +5365,7 @@ namespace SDL2
 		private static extern IntPtr INTERNAL_SDL_GameControllerMapping(
 			IntPtr gamecontroller
 		);
-		public static string SDL_GameControllerMapping(
+		internal static string SDL_GameControllerMapping(
 			IntPtr gamecontroller
 		) {
 			return UTF8_ToManaged(
@@ -5376,13 +5376,13 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_IsGameController(int joystick_index);
+		internal static extern SDL_bool SDL_IsGameController(int joystick_index);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GameControllerNameForIndex", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GameControllerNameForIndex(
 			int joystick_index
 		);
-		public static string SDL_GameControllerNameForIndex(
+		internal static string SDL_GameControllerNameForIndex(
 			int joystick_index
 		) {
 			return UTF8_ToManaged(
@@ -5392,14 +5392,14 @@ namespace SDL2
 
 		/* IntPtr refers to an SDL_GameController* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GameControllerOpen(int joystick_index);
+		internal static extern IntPtr SDL_GameControllerOpen(int joystick_index);
 
 		/* gamecontroller refers to an SDL_GameController* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GameControllerName", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GameControllerName(
 			IntPtr gamecontroller
 		);
-		public static string SDL_GameControllerName(
+		internal static string SDL_GameControllerName(
 			IntPtr gamecontroller
 		) {
 			return UTF8_ToManaged(
@@ -5411,7 +5411,7 @@ namespace SDL2
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_GameControllerGetVendor(
+		internal static extern ushort SDL_GameControllerGetVendor(
 			IntPtr gamecontroller
 		);
 
@@ -5419,7 +5419,7 @@ namespace SDL2
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_GameControllerGetProduct(
+		internal static extern ushort SDL_GameControllerGetProduct(
 			IntPtr gamecontroller
 		);
 
@@ -5427,13 +5427,13 @@ namespace SDL2
 		 * This function is only available in 2.0.6 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern ushort SDL_GameControllerGetProductVersion(
+		internal static extern ushort SDL_GameControllerGetProductVersion(
 			IntPtr gamecontroller
 		);
 
 		/* gamecontroller refers to an SDL_GameController* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_GameControllerGetAttached(
+		internal static extern SDL_bool SDL_GameControllerGetAttached(
 			IntPtr gamecontroller
 		);
 
@@ -5441,21 +5441,21 @@ namespace SDL2
 		 * gamecontroller refers to an SDL_GameController*
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GameControllerGetJoystick(
+		internal static extern IntPtr SDL_GameControllerGetJoystick(
 			IntPtr gamecontroller
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GameControllerEventState(int state);
+		internal static extern int SDL_GameControllerEventState(int state);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GameControllerUpdate();
+		internal static extern void SDL_GameControllerUpdate();
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GameControllerGetAxisFromString", CallingConvention = CallingConvention.Cdecl)]
 		private static extern SDL_GameControllerAxis INTERNAL_SDL_GameControllerGetAxisFromString(
 			byte[] pchString
 		);
-		public static SDL_GameControllerAxis SDL_GameControllerGetAxisFromString(
+		internal static SDL_GameControllerAxis SDL_GameControllerGetAxisFromString(
 			string pchString
 		) {
 			return INTERNAL_SDL_GameControllerGetAxisFromString(
@@ -5467,7 +5467,7 @@ namespace SDL2
 		private static extern IntPtr INTERNAL_SDL_GameControllerGetStringForAxis(
 			SDL_GameControllerAxis axis
 		);
-		public static string SDL_GameControllerGetStringForAxis(
+		internal static string SDL_GameControllerGetStringForAxis(
 			SDL_GameControllerAxis axis
 		) {
 			return UTF8_ToManaged(
@@ -5483,7 +5483,7 @@ namespace SDL2
 			IntPtr gamecontroller,
 			SDL_GameControllerAxis axis
 		);
-		public static SDL_GameControllerButtonBind SDL_GameControllerGetBindForAxis(
+		internal static SDL_GameControllerButtonBind SDL_GameControllerGetBindForAxis(
 			IntPtr gamecontroller,
 			SDL_GameControllerAxis axis
 		) {
@@ -5501,7 +5501,7 @@ namespace SDL2
 
 		/* gamecontroller refers to an SDL_GameController* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern short SDL_GameControllerGetAxis(
+		internal static extern short SDL_GameControllerGetAxis(
 			IntPtr gamecontroller,
 			SDL_GameControllerAxis axis
 		);
@@ -5510,7 +5510,7 @@ namespace SDL2
 		private static extern SDL_GameControllerButton INTERNAL_SDL_GameControllerGetButtonFromString(
 			byte[] pchString
 		);
-		public static SDL_GameControllerButton SDL_GameControllerGetButtonFromString(
+		internal static SDL_GameControllerButton SDL_GameControllerGetButtonFromString(
 			string pchString
 		) {
 			return INTERNAL_SDL_GameControllerGetButtonFromString(
@@ -5522,7 +5522,7 @@ namespace SDL2
 		private static extern IntPtr INTERNAL_SDL_GameControllerGetStringForButton(
 			SDL_GameControllerButton button
 		);
-		public static string SDL_GameControllerGetStringForButton(
+		internal static string SDL_GameControllerGetStringForButton(
 			SDL_GameControllerButton button
 		) {
 			return UTF8_ToManaged(
@@ -5536,7 +5536,7 @@ namespace SDL2
 			IntPtr gamecontroller,
 			SDL_GameControllerButton button
 		);
-		public static SDL_GameControllerButtonBind SDL_GameControllerGetBindForButton(
+		internal static SDL_GameControllerButtonBind SDL_GameControllerGetBindForButton(
 			IntPtr gamecontroller,
 			SDL_GameControllerButton button
 		) {
@@ -5554,14 +5554,14 @@ namespace SDL2
 
 		/* gamecontroller refers to an SDL_GameController* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern byte SDL_GameControllerGetButton(
+		internal static extern byte SDL_GameControllerGetButton(
 			IntPtr gamecontroller,
 			SDL_GameControllerButton button
 		);
 
 		/* gamecontroller refers to an SDL_GameController* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_GameControllerClose(
+		internal static extern void SDL_GameControllerClose(
 			IntPtr gamecontroller
 		);
 
@@ -5569,7 +5569,7 @@ namespace SDL2
 		 * This function is only available in 2.0.4 or higher.
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_GameControllerFromInstanceID(int joyid);
+		internal static extern IntPtr SDL_GameControllerFromInstanceID(int joyid);
 
 		#endregion
 
@@ -5608,7 +5608,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_HapticConstant
+		internal struct SDL_HapticConstant
 		{
 			// Header
 			public ushort type;
@@ -5629,7 +5629,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_HapticPeriodic
+		internal struct SDL_HapticPeriodic
 		{
 			// Header
 			public ushort type;
@@ -5674,7 +5674,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_HapticRamp
+		internal struct SDL_HapticRamp
 		{
 			// Header
 			public ushort type;
@@ -5696,7 +5696,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_HapticLeftRight
+		internal struct SDL_HapticLeftRight
 		{
 			// Header
 			public ushort type;
@@ -5708,7 +5708,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_HapticCustom
+		internal struct SDL_HapticCustom
 		{
 			// Header
 			public ushort type;
@@ -5732,7 +5732,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Explicit)]
-		public struct SDL_HapticEffect
+		internal struct SDL_HapticEffect
 		{
 			[FieldOffset(0)]
 			public ushort type;
@@ -5752,92 +5752,92 @@ namespace SDL2
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_HapticClose(IntPtr haptic);
+		internal static extern void SDL_HapticClose(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_HapticDestroyEffect(
+		internal static extern void SDL_HapticDestroyEffect(
 			IntPtr haptic,
 			int effect
 		);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticEffectSupported(
+		internal static extern int SDL_HapticEffectSupported(
 			IntPtr haptic,
 			ref SDL_HapticEffect effect
 		);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticGetEffectStatus(
+		internal static extern int SDL_HapticGetEffectStatus(
 			IntPtr haptic,
 			int effect
 		);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticIndex(IntPtr haptic);
+		internal static extern int SDL_HapticIndex(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, EntryPoint = "SDL_HapticName", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_HapticName(int device_index);
-		public static string SDL_HapticName(int device_index)
+		internal static string SDL_HapticName(int device_index)
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_HapticName(device_index));
 		}
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticNewEffect(
+		internal static extern int SDL_HapticNewEffect(
 			IntPtr haptic,
 			ref SDL_HapticEffect effect
 		);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticNumAxes(IntPtr haptic);
+		internal static extern int SDL_HapticNumAxes(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticNumEffects(IntPtr haptic);
+		internal static extern int SDL_HapticNumEffects(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticNumEffectsPlaying(IntPtr haptic);
+		internal static extern int SDL_HapticNumEffectsPlaying(IntPtr haptic);
 
 		/* IntPtr refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_HapticOpen(int device_index);
+		internal static extern IntPtr SDL_HapticOpen(int device_index);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticOpened(int device_index);
+		internal static extern int SDL_HapticOpened(int device_index);
 
 		/* IntPtr refers to an SDL_Haptic*, joystick to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_HapticOpenFromJoystick(
+		internal static extern IntPtr SDL_HapticOpenFromJoystick(
 			IntPtr joystick
 		);
 
 		/* IntPtr refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_HapticOpenFromMouse();
+		internal static extern IntPtr SDL_HapticOpenFromMouse();
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticPause(IntPtr haptic);
+		internal static extern int SDL_HapticPause(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_HapticQuery(IntPtr haptic);
+		internal static extern uint SDL_HapticQuery(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticRumbleInit(IntPtr haptic);
+		internal static extern int SDL_HapticRumbleInit(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticRumblePlay(
+		internal static extern int SDL_HapticRumblePlay(
 			IntPtr haptic,
 			float strength,
 			uint length
@@ -5845,15 +5845,15 @@ namespace SDL2
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticRumbleStop(IntPtr haptic);
+		internal static extern int SDL_HapticRumbleStop(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticRumbleSupported(IntPtr haptic);
+		internal static extern int SDL_HapticRumbleSupported(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticRunEffect(
+		internal static extern int SDL_HapticRunEffect(
 			IntPtr haptic,
 			int effect,
 			uint iterations
@@ -5861,36 +5861,36 @@ namespace SDL2
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticSetAutocenter(
+		internal static extern int SDL_HapticSetAutocenter(
 			IntPtr haptic,
 			int autocenter
 		);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticSetGain(
+		internal static extern int SDL_HapticSetGain(
 			IntPtr haptic,
 			int gain
 		);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticStopAll(IntPtr haptic);
+		internal static extern int SDL_HapticStopAll(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticStopEffect(
+		internal static extern int SDL_HapticStopEffect(
 			IntPtr haptic,
 			int effect
 		);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticUnpause(IntPtr haptic);
+		internal static extern int SDL_HapticUnpause(IntPtr haptic);
 
 		/* haptic refers to an SDL_Haptic* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_HapticUpdateEffect(
+		internal static extern int SDL_HapticUpdateEffect(
 			IntPtr haptic,
 			int effect,
 			ref SDL_HapticEffect data
@@ -5898,13 +5898,13 @@ namespace SDL2
 
 		/* joystick refers to an SDL_Joystick* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_JoystickIsHaptic(IntPtr joystick);
+		internal static extern int SDL_JoystickIsHaptic(IntPtr joystick);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_MouseIsHaptic();
+		internal static extern int SDL_MouseIsHaptic();
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_NumHaptics();
+		internal static extern int SDL_NumHaptics();
 
 		#endregion
 
@@ -5915,37 +5915,37 @@ namespace SDL2
 		public const ushort SDL_AUDIO_MASK_ENDIAN =	(1 << 12);
 		public const ushort SDL_AUDIO_MASK_SIGNED =	(1 << 15);
 
-		public static ushort SDL_AUDIO_BITSIZE(ushort x)
+		internal static ushort SDL_AUDIO_BITSIZE(ushort x)
 		{
 			return (ushort) (x & SDL_AUDIO_MASK_BITSIZE);
 		}
 
-		public static bool SDL_AUDIO_ISFLOAT(ushort x)
+		internal static bool SDL_AUDIO_ISFLOAT(ushort x)
 		{
 			return (x & SDL_AUDIO_MASK_DATATYPE) != 0;
 		}
 
-		public static bool SDL_AUDIO_ISBIGENDIAN(ushort x)
+		internal static bool SDL_AUDIO_ISBIGENDIAN(ushort x)
 		{
 			return (x & SDL_AUDIO_MASK_ENDIAN) != 0;
 		}
 
-		public static bool SDL_AUDIO_ISSIGNED(ushort x)
+		internal static bool SDL_AUDIO_ISSIGNED(ushort x)
 		{
 			return (x & SDL_AUDIO_MASK_SIGNED) != 0;
 		}
 
-		public static bool SDL_AUDIO_ISINT(ushort x)
+		internal static bool SDL_AUDIO_ISINT(ushort x)
 		{
 			return (x & SDL_AUDIO_MASK_DATATYPE) == 0;
 		}
 
-		public static bool SDL_AUDIO_ISLITTLEENDIAN(ushort x)
+		internal static bool SDL_AUDIO_ISLITTLEENDIAN(ushort x)
 		{
 			return (x & SDL_AUDIO_MASK_ENDIAN) == 0;
 		}
 
-		public static bool SDL_AUDIO_ISUNSIGNED(ushort x)
+		internal static bool SDL_AUDIO_ISUNSIGNED(ushort x)
 		{
 			return (x & SDL_AUDIO_MASK_SIGNED) == 0;
 		}
@@ -5965,13 +5965,13 @@ namespace SDL2
 		public const ushort AUDIO_F32MSB =	0x9120;
 		public const ushort AUDIO_F32 =		AUDIO_F32LSB;
 
-		public static readonly ushort AUDIO_U16SYS =
+		internal static readonly ushort AUDIO_U16SYS =
 			BitConverter.IsLittleEndian ? AUDIO_U16LSB : AUDIO_U16MSB;
-		public static readonly ushort AUDIO_S16SYS =
+		internal static readonly ushort AUDIO_S16SYS =
 			BitConverter.IsLittleEndian ? AUDIO_S16LSB : AUDIO_S16MSB;
-		public static readonly ushort AUDIO_S32SYS =
+		internal static readonly ushort AUDIO_S32SYS =
 			BitConverter.IsLittleEndian ? AUDIO_S32LSB : AUDIO_S32MSB;
-		public static readonly ushort AUDIO_F32SYS =
+		internal static readonly ushort AUDIO_F32SYS =
 			BitConverter.IsLittleEndian ? AUDIO_F32LSB : AUDIO_F32MSB;
 
 		public const uint SDL_AUDIO_ALLOW_FREQUENCY_CHANGE =	0x00000001;
@@ -5985,7 +5985,7 @@ namespace SDL2
 
 		public const int SDL_MIX_MAXVOLUME = 128;
 
-		public enum SDL_AudioStatus
+		internal enum SDL_AudioStatus
 		{
 			SDL_AUDIO_STOPPED,
 			SDL_AUDIO_PLAYING,
@@ -5993,7 +5993,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_AudioSpec
+		internal struct SDL_AudioSpec
 		{
 			public int freq;
 			public ushort format; // SDL_AudioFormat
@@ -6007,7 +6007,7 @@ namespace SDL2
 
 		/* userdata refers to a void*, stream to a Uint8 */
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate void SDL_AudioCallback(
+		internal delegate void SDL_AudioCallback(
 			IntPtr userdata,
 			IntPtr stream,
 			int len
@@ -6017,7 +6017,7 @@ namespace SDL2
 		private static extern int INTERNAL_SDL_AudioInit(
 			byte[] driver_name
 		);
-		public static int SDL_AudioInit(string driver_name)
+		internal static int SDL_AudioInit(string driver_name)
 		{
 			return INTERNAL_SDL_AudioInit(
 				UTF8_ToNative(driver_name)
@@ -6025,25 +6025,25 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_AudioQuit();
+		internal static extern void SDL_AudioQuit();
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_CloseAudio();
+		internal static extern void SDL_CloseAudio();
 
 		/* dev refers to an SDL_AudioDeviceID */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_CloseAudioDevice(uint dev);
+		internal static extern void SDL_CloseAudioDevice(uint dev);
 
 		/* audio_buf refers to a malloc()'d buffer from SDL_LoadWAV */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FreeWAV(IntPtr audio_buf);
+		internal static extern void SDL_FreeWAV(IntPtr audio_buf);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetAudioDeviceName", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetAudioDeviceName(
 			int index,
 			int iscapture
 		);
-		public static string SDL_GetAudioDeviceName(
+		internal static string SDL_GetAudioDeviceName(
 			int index,
 			int iscapture
 		) {
@@ -6054,13 +6054,13 @@ namespace SDL2
 
 		/* dev refers to an SDL_AudioDeviceID */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_AudioStatus SDL_GetAudioDeviceStatus(
+		internal static extern SDL_AudioStatus SDL_GetAudioDeviceStatus(
 			uint dev
 		);
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetAudioDriver", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetAudioDriver(int index);
-		public static string SDL_GetAudioDriver(int index)
+		internal static string SDL_GetAudioDriver(int index)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GetAudioDriver(index)
@@ -6068,20 +6068,20 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_AudioStatus SDL_GetAudioStatus();
+		internal static extern SDL_AudioStatus SDL_GetAudioStatus();
 
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetCurrentAudioDriver", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetCurrentAudioDriver();
-		public static string SDL_GetCurrentAudioDriver()
+		internal static string SDL_GetCurrentAudioDriver()
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetCurrentAudioDriver());
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumAudioDevices(int iscapture);
+		internal static extern int SDL_GetNumAudioDevices(int iscapture);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetNumAudioDrivers();
+		internal static extern int SDL_GetNumAudioDrivers();
 
 		/* audio_buf will refer to a malloc()'d byte buffer */
 		/* THIS IS AN RWops FUNCTION! */
@@ -6093,7 +6093,7 @@ namespace SDL2
 			out IntPtr audio_buf,
 			out uint audio_len
 		);
-		public static SDL_AudioSpec SDL_LoadWAV(
+		internal static SDL_AudioSpec SDL_LoadWAV(
 			string file,
 			ref SDL_AudioSpec spec,
 			out IntPtr audio_buf,
@@ -6116,14 +6116,14 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_LockAudio();
+		internal static extern void SDL_LockAudio();
 
 		/* dev refers to an SDL_AudioDeviceID */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_LockAudioDevice(uint dev);
+		internal static extern void SDL_LockAudioDevice(uint dev);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_MixAudio(
+		internal static extern void SDL_MixAudio(
 			[Out()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1, SizeParamIndex = 2)]
 				byte[] dst,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1, SizeParamIndex = 2)]
@@ -6134,7 +6134,7 @@ namespace SDL2
 
 		/* format refers to an SDL_AudioFormat */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_MixAudioFormat(
+		internal static extern void SDL_MixAudioFormat(
 			[Out()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1, SizeParamIndex = 3)]
 				byte[] dst,
 			[In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1, SizeParamIndex = 3)]
@@ -6145,13 +6145,13 @@ namespace SDL2
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_OpenAudio(
+		internal static extern int SDL_OpenAudio(
 			ref SDL_AudioSpec desired,
 			out SDL_AudioSpec obtained
 		);
 		
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_OpenAudio(
+		internal static extern int SDL_OpenAudio(
 			ref SDL_AudioSpec desired,
 			IntPtr obtained
 		);
@@ -6165,7 +6165,7 @@ namespace SDL2
 			out SDL_AudioSpec obtained,
 			int allowed_changes
 		);
-		public static uint SDL_OpenAudioDevice(
+		internal static uint SDL_OpenAudioDevice(
 			string device,
 			int iscapture,
 			ref SDL_AudioSpec desired,
@@ -6182,26 +6182,26 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_PauseAudio(int pause_on);
+		internal static extern void SDL_PauseAudio(int pause_on);
 
 		/* dev refers to an SDL_AudioDeviceID */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_PauseAudioDevice(
+		internal static extern void SDL_PauseAudioDevice(
 			uint dev,
 			int pause_on
 		);
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_UnlockAudio();
+		internal static extern void SDL_UnlockAudio();
 
 		/* dev refers to an SDL_AudioDeviceID */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_UnlockAudioDevice(uint dev);
+		internal static extern void SDL_UnlockAudioDevice(uint dev);
 
 		/* dev refers to an SDL_AudioDeviceID, data to a void* */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_QueueAudio(
+		internal static extern int SDL_QueueAudio(
 			uint dev,
 			IntPtr data,
 			UInt32 len
@@ -6210,7 +6210,7 @@ namespace SDL2
 		/* dev refers to an SDL_AudioDeviceID, data to a void* */
 		/* Only available in 2.0.5 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern uint SDL_DequeueAudio(
+		internal static extern uint SDL_DequeueAudio(
 			uint dev,
 			IntPtr data,
 			uint len
@@ -6219,19 +6219,19 @@ namespace SDL2
 		/* dev refers to an SDL_AudioDeviceID */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetQueuedAudioSize(uint dev);
+		internal static extern UInt32 SDL_GetQueuedAudioSize(uint dev);
 
 		/* dev refers to an SDL_AudioDeviceID */
 		/* Only available in 2.0.4 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_ClearQueuedAudio(uint dev);
+		internal static extern void SDL_ClearQueuedAudio(uint dev);
 
 		/* src_format and dst_format refer to SDL_AudioFormats.
 		 * IntPtr refers to an SDL_AudioStream*.
 		 * Only available in 2.0.7
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern IntPtr SDL_NewAudioStream(
+		internal static extern IntPtr SDL_NewAudioStream(
 			ushort src_format,
 			byte src_channels,
 			int src_rate,
@@ -6244,7 +6244,7 @@ namespace SDL2
 		 * Only available in 2.0.7
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_AudioStreamPut(
+		internal static extern int SDL_AudioStreamPut(
 			IntPtr stream,
 			IntPtr buf,
 			int len
@@ -6254,7 +6254,7 @@ namespace SDL2
 		 * Only available in 2.0.7
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_AudioStreamGet(
+		internal static extern int SDL_AudioStreamGet(
 			IntPtr stream,
 			IntPtr buf,
 			int len
@@ -6264,19 +6264,19 @@ namespace SDL2
 		 * Only available in 2.0.7
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_AudioStreamAvailable(IntPtr stream);
+		internal static extern int SDL_AudioStreamAvailable(IntPtr stream);
 
 		/* stream refers to an SDL_AudioStream*.
 		 * Only available in 2.0.7
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_AudioStreamClear(IntPtr stream);
+		internal static extern void SDL_AudioStreamClear(IntPtr stream);
 
 		/* stream refers to an SDL_AudioStream*.
 		 * Only available in 2.0.7
 		 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_FreeAudioStream(IntPtr stream);
+		internal static extern void SDL_FreeAudioStream(IntPtr stream);
 
 		#endregion
 
@@ -6289,34 +6289,34 @@ namespace SDL2
 		/* Compare tick values, return true if A has passed B. Introduced in SDL 2.0.1,
 		 * but does not require it (it was a macro).
 		 */
-		public static bool SDL_TICKS_PASSED(UInt32 A, UInt32 B)
+		internal static bool SDL_TICKS_PASSED(UInt32 A, UInt32 B)
 		{
 			return ((Int32)(B - A) <= 0);
 		}
 
 		/* Delays the thread's processing based on the milliseconds parameter */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SDL_Delay(UInt32 ms);
+		internal static extern void SDL_Delay(UInt32 ms);
 
 		/* Returns the milliseconds that have passed since SDL was initialized */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt32 SDL_GetTicks();
+		internal static extern UInt32 SDL_GetTicks();
 
 		/* Get the current value of the high resolution counter */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt64 SDL_GetPerformanceCounter();
+		internal static extern UInt64 SDL_GetPerformanceCounter();
 
 		/* Get the count per second of the high resolution counter */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt64 SDL_GetPerformanceFrequency();
+		internal static extern UInt64 SDL_GetPerformanceFrequency();
 
 		/* param refers to a void* */
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate UInt32 SDL_TimerCallback(UInt32 interval, IntPtr param);
+		internal delegate UInt32 SDL_TimerCallback(UInt32 interval, IntPtr param);
 
 		/* int refers to an SDL_TimerID, param to a void* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_AddTimer(
+		internal static extern int SDL_AddTimer(
 			UInt32 interval,
 			SDL_TimerCallback callback,
 			IntPtr param
@@ -6324,13 +6324,13 @@ namespace SDL2
 
 		/* id refers to an SDL_TimerID */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_RemoveTimer(int id);
+		internal static extern SDL_bool SDL_RemoveTimer(int id);
 
 		#endregion
 
 		#region SDL_syswm.h
 
-		public enum SDL_SYSWM_TYPE
+		internal enum SDL_SYSWM_TYPE
 		{
 			SDL_SYSWM_UNKNOWN,
 			SDL_SYSWM_WINDOWS,
@@ -6346,27 +6346,27 @@ namespace SDL2
 
 		// FIXME: I wish these weren't public...
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_windows_wminfo
+		internal struct INTERNAL_windows_wminfo
 		{
 			public IntPtr window; // Refers to an HWND
 			public IntPtr hdc; // Refers to an HDC
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_winrt_wminfo
+		internal struct INTERNAL_winrt_wminfo
 		{
 			public IntPtr window; // Refers to an IInspectable*
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_x11_wminfo
+		internal struct INTERNAL_x11_wminfo
 		{
 			public IntPtr display; // Refers to a Display*
 			public IntPtr window; // Refers to a Window (XID, use ToInt64!)
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_directfb_wminfo
+		internal struct INTERNAL_directfb_wminfo
 		{
 			public IntPtr dfb; // Refers to an IDirectFB*
 			public IntPtr window; // Refers to an IDirectFBWindow*
@@ -6374,13 +6374,13 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_cocoa_wminfo
+		internal struct INTERNAL_cocoa_wminfo
 		{
 			public IntPtr window; // Refers to an NSWindow*
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_uikit_wminfo
+		internal struct INTERNAL_uikit_wminfo
 		{
 			public IntPtr window; // Refers to a UIWindow*
 			public uint framebuffer;
@@ -6389,7 +6389,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_wayland_wminfo
+		internal struct INTERNAL_wayland_wminfo
 		{
 			public IntPtr display; // Refers to a wl_display*
 			public IntPtr surface; // Refers to a wl_surface*
@@ -6397,21 +6397,21 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_mir_wminfo
+		internal struct INTERNAL_mir_wminfo
 		{
 			public IntPtr connection; // Refers to a MirConnection*
 			public IntPtr surface; // Refers to a MirSurface*
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct INTERNAL_android_wminfo
+		internal struct INTERNAL_android_wminfo
 		{
 			public IntPtr window; // Refers to an ANativeWindow
 			public IntPtr surface; // Refers to an EGLSurface
 		}
 
 		[StructLayout(LayoutKind.Explicit)]
-		public struct INTERNAL_SysWMDriverUnion
+		internal struct INTERNAL_SysWMDriverUnion
 		{
 			[FieldOffset(0)]
 			public INTERNAL_windows_wminfo win;
@@ -6435,7 +6435,7 @@ namespace SDL2
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct SDL_SysWMinfo
+		internal struct SDL_SysWMinfo
 		{
 			public SDL_version version;
 			public SDL_SYSWM_TYPE subsystem;
@@ -6444,7 +6444,7 @@ namespace SDL2
 
 		/* window refers to an SDL_Window* */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_bool SDL_GetWindowWMInfo(
+		internal static extern SDL_bool SDL_GetWindowWMInfo(
 			IntPtr window,
 			ref SDL_SysWMinfo info
 		);
@@ -6456,7 +6456,7 @@ namespace SDL2
 		/* Only available in 2.0.1 */
 		[DllImport(nativeLibName, EntryPoint = "SDL_GetBasePath", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr INTERNAL_SDL_GetBasePath();
-		public static string SDL_GetBasePath()
+		internal static string SDL_GetBasePath()
 		{
 			return UTF8_ToManaged(INTERNAL_SDL_GetBasePath(), true);
 		}
@@ -6467,7 +6467,7 @@ namespace SDL2
 			byte[] org,
 			byte[] app
 		);
-		public static string SDL_GetPrefPath(string org, string app)
+		internal static string SDL_GetPrefPath(string org, string app)
 		{
 			return UTF8_ToManaged(
 				INTERNAL_SDL_GetPrefPath(
@@ -6482,7 +6482,7 @@ namespace SDL2
 
 		#region SDL_power.h
 
-		public enum SDL_PowerState
+		internal enum SDL_PowerState
 		{
 			SDL_POWERSTATE_UNKNOWN = 0,
 			SDL_POWERSTATE_ON_BATTERY,
@@ -6492,7 +6492,7 @@ namespace SDL2
 		}
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern SDL_PowerState SDL_GetPowerInfo(
+		internal static extern SDL_PowerState SDL_GetPowerInfo(
 			out int secs,
 			out int pct
 		);
@@ -6502,11 +6502,11 @@ namespace SDL2
 		#region SDL_cpuinfo.h
 
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetCPUCount();
+		internal static extern int SDL_GetCPUCount();
 
 		/* Only available in 2.0.1 */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int SDL_GetSystemRAM();
+		internal static extern int SDL_GetSystemRAM();
 
 		#endregion
 	}

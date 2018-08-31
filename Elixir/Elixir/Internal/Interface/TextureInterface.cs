@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using Elixir.GameFramework;
 
@@ -10,7 +10,7 @@ namespace Elixir.Internal.Interface
 
         public abstract void Update(byte[] pixels, int width, int height, int offsetX, int offsetY);
         public abstract void Dispose();
-        public abstract int[] GetPixelData();
+        public abstract IntPtr GetPixelData();
         
         internal abstract void CreateTexture(int width, int height);
         internal abstract void CreateTexture(string file);
@@ -19,17 +19,18 @@ namespace Elixir.Internal.Interface
         /// Return the pointer to the pixel data, call UnlockTexture when you are done using it!
         /// </summary>
         /// <returns></returns>
-        public IntPtr LockTexture()
+        /*public IntPtr LockTexture()
         {
             _gcHandle = GCHandle.Alloc(GetPixelData(), GCHandleType.Pinned);
             IntPtr ptr = _gcHandle.AddrOfPinnedObject();
             return ptr;
         }
+*/
 
         /// <summary>
         /// Free the previously locked pointer
         /// </summary>
-        public void UnlockTexture()
+        /*public void UnlockTexture()
         {
             if (_gcHandle.IsAllocated)
             {
@@ -37,6 +38,6 @@ namespace Elixir.Internal.Interface
             }
         }
 
-        private GCHandle _gcHandle;
+        private GCHandle _gcHandle;*/
     }
 }

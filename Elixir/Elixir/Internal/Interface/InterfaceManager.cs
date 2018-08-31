@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Elixir.Internal.Interface
 {
@@ -14,8 +14,6 @@ namespace Elixir.Internal.Interface
                     break;
                 case InterfaceType.Window:
                     return typeof(Implementation.SDLImpl.SdlWindow); 
-                case InterfaceType.Texture:
-                    return typeof(Implementation.ImageSharpImpl.ImageSharpTexture);
                 case InterfaceType.Audio:
                     throw new NotImplementedException();
                 default:

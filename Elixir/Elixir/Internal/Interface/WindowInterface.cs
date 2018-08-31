@@ -1,4 +1,4 @@
-﻿using Elixir.Graphics;
+using Elixir.Graphics;
 using System;
 using Elixir.GameFramework;
 using Elixir.Input;

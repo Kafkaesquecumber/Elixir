@@ -29,5 +29,10 @@ namespace Elixir.Graphics
             Color = color;
             TexCoords = texCoords;
         }
+
+        public override string ToString()
+        {
+            return $"(P:{Position}, C:{Color}, T:{TexCoords})";
+        }
     }
 }

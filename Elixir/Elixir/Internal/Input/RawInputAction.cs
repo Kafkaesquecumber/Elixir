@@ -1,4 +1,4 @@
-﻿using Elixir.Input;
+using Elixir.Input;
 
 namespace Elixir.Internal.Input
 {

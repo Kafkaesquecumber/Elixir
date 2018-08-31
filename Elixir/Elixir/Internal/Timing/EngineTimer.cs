@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Elixir.Internal.Interface;
 
 namespace Elixir.Internal.Timing
