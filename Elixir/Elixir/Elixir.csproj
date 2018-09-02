@@ -45,10 +45,13 @@
   <ItemGroup>
     <Compile Remove="Binaries\**" />
     <Compile Remove="Internal\Library\OpenGL.Net\**" />
+    <Compile Remove="Localization\**" />
     <EmbeddedResource Remove="Binaries\**" />
     <EmbeddedResource Remove="Internal\Library\OpenGL.Net\**" />
+    <EmbeddedResource Remove="Localization\**" />
     <None Remove="Binaries\**" />
     <None Remove="Internal\Library\OpenGL.Net\**" />
+    <None Remove="Localization\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,10 +78,6 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Localization\" />
   </ItemGroup>
 
 </Project>

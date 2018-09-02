@@ -73,7 +73,7 @@ namespace Elixir.Graphics
             _frameBufferVbo = GL.GenBuffer();
             PostProcessingShader = Shader.Default;
 
-            _frameBuffer = new RenderTarget(window.Size, TextureFilterMode.Nearest);
+            _frameBuffer = new RenderTarget(window.Size, TextureFilterMode.Linear);
         }
 
         internal void AddDrawableActor(DrawableActor drawableActor)

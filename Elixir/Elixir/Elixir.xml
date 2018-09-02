@@ -386,19 +386,41 @@
             (R=0, G=0, B=0, A=0);
             </summary>
         </member>
-        <member name="M:Elixir.GameFramework.Color.ToBytes">
+        <member name="M:Elixir.GameFramework.Color.ToRgbaBytes">
             <summary>
             Create a byte array of rgba values (between 0 and 255)
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Elixir.GameFramework.Color.ToBgra(System.Byte[])">
+            <summary>
+            Convert a RGBA byte array to a BGRA byte array
+            </summary>
+            <param name="rgbaBytes">The bytes in RGBA order</param>
+            <returns>The bytes in BGRA order</returns>
+        </member>
+        <member name="M:Elixir.GameFramework.Color.ToRgba(System.Byte[])">
+            <summary>
+            Convert a BGRA byte array to a RGBA byte array
+            </summary>
+            <param name="bgraBytes">The bytes in BGRA order</param>
+            <returns>The bytes in RGBA order</returns>
+        </member>
         <member name="M:Elixir.GameFramework.ColorExtensions.ToBytes(System.Collections.Generic.IEnumerable{Elixir.GameFramework.Color})">
             <summary>
-            <para>Create a byte array of rgba values (between 0 and 255)</para>
-            <para>The byte array will be 4 times the length of the color collection</para>
+            <para>Create an RGBA byte array of rgba values (between 0 and 255)</para>
+            <para>The RGBA byte array will be 4 times the length of the color collection</para>
             </summary>
-            <param name="colors"></param>
-            <returns></returns>
+            <param name="colors">The colors to convert to RGBA bytes</param>
+            <returns>The RGBA bytes</returns>
+        </member>
+        <member name="M:Elixir.GameFramework.ColorExtensions.ToColors(System.Collections.Generic.IEnumerable{System.Byte})">
+            <summary>
+            <para>Convert the RGBA bytes to colors</para>
+            <para>The color array will be a quarter the length of the byte array</para>
+            </summary>
+            <param name="bytes">The RGBA bytes to convert</param>
+            <returns>The colors</returns>
         </member>
         <member name="T:Elixir.GameFramework.ContentLoader">
             <summary>
@@ -824,6 +846,130 @@
             </summary>
             <returns>Integer description of the object</returns>
         </member>
+        <member name="T:Elixir.Graphics.DynamicTexture">
+            <inheritdoc />
+            <summary>
+            <para>Unlike a normal texture, a dynamic texture has direct access to it's pixel data</para>
+            <para>Use a dynamic texture if you need flexible access to read and write pixel data</para>
+            <para>A dynamic texture can be convert to a normal texture and vise-versa (do not forget to dispose the dynamic texture when you are done with it)</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.Graphics.DynamicTexture.Size">
+            <summary>
+            The dimensions of the dynamic texture
+            </summary>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.#ctor(System.String)">
+            <summary>
+            Create a new dynamic texture
+            </summary>
+            <param name="file">The path to the file (with extension)</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a new dynamic texture
+            </summary>
+            <param name="width">The width of the dynamic texture</param>
+            <param name="height">The height of the dynamic texture</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.#ctor(Elixir.Graphics.Texture)">
+            <summary>
+            Create a new dynamic texture 
+            </summary>
+            <param name="texture">A texture to copy the pixel data from</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.ReadColors">
+            <summary>
+            <para>Read the RGBA bytes from the dynamic texture and convert them to colors</para>
+            <para>The length of the color array is (Size.X * Size.Y)</para>
+            </summary>
+            <returns>The pixels as colors</returns>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.ReadBytes">
+            <summary>
+            <para>Read all the RGBA bytes from the dynamic texture</para>
+            <para>The length of the byte array is (Size.X * Size.Y * 4)</para>
+            </summary>
+            <returns>The pixels as RGBA bytes</returns>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.ReadColors(Elixir.GameFramework.IntRect)">
+            <summary>
+            <para>Read the RGBA bytes from the dynamic texture and convert them to colors</para>
+            <para>The length of the color array will be (region.Width * region.Height) unless a part of the region falls of the texture, 
+            the region will then size down to fit the texture exactly</para>
+            </summary>
+            <param name="region">The region on the dynamic texture to read from</param>
+            <returns>The pixels as colors</returns>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.ReadBytes(Elixir.GameFramework.IntRect)">
+            <summary>
+            <para>Read the RGBA bytes from the dynamic texture</para>
+            <para>The length of the byte array will be (region.Width * region.Height * 4) unless a part of the region falls of the texture, 
+            the region will then size down to fit the texture exactly</para>
+            </summary>
+            <param name="region">The region on the dynamic texture to read from</param>
+            <returns>The pixels as RGBA bytes</returns>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.WriteBytes(System.Byte[])">
+            <summary>
+            <para>Write RGBA bytes to the dynamic texture</para>
+            </summary>
+            <param name="bytes">The RGBA bytes to write</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.WriteColors(Elixir.GameFramework.Color[])">
+            <summary>
+            <para>Write the colors to the dynamic texture</para>
+            </summary>
+            <param name="colors">The colors to write</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.WriteColors(Elixir.GameFramework.Color[],Elixir.GameFramework.IntRect)">
+            <summary>
+            <para>Write the colors to the dynamic texture in the specified region</para>
+            </summary>
+            <param name="colors">The colors to write</param>
+            <param name="region">The region on the dynamic texture to write into</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.WriteColor(Elixir.GameFramework.Color,Elixir.GameFramework.IntRect)">
+            <summary>
+            <para>Write a single color into all pixels in the region</para>
+            </summary>
+            <param name="color">The color to write</param>
+            <param name="region">The region on the dynamic texture to write into</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.WriteColor(Elixir.GameFramework.Color)">
+            <summary>
+            <para>Write a single color into all pixels in the dynamic texture</para>
+            </summary>
+            <param name="color">The color to write</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.WriteDynamicTexture(Elixir.Graphics.DynamicTexture,System.Int32,System.Int32)">
+            <summary>
+            <para>Write a dynamic texture into this dynamic texture</para>
+            <para>The input dynamic texture must not be larger than the target dynamic texture</para>
+            </summary>
+            <param name="dynamicTexture">The dynamic texture to write into the target dynamic texture</param>
+            <param name="x">The x start location on the target dynamic texture</param>
+            <param name="y">The y start location on the target dynamic texture</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.WriteBytes(System.Byte[],Elixir.GameFramework.IntRect)">
+            <summary>
+            <para>Write the RGBA bytes to the dynamic texture</para>
+            </summary>
+            <param name="bytes">The RGBA bytes to write</param>
+            <param name="region">The region on the dynamic texture to write to</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.Save(System.String)">
+            <summary>
+            Save the dynamic texture to a file
+            </summary>
+            <param name="file">The path and file name + extension</param>
+        </member>
+        <member name="M:Elixir.Graphics.DynamicTexture.Dispose">
+            <inheritdoc />
+            <summary>
+            Dispose the dynamic texture
+            </summary>
+        </member>
         <member name="T:Elixir.Graphics.FontCreateOptions">
             <summary>
             The create options to use for the font
@@ -915,44 +1061,64 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Elixir.Graphics.Texture.Size">
+        <member name="T:Elixir.Graphics.Texture">
+            <inheritdoc cref="T:Elixir.GameFramework.LoadableContent" />
+            <summary>
+            <para>A texture exists only on the GPU and is therefor not as flexible as a dynamic texture</para>
+            <para>Use a dynamic texture if you want access and/or modify the pixel data on the CPU</para>
+            <para>A dynamic texture can be converted to a texture and vise-versa (do not forget to dispose the dynamic texture when you are done with it)</para>
+            </summary>
+        </member>
+        <member name="P:Elixir.Graphics.Texture.Handle">
+            <summary>
+            The gl handle 
+            </summary>
+        </member>
+        <member name="F:Elixir.Graphics.Texture.Size">
             <summary>
             The dimensions of the texture
             </summary>
         </member>
-        <member name="M:Elixir.Graphics.Texture.#ctor(System.String,Elixir.Graphics.TextureCreateOptions)">
+        <member name="M:Elixir.Graphics.Texture.#ctor(System.Int32,System.Int32,Elixir.Graphics.TextureCreateOptions)">
             <summary>
-            Used by the content loader
-            </summary>
-            <param name="file"></param>
-            <param name="createOptions">The create options</param>
-        </member>
-        <member name="M:Elixir.Graphics.Texture.#ctor(System.Int32,System.Int32,Elixir.GameFramework.Color,Elixir.Graphics.TextureCreateOptions)">
-            <summary>
-            Create a new texture instance with all white pixels
+            Create a new texture
             </summary>
             <param name="width">The width of the texture</param>
             <param name="height">The height of the texture</param>
-            <param name="color">The color of all pixels in the texture</param>
             <param name="createOptions">The create options</param>
         </member>
-        <member name="M:Elixir.Graphics.Texture.Update(System.Byte[])">
+        <member name="M:Elixir.Graphics.Texture.#ctor(Elixir.Graphics.DynamicTexture,Elixir.Graphics.TextureCreateOptions)">
             <summary>
-            Set the pixel data for the texture
+            Create a new texture
             </summary>
-            <param name="rgbaBytes">Length should match texture dimensions * 4</param>
+            <param name="dynamicTexture">The dynamic texture to copy the pixel data from</param>
+            <param name="createOptions">The create options</param>
         </member>
-        <member name="M:Elixir.Graphics.Texture.Update(System.Collections.Generic.IEnumerable{Elixir.GameFramework.Color})">
+        <member name="M:Elixir.Graphics.Texture.Update(System.Collections.Generic.IEnumerable{Elixir.GameFramework.Color},Elixir.GameFramework.IntRect)">
             <summary>
-            Set the pixel data for the texture
+            Update the texture on the GPU using 32-bit RGBA colors
             </summary>
-            <param name="pixels">Count should match texture dimensions</param>
+            <param name="colors">The color pixels to be submitted to the texture</param>
+            <param name="region">The region of the sub texture</param>
         </member>
         <member name="M:Elixir.Graphics.Texture.Update(Elixir.GameFramework.Color)">
             <summary>
-            Set all pixels in the texture to the given color
+            Update all the pixels in the texture on the GPU to a single 32-bit RGBA color
             </summary>
-            <param name="allPixels"></param>
+            <param name="color">The color for all the pixels in the texture</param>
+        </member>
+        <member name="M:Elixir.Graphics.Texture.Update(System.Byte[],Elixir.GameFramework.IntRect)">
+            <summary>
+            Update the texture on the GPU
+            </summary>
+            <param name="bytes">The bytes to be submitted to the texture</param>
+            <param name="region">The region of the sub texture</param>
+        </member>
+        <member name="M:Elixir.Graphics.Texture.Dispose">
+            <inheritdoc />
+            <summary>
+            Dispose the texture
+            </summary>
         </member>
         <member name="T:Elixir.Graphics.TextureCreateOptions">
             <summary>
