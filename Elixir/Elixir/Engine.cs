@@ -246,7 +246,7 @@ namespace Elixir
                 
                 EngineTimer.CaptureFrameStartTime();
 
-                Window.Interface.Clear(Color.Black);
+                Window.Interface.Clear(Color.White); // HACK Temp for testing text
 
                 // Tick after first iteration so delta time is set
                 if (!EngineTimer.FirstIteration) 

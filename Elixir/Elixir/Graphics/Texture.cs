@@ -1,121 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.IO;
 using Elixir.GameFramework;
-using Elixir.Internal;
 using OpenTK.Graphics.OpenGL;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Elixir.Internal.Interface;
 using Color = Elixir.GameFramework.Color;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Elixir.Graphics
 {
+    /// <inheritdoc cref="LoadableContent" />
+    /// <summary>
+    /// <para>A texture exists only on the GPU and is therefor not as flexible as a dynamic texture</para>
+    /// <para>Use a dynamic texture if you want access and/or modify the pixel data on the CPU</para>
+    /// <para>A dynamic texture can be converted to a texture and vise-versa (do not forget to dispose the dynamic texture when you are done with it)</para>
+    /// </summary>
     public class Texture : LoadableContent, IDisposable
     {
+        internal const PixelFormat PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
+
         /// <summary>
-        /// The dimensions of the texture
-        /// </summary>
-        public IntVector2 Size { get; private set; }
-        
-        /// <summary>
-        /// The OpenGL handle
+        /// The gl handle 
         /// </summary>
         internal int Handle { get; private set; }
 
+        /// <summary>
+        /// The dimensions of the texture
+        /// </summary>
+        public readonly IntVector2 Size;
+        
         internal override bool IsDisposed => Handle == 0;
         
-        private TextureCreateOptions _createOptions;
+        private readonly TextureCreateOptions _createOptions;
         
         /// <summary>
-        /// Create a new texture instance with all white pixels
+        /// Create a new texture
         /// </summary>
         /// <param name="width">The width of the texture</param>
         /// <param name="height">The height of the texture</param>
         /// <param name="createOptions">The create options</param>
         public Texture(int width, int height, TextureCreateOptions createOptions)
         {
+            _createOptions = createOptions;
             Size = new IntVector2(width, height);
-            LoadTexture();
+            LoadTexture(Enumerable.Repeat<byte>(0, Size.X * Size.Y * 4).ToArray());
         }
 
-        private IntPtr GetPixelDataPointer()
-        {
-            IntPtr dataPtr;
-            BitmapData data = NativeTexture.LockBits(new Rectangle(0, 0, Size.X, Size.Y), 
-                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            dataPtr = data.Scan0;
-            NativeTexture.UnlockBits(data);
-            return dataPtr;
-        }
-
-        internal void LoadTexture()
-        {
-            byte[] bytes = Enumerable.Repeat<byte>(255, Size.X * Size.Y * 4).ToArray();
-            
-            Handle = GL.GenTexture();
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
-            
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Size.X, Size.Y, 0, 
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bytes);
-            
-            ApplyTextureParameters();
-
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-        }
-        
         /// <summary>
-        /// Update the texture using bytes
+        /// Create a new texture
         /// </summary>
-        /// <param name="pixels">The pixels to be submitted to the texture</param>
-        /// <param name="width">The width of the sub-texture to submit</param>
-        /// <param name="height">The height of the sub-texture to submit</param>
-        /// <param name="x">The x location in the texture to begin submitting from</param>
-        /// <param name="y">The y location in the texture to begin submitting from</param>
-        public void Update(byte[] pixels, int width, int height, int x, int y)
+        /// <param name="dynamicTexture">The dynamic texture to copy the pixel data from</param>
+        /// <param name="createOptions">The create options</param>
+        public Texture(DynamicTexture dynamicTexture, TextureCreateOptions createOptions)
         {
-            if (pixels.Length > 0 && Handle != 0)
+            _createOptions = createOptions;
+            Size = new IntVector2(dynamicTexture.Size.X, dynamicTexture.Size.Y);
+            LoadTexture(dynamicTexture.ReadBytes());
+        }
+
+        // This constructor is reserved for the content loader, it's signature should not be changed
+        internal Texture(string file, TextureCreateOptions createOptions)
+        {
+            _createOptions = createOptions;
+
+            // Create a temporary dynamic texture so we can load the file and read the pixel data
+            using (DynamicTexture temp = new DynamicTexture(file))
             {
-                GL.BindTexture(TextureTarget.Texture2D, Handle);
-                GL.TexSubImage2D(TextureTarget.Texture2D, 0, x, y, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
-                ApplyTextureParameters();
-                
-                // Flush to make sure the new texture data will be up-to-date immediately
-                GL.Flush();
+                Size = new IntVector2(temp.Size.X, temp.Size.Y);
+                // Load the texture into gl
+                LoadTexture(temp.ReadBytes());
             }
         }
 
         /// <summary>
-        /// Update the texture using rgba colors
+        /// Update the texture on the GPU using 32-bit RGBA colors
         /// </summary>
-        /// <param name="pixels">The color pixels to be submitted to the texture</param>
-        /// <param name="width">The width of the sub-texture to submit</param>
-        /// <param name="height">The height of the sub-texture to submit</param>
-        /// <param name="x">The x location in the texture to begin submitting from</param>
-        /// <param name="y">The y location in the texture to begin submitting from</param>
-        public void Update(IEnumerable<Color> pixels, int width, int height, int x, int y)
+        /// <param name="colors">The color pixels to be submitted to the texture</param>
+        /// <param name="region">The region of the sub texture</param>
+        public void Update(IEnumerable<Color> colors, IntRect region)
         {
-            Color[] colors = pixels as Color[] ?? pixels.ToArray();
-            Update(colors.ToRgbaBytes(), width, height, x, y);
+            Color[] colorArray = colors as Color[] ?? colors.ToArray();
+            Update(colorArray.ToBytes(), region);
         }
 
         /// <summary>
-        /// Update all the pixels in the texture to a single color
+        /// Update all the pixels in the texture on the GPU to a single 32-bit RGBA color
         /// </summary>
-        /// <param name="allPixels">The color for all the pixels in the texture</param>
-        public void Update(Color allPixels)
+        /// <param name="color">The color for all the pixels in the texture</param>
+        public void Update(Color color)
         {
-            Color[] colors = Enumerable.Repeat(allPixels, Size.X * Size.Y).ToArray();
-            Update(colors.ToRgbaBytes(), Size.X, Size.Y, 0, 0);
+            Color[] colors = Enumerable.Repeat(color, Size.X * Size.Y).ToArray();
+            Update(colors.ToBytes(), new IntRect(0, 0, Size));
         }
-        
+
+        /// <summary>
+        /// Update the texture on the GPU
+        /// </summary>
+        /// <param name="bytes">The bytes to be submitted to the texture</param>
+        /// <param name="region">The region of the sub texture</param>
+        public void Update(byte[] bytes, IntRect region)
+        {
+            if (bytes.Length > 0 && Handle != 0)
+            {
+                // Bind the texture
+                GL.BindTexture(TextureTarget.Texture2D, Handle);
+                
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, region.X, region.Y, region.Width, region.Height, 
+                    PixelFormat, PixelType.UnsignedByte, bytes);
+
+                ApplyTextureParameters();
+
+                // Flush to make sure the new texture data will be up-to-date immediately
+                GL.Flush();
+
+                // Unbind the texture
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+            }
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Dispose the texture
+        /// </summary>
         public void Dispose()
         {
             GL.DeleteTexture(Handle);
+        }
+
+        internal void LoadTexture(byte[] bytes)
+        {
+            Handle = GL.GenTexture();
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Size.X, Size.Y, 0,
+                PixelFormat, PixelType.UnsignedByte, bytes);
+
+            ApplyTextureParameters();
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
         private void ApplyTextureParameters()

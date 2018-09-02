@@ -386,13 +386,13 @@
             (R=0, G=0, B=0, A=0);
             </summary>
         </member>
-        <member name="M:Elixir.GameFramework.Color.ToRgbaBytes">
+        <member name="M:Elixir.GameFramework.Color.ToBytes">
             <summary>
             Create a byte array of rgba values (between 0 and 255)
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Elixir.GameFramework.ColorExtensions.ToRgbaBytes(System.Collections.Generic.IEnumerable{Elixir.GameFramework.Color})">
+        <member name="M:Elixir.GameFramework.ColorExtensions.ToBytes(System.Collections.Generic.IEnumerable{Elixir.GameFramework.Color})">
             <summary>
             <para>Create a byte array of rgba values (between 0 and 255)</para>
             <para>The byte array will be 4 times the length of the color collection</para>

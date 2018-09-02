@@ -34,7 +34,7 @@ namespace Elixir.Internal.Interface.Implementation.SDLImpl
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MINOR_VERSION, 2);
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_PROFILE_MASK, SDL.SDL_GLprofile.SDL_GL_CONTEXT_PROFILE_CORE);
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_DOUBLEBUFFER, 1);
-
+            
             SDL.SDL_WindowFlags windowFlags= windowFlags = SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL |
                                                            SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN |
                                                            SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
@@ -51,7 +51,7 @@ namespace Elixir.Internal.Interface.Implementation.SDLImpl
             OpenTK.Platform.IWindowInfo windowInfo =
                 OpenTK.Platform.Utilities.CreateSdl2WindowInfo(NativeWindowHandle);
             GraphicsMode graphicsMode = GraphicsMode.Default;
-
+            
             GlContext = new GraphicsContext(graphicsMode, windowInfo)
             {
                 SwapInterval = 1

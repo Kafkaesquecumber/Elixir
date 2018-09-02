@@ -30,7 +30,7 @@ namespace Elixir.GameFramework
             Font = font;
 
             string testString = "Hello";
-            Texture = new Texture(8000, 1000, Color.Transparant, TextureCreateOptions.Sharp);
+            Texture = new Texture(8000, 1000, TextureCreateOptions.Sharp);
 
             List<Surface> surfaces = new List<Surface>();
             for (int i = 0; i < testString.Length; i++)
@@ -64,7 +64,7 @@ namespace Elixir.GameFramework
                     pixels[index++] = c;
                 }
                 
-                Texture.Update(pixels, width, height, (width * i), 0);
+                Texture.Update(pixels, new IntRect(width * i, 0, width, height));
                 
                 Marshal.FreeHGlobal(fontSurface.Bits);
             }
