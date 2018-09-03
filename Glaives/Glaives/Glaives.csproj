@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.0.1</Version>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>D:\git\Elixir\Elixir\Elixir\Elixir.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>D:\git\Elixir\Elixir\Elixir\Elixir.xml</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>D:\git\Arroic\Glaives\Glaives\Glaives\Glaives.xml</DocumentationFile>
+    <DefineConstants>TRACE;X86</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>D:\git\Arroic\SGE\SGE\SGE\SGE.xml</DocumentationFile>
+    <DefineConstants>TRACE;X64</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <DefineConstants>TRACE;X86</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>D:\git\Arroic\Glaives\Glaives\Glaives\Glaives.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DefineConstants>TRACE;X64</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>D:\git\Arroic\SGE\SGE\SGE\SGE.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Binaries\**" />
+    <Compile Remove="Internal\Library\OpenGL.Net\**" />
+    <Compile Remove="Localization\**" />
+    <EmbeddedResource Remove="Binaries\**" />
+    <EmbeddedResource Remove="Internal\Library\OpenGL.Net\**" />
+    <EmbeddedResource Remove="Localization\**" />
+    <None Remove="Binaries\**" />
+    <None Remove="Internal\Library\OpenGL.Net\**" />
+    <None Remove="Localization\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Internal\Library\Khronos.Net\Khronos.Net.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpFontCore" Version="0.1.1" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OpenTK">
+      <HintPath>Binaries\Assemblies\OpenTK.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Internal\Library\Khronos.Net\Khronos.Net.projitems">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Khronos.Net.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>
