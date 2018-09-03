@@ -50,7 +50,7 @@ namespace Glaives.Configuration
             {
                 if (value.GroupBy(x => x.Id).Any(y => y.Count() > 1))
                 {
-                    throw new GlaivesCoreException($"Duplicate {nameof(InputActionBinding)} id's are not allowed");
+                    throw new GlaivesException($"Duplicate {nameof(InputActionBinding)} id's are not allowed");
                 }
 
                 _actionBindings = value;
@@ -68,7 +68,7 @@ namespace Glaives.Configuration
             {
                 if (value.GroupBy(x => x.Id).Any(y => y.Count() > 1))
                 {
-                    throw new GlaivesCoreException($"Duplicate {nameof(InputAxisBinding)} id's are not allowed");
+                    throw new GlaivesException($"Duplicate {nameof(InputAxisBinding)} id's are not allowed");
                 }
 
                 _axisBindings = value;

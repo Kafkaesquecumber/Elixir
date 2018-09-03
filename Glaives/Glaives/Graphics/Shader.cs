@@ -88,7 +88,7 @@ namespace Glaives.Graphics
         {
             if (!File.Exists(pixelShaderFile))
             {
-                throw new GlaivesCoreException($"No shader file exists in path '{pixelShaderFile}'");
+                throw new GlaivesException($"No shader file exists in path '{pixelShaderFile}'");
             }
 
             PixelShaderString = File.ReadAllText(pixelShaderFile);

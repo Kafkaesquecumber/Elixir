@@ -50,13 +50,13 @@ namespace Glaives.Internal.Interface
             Type type = GetInterfaceType(interfaceType);
             if(type == null)
             {
-                throw new GlaivesCoreException("No interface type found for " + interfaceType);
+                throw new GlaivesException("No interface type found for " + interfaceType);
             }
 
             Interface instance = (Interface)Activator.CreateInstance(type);
             if(instance == null)
             {
-                throw new GlaivesCoreException("Failed to create instance of interface for " + type.Name);
+                throw new GlaivesException("Failed to create instance of interface for " + type.Name);
             }
             return instance;
         }

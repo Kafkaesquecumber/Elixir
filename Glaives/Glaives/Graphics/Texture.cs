@@ -22,10 +22,9 @@
 
 using System;
 using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL;
 using System.Linq;
+using OpenTK.Graphics.OpenGL;
 using Glaives.GameFramework;
-using Color = Glaives.GameFramework.Color;
 
 namespace Glaives.Graphics
 {
@@ -38,6 +37,11 @@ namespace Glaives.Graphics
     public class Texture : LoadableContent, IDisposable
     {
         internal const PixelFormat PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
+
+        /// <summary>
+        /// The maximum width/height that a texture supports
+        /// </summary>
+        public static int MaxTextureSize => GL.GetInteger(GetPName.MaxTextureSize);
 
         /// <summary>
         /// The gl handle 
@@ -136,6 +140,23 @@ namespace Glaives.Graphics
                 // Unbind the texture
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
+        }
+
+        /// <summary>
+        /// Get the RGBA bytes of the texture from the GPU
+        /// </summary>
+        public byte[] GetBytes()
+        {
+            byte[] bytes = new byte[Size.X * Size.Y * 4];
+            
+            // Bind texture and copy the texture data into the byte array
+            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat, PixelType.UnsignedByte, bytes);
+
+            // Unbind the texture
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+
+            return bytes;
         }
 
         /// <inheritdoc />

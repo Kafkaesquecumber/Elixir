@@ -48,7 +48,7 @@ namespace Glaives.Internal.Interface.Implementation.SDLImpl
         {
             if (SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) < 0)
             {
-                throw new GlaivesCoreException($"Failed to initialize SDL: {SDL.SDL_GetError()}");
+                throw new GlaivesException($"Failed to initialize SDL: {SDL.SDL_GetError()}");
             }
 
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -64,7 +64,7 @@ namespace Glaives.Internal.Interface.Implementation.SDLImpl
             
             if (NativeWindowHandle == IntPtr.Zero)
             {
-                throw new GlaivesCoreException($"Failed to open SDL window: {SDL.SDL_GetError()}");
+                throw new GlaivesException($"Failed to open SDL window: {SDL.SDL_GetError()}");
             }
 
             _isOpen = true;

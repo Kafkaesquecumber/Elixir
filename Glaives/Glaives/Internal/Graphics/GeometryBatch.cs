@@ -74,7 +74,7 @@ namespace Glaives.Internal.Graphics
         {
             if(!_begun)
             {
-                throw new GlaivesCoreException("Vertices may not be added before Begin is called");
+                throw new GlaivesException("Vertices may not be added before Begin is called");
             }
             _vertices.Add(vertex);
         }
@@ -94,7 +94,7 @@ namespace Glaives.Internal.Graphics
         {
             if(!_begun)
             {
-                throw new GlaivesCoreException("End may not be called before Begin is called");
+                throw new GlaivesException("End may not be called before Begin is called");
             }
             
             Vertex[] vertices = _vertices.ToArray(); //TODO: Optimize to be an array in the first place

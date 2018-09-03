@@ -124,7 +124,7 @@ namespace Glaives.GameFramework
             {
                 if (!actor.PendingDestruction)
                 {
-                    throw new GlaivesCoreException("Attempting to remove an actor that is not PendingDestruction, this should not be possible");
+                    throw new GlaivesException("Attempting to remove an actor that is not PendingDestruction, this should not be possible");
                 }
                 // This is legal in this case because PendingDestruction is true
                 actor.Parent = null;

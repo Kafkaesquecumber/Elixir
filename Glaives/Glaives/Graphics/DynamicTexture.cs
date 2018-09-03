@@ -60,7 +60,7 @@ namespace Glaives.Graphics
         {
             if (!File.Exists(file))
             {
-                throw new GlaivesCoreException($"Failed to create dynamic texture: file '{file}' not found");
+                throw new GlaivesException($"Failed to create dynamic texture: file '{file}' not found");
             }
 
             // Load the bitmap
@@ -89,18 +89,10 @@ namespace Glaives.Graphics
         {
             if (texture.Handle == 0)
             {
-                throw new GlaivesCoreException("Failed to create dynamic texture from texture: The texture has been disposed");
+                throw new GlaivesException("Failed to create dynamic texture from texture: The texture has been disposed");
             }
 
-            byte[] bytes = new byte[texture.Size.X * texture.Size.Y * 4];
-            
-            // Bind texture and copy the texture data into the byte array
-            GL.BindTexture(TextureTarget.Texture2D, texture.Handle);
-            GL.GetTexImage(TextureTarget.Texture2D, 0, Texture.PixelFormat, PixelType.UnsignedByte, bytes);
-
-            // Unbind the texture
-            GL.BindTexture(TextureTarget.Texture2D, 0); 
-
+            byte[] bytes = texture.GetBytes();
             _bitmap = new Bitmap(texture.Size.X, texture.Size.Y, BitmapPixelFormat);
             WriteBytes(bytes);
         }

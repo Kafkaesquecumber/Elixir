@@ -1,6 +1,6 @@
 ﻿// MIT License
 // 
-// Copyright(c) 2018 
+// Copyright (c) 2018 
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,38 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using Glaives.Internal;
+using Glaives.GameFramework;
 
-namespace Glaives.Input
+namespace Glaives.Internal.Graphics
 {
-    /// <summary>
-    /// Binding an id to an array of keys
-    /// </summary>
-    public struct InputActionBinding
+    internal struct GlyphInfo
     {
-        /// <summary>
-        /// The identifier for this input binding
-        /// </summary>
-        public string Id { get; set; }
+        internal static GlyphInfo Empty => new GlyphInfo();
 
-        private Key[] _keys;
-
-        /// <summary>
-        /// The keys associated with this input binding
-        /// </summary>
-        public Key[] Keys
-        {
-            get => _keys;
-            set
-            {
-                if (value.Any(key => key == Key.Unknown))
-                {
-                    throw new GlaivesException($"Can not create an {nameof(InputActionBinding)} using {nameof(Key)}.{nameof(Key.Unknown)}");
-                }
-
-                _keys = value;
-            }
-        }
+        internal float BearingX;
+        internal float BearingY;
+        internal float Advance;
+        internal FloatRect SourceRect;
     }
 }

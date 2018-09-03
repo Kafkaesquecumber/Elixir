@@ -159,29 +159,29 @@ namespace Glaives
         {
             if (_initCalled)
             {
-                throw new GlaivesCoreException("Initialize was already called previously and may not be called more than once");
+                throw new GlaivesException("Initialize was already called previously and may not be called more than once");
             }
 
             _initCalled = true;
 
             if (gameInstanceType == null)
             {
-                throw new GlaivesCoreException($"{nameof(gameInstanceType)} may not be null");
+                throw new GlaivesException($"{nameof(gameInstanceType)} may not be null");
             }
 
             if (!gameInstanceType.IsSubclassOf(typeof(GameInstance)))
             {
-                throw new GlaivesCoreException($"{nameof(gameInstanceType)} does not derive from {typeof(GameInstance).Name}");
+                throw new GlaivesException($"{nameof(gameInstanceType)} does not derive from {typeof(GameInstance).Name}");
             }
 
             if (initialLevelType == null)
             {
-                throw new GlaivesCoreException($"{nameof(initialLevelType)} may not be null");
+                throw new GlaivesException($"{nameof(initialLevelType)} may not be null");
             }
 
             if (!initialLevelType.IsSubclassOf(typeof(Level)))
             {
-                throw new GlaivesCoreException($"{nameof(initialLevelType)} does not derive from {nameof(Level)}");
+                throw new GlaivesException($"{nameof(initialLevelType)} does not derive from {nameof(Level)}");
             }
 
             AllowGameInstanceInstantiation = true;
@@ -246,7 +246,7 @@ namespace Glaives
             Level level = LevelManager.Level;
             if (level == null)
             {
-                throw new GlaivesCoreException("No level was loaded while creating the actor");
+                throw new GlaivesException("No level was loaded while creating the actor");
             }
             level.AddActor(newActor);
 
@@ -268,7 +268,7 @@ namespace Glaives
                 
                 EngineTimer.CaptureFrameStartTime();
 
-                Window.Interface.Clear(Color.White); // HACK Temp for testing text
+                Window.Interface.Clear(Color.Black);
 
                 // Tick after first iteration so delta time is set
                 if (!EngineTimer.FirstIteration) 
@@ -298,7 +298,7 @@ namespace Glaives
         {
             if (!_initCalled)
             {
-                throw new GlaivesCoreException("Engine has not been initialized, call initialize first");
+                throw new GlaivesException("Engine has not been initialized, call initialize first");
             }
         }
     }

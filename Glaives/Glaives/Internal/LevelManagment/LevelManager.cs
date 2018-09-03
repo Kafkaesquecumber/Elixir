@@ -57,7 +57,7 @@ namespace Glaives.Internal.LevelManagment
             UnloadLevel();
             if (!levelType.IsSubclassOf(typeof(Level)))
             {
-                throw new GlaivesCoreException($"Failed to load level: {levelType.Name} does not derive from { typeof(Level).Name }");
+                throw new GlaivesException($"Failed to load level: {levelType.Name} does not derive from { typeof(Level).Name }");
             }
 
             Level = (Level)Activator.CreateInstance(levelType);

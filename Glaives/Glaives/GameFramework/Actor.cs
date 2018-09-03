@@ -59,7 +59,7 @@ namespace Glaives.GameFramework
 
                 if(value == null && !PendingDestruction)
                 {
-                    throw new GlaivesCoreException("Actor must have a parent, call Unparent to parent the actor to the level root actor");
+                    throw new GlaivesException("Actor must have a parent, call Unparent to parent the actor to the level root actor");
                 }
 
                 if(value == this || value == _parent)

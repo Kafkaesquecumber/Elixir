@@ -80,7 +80,7 @@ namespace Glaives.GameFramework
             {
                 if (value.X < 0.0f || value.X > 1.0f || value.Y < 0.0f || value.Y > 1.0f)
                 {
-                    throw new GlaivesCoreException("Origin values must be between 0.0f and 1.0f");
+                    throw new GlaivesException("Origin values must be between 0.0f and 1.0f");
                 }
 
                 if (_origin != value)

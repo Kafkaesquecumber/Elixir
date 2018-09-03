@@ -40,7 +40,7 @@ namespace Glaives.GameFramework
         {
             if (!Engine.Get.AllowGameInstanceInstantiation)
             {
-                throw new GlaivesCoreException("A game instance should not be created manually, the engine will create it when you call Engine.Initialize");
+                throw new GlaivesException("A game instance should not be created manually, the engine will create it when you call Engine.Initialize");
             }
         }
 

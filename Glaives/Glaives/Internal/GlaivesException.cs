@@ -25,21 +25,21 @@ using System.Runtime.Serialization;
 
 namespace Glaives.Internal
 {
-    internal class GlaivesCoreException : Exception
+    internal class GlaivesException : Exception
     {
-        internal GlaivesCoreException()
+        internal GlaivesException()
         {
         }
 
-        internal GlaivesCoreException(string message) : base(message)
+        internal GlaivesException(string message) : base(message)
         {
         }
 
-        internal GlaivesCoreException(string message, Exception innerException) : base(message, innerException)
+        internal GlaivesException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
-        protected internal GlaivesCoreException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected internal GlaivesException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

@@ -131,7 +131,7 @@ namespace Glaives.Graphics
             {
                 batch.Begin(); // clears all vertices
             }
-
+            
             foreach (DrawableActor drawable in _drawables)
             {
                 // Find an appropriate existing batch or create a new batch if no appropriate batch was found
@@ -177,7 +177,7 @@ namespace Glaives.Graphics
                 batch.End(this, _frameBuffer); 
             }
             _frameBuffer.UnBind();
-            
+
             // Draw the screen quad (final image) using the frame buffer color texture
             Viewport viewport = Engine.Get.Viewport;
             Draw(viewport.Size, _frameBufferShaderProgram, _frameBufferVertices, _frameBufferVbo, _frameBufferRenderProgram, Matrix.Identity, _frameBuffer.ColorTexture);

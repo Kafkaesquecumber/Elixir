@@ -20,9 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Glaives.Graphics;
+using Glaives.Internal.Graphics;
 using SharpFont;
 using Font = Glaives.Graphics.Font;
 
@@ -36,83 +38,119 @@ namespace Glaives.GameFramework
         /// The string to be drawn by the text actor
         /// </summary>
         public string String { get; set; }
-        public TextStyle Style { get; set; }
-        public Graphics.Font Font { get; set; }
+
         
-        public Text(Graphics.Font font, string text)
+        public TextStyle Style { get; set; }
+        
+        public Font Font { get; set; }
+        
+        public Text(Font font, string text)
         {
             Style = TextStyle.Normal;
             Font = font;
-
-            string testString = "Hello";
-            Texture = new Texture(8000, 1000, TextureCreateOptions.Sharp);
-            
             String = text;
+            Texture = font.Texture;
         }
-
+        
         private FloatRect _localBounds;
         public override FloatRect LocalBounds
         {
             get
             {
-                if (Texture == null)
-                {
-                    return FloatRect.Zero;
-                }
-                return new FloatRect(0, 0, Texture.Size.X, Texture.Size.Y);
+                //TODO: Calc bounds
+                return FloatRect.Zero;
             }
         }
 
         protected internal override Vertex[] GetVertices()
         {
-            Vertex[] vertices = new Vertex[4];
+            Vertex[] vertices = new Vertex[4 * String.Length];
 
-            Matrix mat = WorldMatrix;
-            vertices[0].Position = mat * new Vector2(0.0f, 0.0f);
-            vertices[1].Position = mat * new Vector2(LocalBounds.Width, 0.0f);
-            vertices[2].Position = mat * new Vector2(LocalBounds.Width, LocalBounds.Height);
-            vertices[3].Position = mat * new Vector2(0.0f, LocalBounds.Height);
+            float advance = 0.0f;
+            char prevChar = (char) 0;
+            FaceMetrics faceMetrics = Font.FontFace.GetFaceMetrics(Font.CreateOptions.Size);
 
-            int textureWidth = Texture.Size.X;
-            int textureHeight = Texture.Size.Y;
-
-            // Set vertex texture coordinates
-            vertices[0].TexCoords.X = LocalBounds.X / textureWidth;
-            vertices[0].TexCoords.Y = LocalBounds.Y / textureHeight;
-            vertices[1].TexCoords.X = (LocalBounds.X + LocalBounds.Width) / textureWidth;
-            vertices[1].TexCoords.Y = LocalBounds.Y / textureHeight;
-            vertices[2].TexCoords.X = (LocalBounds.X + LocalBounds.Width) / textureWidth;
-            vertices[2].TexCoords.Y = (LocalBounds.Y + LocalBounds.Height) / textureHeight;
-            vertices[3].TexCoords.X = LocalBounds.X / textureWidth;
-            vertices[3].TexCoords.Y = (LocalBounds.Y + LocalBounds.Height) / textureHeight;
-
-            // Apply flips
-            if (FlipX)
+            int line = 0;
+            Texture = Font.Texture; // We need to do this because the font texture might change
+            for (int i = 0; i < String.Length; i++)
             {
-                Vector2 v0 = vertices[0].TexCoords;
-                vertices[0].TexCoords = vertices[1].TexCoords;
-                vertices[1].TexCoords = v0;
+                int i0 = (i * 4);
+                int i1 = i0 + 1;
+                int i2 = i0 + 2;
+                int i3 = i0 + 3;
 
-                Vector2 v3 = vertices[3].TexCoords;
-                vertices[3].TexCoords = vertices[2].TexCoords;
-                vertices[2].TexCoords = v3;
+                char curChar = String[i];
+                FloatRect srcRect = FloatRect.Zero;
+                GlyphInfo glyphInfo = GlyphInfo.Empty;
+
+                if (curChar == '\n')
+                {
+                    line++;
+                    advance = 0.0f;
+                }
+                else
+                {
+                    glyphInfo = Font.LoadGlyph(curChar);
+                    srcRect = glyphInfo.SourceRect;
+                }
+
+                float y = faceMetrics.LineHeight - glyphInfo.BearingY;
+                y += faceMetrics.LineHeight * line;
+
+                float kerning = Font.FontFace.GetKerning(curChar, prevChar, Font.CreateOptions.Size);
+                float x = (float)Math.Ceiling(advance + glyphInfo.BearingX + kerning);
+
+                Matrix mat = WorldMatrix;
+                vertices[i0].Position = mat * new Vector2(x, y);
+                vertices[i1].Position = mat * new Vector2(x + srcRect.Width, y);
+                vertices[i2].Position = mat * new Vector2(x + srcRect.Width, srcRect.Height + y);
+                vertices[i3].Position = mat * new Vector2(x, srcRect.Height + y);
+                
+                advance += glyphInfo.Advance;
+                prevChar = curChar;
+
+                int textureWidth = Texture.Size.X;
+                int textureHeight = Texture.Size.Y;
+
+                // Set vertex texture coordinates
+                vertices[i0].TexCoords.X = srcRect.X / textureWidth;
+                vertices[i0].TexCoords.Y = srcRect.Y / textureHeight;
+                vertices[i1].TexCoords.X = (srcRect.X + srcRect.Width) / textureWidth;
+                vertices[i1].TexCoords.Y = srcRect.Y / textureHeight;
+                vertices[i2].TexCoords.X = (srcRect.X + srcRect.Width) / textureWidth;
+                vertices[i2].TexCoords.Y = (srcRect.Y + srcRect.Height) / textureHeight;
+                vertices[i3].TexCoords.X = srcRect.X / textureWidth;
+                vertices[i3].TexCoords.Y = (srcRect.Y + srcRect.Height) / textureHeight;
+
+                // Apply flips
+                if (FlipX)
+                {
+                    Vector2 v0 = vertices[i0].TexCoords;
+                    vertices[i0].TexCoords = vertices[i1].TexCoords;
+                    vertices[i1].TexCoords = v0;
+
+                    Vector2 v3 = vertices[i3].TexCoords;
+                    vertices[i3].TexCoords = vertices[i2].TexCoords;
+                    vertices[i2].TexCoords = v3;
+                }
+                if (FlipY)
+                {
+                    Vector2 v0 = vertices[i0].TexCoords;
+                    vertices[i0].TexCoords = vertices[i3].TexCoords;
+                    vertices[i3].TexCoords = v0;
+
+                    Vector2 v1 = vertices[i1].TexCoords;
+                    vertices[i1].TexCoords = vertices[i2].TexCoords;
+                    vertices[i2].TexCoords = v1;
+                }
+
+                // Set vertex colors
+                vertices[i0].Color = Color;
+                vertices[i1].Color = Color;
+                vertices[i2].Color = Color;
+                vertices[i3].Color = Color;
             }
-            if (FlipY)
-            {
-                Vector2 v0 = vertices[0].TexCoords;
-                vertices[0].TexCoords = vertices[3].TexCoords;
-                vertices[3].TexCoords = v0;
-
-                Vector2 v1 = vertices[1].TexCoords;
-                vertices[1].TexCoords = vertices[2].TexCoords;
-                vertices[2].TexCoords = v1;
-            }
-
-            // Set vertex colors
-            vertices[0].Color = Color;
-            vertices[1].Color = Color;
-            vertices[2].Color = Color;
-            vertices[3].Color = Color;
+            
 
             return vertices;
         }

@@ -48,12 +48,12 @@ namespace Glaives.Input
         {
             if (Engine.Get.Settings.Input.ActionBindings.Count(x => x.Id == inputActionId) == 0)
             {
-                throw new GlaivesCoreException($"No action binding exists in input settings with id '{inputActionId}'");
+                throw new GlaivesException($"No action binding exists in input settings with id '{inputActionId}'");
             }
 
             if (InputActionEvents.ContainsKey(inputActionId))
             {
-                throw new GlaivesCoreException($"Failed to bind '{inputActionId}', can not bind to the same input action multiple times for the same actor");
+                throw new GlaivesException($"Failed to bind '{inputActionId}', can not bind to the same input action multiple times for the same actor");
             }
             InputActionEvents.Add(inputActionId, eventHandler);
         }
@@ -67,12 +67,12 @@ namespace Glaives.Input
         {
             if (Engine.Get.Settings.Input.AxisBindings.Count(x => x.Id == inputAxisId) == 0)
             {
-                throw new GlaivesCoreException($"No axis binding exists in input settings with id '{inputAxisId}'");
+                throw new GlaivesException($"No axis binding exists in input settings with id '{inputAxisId}'");
             }
 
             if (InputAxisEvents.ContainsKey(inputAxisId))
             {
-                throw new GlaivesCoreException($"Failed to bind '{inputAxisId}', can not bind to the same input axis multiple times for the same actor");
+                throw new GlaivesException($"Failed to bind '{inputAxisId}', can not bind to the same input axis multiple times for the same actor");
             }
             InputAxisEvents.Add(inputAxisId, eventHandler);
         }

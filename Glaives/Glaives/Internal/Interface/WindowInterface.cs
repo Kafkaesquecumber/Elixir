@@ -60,8 +60,6 @@ namespace Glaives.Internal.Interface
 
         protected void OnInputActionEvent(KeyState keyState, Key key, int gamepadId)
         {
-            if(keyState == KeyState.Pressed)
-                Console.WriteLine(key);
             InputActionEvent(keyState, key, gamepadId);
         }
 
