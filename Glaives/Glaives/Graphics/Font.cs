@@ -1,6 +1,6 @@
 ﻿// MIT License
 // 
-// Copyright(c) 2018 
+// Copyright(c) 2018 Glaives Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Glaives.GameFramework;
-using Glaives.Internal;
 using Glaives.Internal.Graphics;
 using SharpFont;
 
@@ -39,24 +38,25 @@ namespace Glaives.Graphics
         
         public FontFace FontFace { get; private set; }
         
-        private Dictionary<char, GlyphInfo> _pages = new Dictionary<char, GlyphInfo>();
-
         //TODO: What if the texture isnt big enough, we'll potentially need multiple texture
         internal Texture Texture { get; private set; }
 
+        private Dictionary<char, GlyphInfo> _pages = new Dictionary<char, GlyphInfo>();
+        private int _nextFreeColumn;
+        private int _nextFreeRow;
+        
         internal Font(string file, FontCreateOptions createOptions)
         {
+            
             CreateOptions = createOptions;
             
             FontFace = new FontFace(File.OpenRead(file));
             Texture = new Texture(100, 100, new TextureCreateOptions(createOptions.FilterMode, TextureWrapMode.ClampToEdge));
         }
-
-        private int _endX = 0; // HACK
-
+        
         internal GlyphInfo LoadGlyph(char codePoint)
         {
-            Glyph glyph = FontFace.GetGlyph(codePoint, CreateOptions.Size);
+            Glyph glyph = FontFace.GetGlyph(codePoint, CreateOptions.FontSize);
             if (glyph == null)
             {
                 if (codePoint == '\n')
@@ -64,6 +64,7 @@ namespace Glaives.Graphics
                     return GlyphInfo.Empty;
                 }
                 Engine.Get.Debug.Warning($"Character '{codePoint}' not supported by font '{FontFace.FullName}'");
+                return GlyphInfo.Empty;
             }
             
             if (!_pages.ContainsKey(codePoint))
@@ -116,7 +117,7 @@ namespace Glaives.Graphics
                 const int padding = 1; // padding between glyphs to avoid bleeding in rotated text
 
                 // Resize texture if the glyph does not fit
-                if (Texture.Size.X < (_endX + glyph.RenderWidth + padding))
+                if (Texture.Size.X < (_nextFreeColumn + glyph.RenderWidth + padding))
                 {
                     int newSizeX = Texture.Size.X + glyph.RenderWidth + padding;
                     
@@ -132,13 +133,13 @@ namespace Glaives.Graphics
                 }
 
                 // Update texture with the glyph
-                Texture.Update(pixels, new IntRect(_endX, 0, glyph.RenderWidth, glyph.RenderHeight));
+                Texture.Update(pixels, new IntRect(_nextFreeColumn, 0, glyph.RenderWidth, glyph.RenderHeight));
                 
                 // Create the rect representing the region for this glyph on the updated texture
-                FloatRect sourceRect = new FloatRect(_endX, 0, glyph.RenderWidth, glyph.RenderHeight);
+                FloatRect sourceRect = new FloatRect(_nextFreeColumn, 0, glyph.RenderWidth, glyph.RenderHeight);
                 
                 // Increment HACK endX
-                _endX += glyph.RenderWidth + padding;
+                _nextFreeColumn += glyph.RenderWidth + padding;
 
                 // Create and add glyph info to the pages
                 GlyphInfo glyphInfo = new GlyphInfo

@@ -1,6 +1,6 @@
 ﻿// MIT License
 // 
-// Copyright(c) 2018 
+// Copyright(c) 2018 Glaives Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@ namespace Glaives.Graphics
     public struct FontCreateOptions : IEquatable<FontCreateOptions>
     {
         /// <summary>
-        /// The size of the font
+        /// The size of the font, must be between 0 and 256
         /// </summary>
-        public readonly float Size;
+        public readonly int FontSize;
 
         /// <summary>
         /// The styling of the font (flags)
@@ -53,23 +53,23 @@ namespace Glaives.Graphics
         /// <summary>
         /// Create new font create options
         /// </summary>
-        /// <param name="size">The size of the font</param>
-        public FontCreateOptions(float size)
-            : this(size, FontStyleFlags.Regular, TextureFilterMode.Linear, AlphabetFlags.Latin)
+        /// <param name="fontSize">The size of the font</param>
+        public FontCreateOptions(int fontSize)
+            : this(fontSize, FontStyleFlags.Regular, TextureFilterMode.Linear, AlphabetFlags.Latin)
         {
-            Size = size;
+            FontSize = fontSize;
         }
 
         /// <inheritdoc />
         /// <summary>
         /// Create new font create options
         /// </summary>
-        /// <param name="size">The size of the font</param>
+        /// <param name="fontSize">The size of the font</param>
         /// <param name="styleFlags">The styling of the font (flags)</param>
-        public FontCreateOptions(float size, FontStyleFlags styleFlags)
-            : this(size, styleFlags, TextureFilterMode.Linear, AlphabetFlags.Latin)
+        public FontCreateOptions(int fontSize, FontStyleFlags styleFlags)
+            : this(fontSize, styleFlags, TextureFilterMode.Linear, AlphabetFlags.Latin)
         {
-            Size = size;
+            FontSize = fontSize;
             StyleFlags = styleFlags;
         }
 
@@ -77,13 +77,13 @@ namespace Glaives.Graphics
         /// <summary>
         /// Create new font create options
         /// </summary>
-        /// <param name="size">The size of the font</param>
+        /// <param name="fontSize">The size of the font</param>
         /// <param name="styleFlags">The styling of the font (flags)</param>
         /// <param name="filterMode">The filter mode for the font texture</param>
-        public FontCreateOptions(float size, FontStyleFlags styleFlags, TextureFilterMode filterMode)
-            : this(size, styleFlags, filterMode, AlphabetFlags.Latin)
+        public FontCreateOptions(int fontSize, FontStyleFlags styleFlags, TextureFilterMode filterMode)
+            : this(fontSize, styleFlags, filterMode, AlphabetFlags.Latin)
         {
-            Size = size;
+            FontSize = fontSize;
             FilterMode = filterMode;
             StyleFlags = styleFlags;
         }
@@ -91,13 +91,13 @@ namespace Glaives.Graphics
         /// <summary>
         /// Create new font create options
         /// </summary>
-        /// <param name="size">The size of the font</param>
+        /// <param name="fontSize">The size of the font</param>
         /// <param name="styleFlags">The styling of the font (flags)</param>
         /// <param name="filterMode">The filter mode for the font texture</param>
         /// <param name="supportedAlphabetsFlags">The alphabets supported by the font (flags)</param>
-        public FontCreateOptions(float size, FontStyleFlags styleFlags, TextureFilterMode filterMode, AlphabetFlags supportedAlphabetsFlags)
+        public FontCreateOptions(int fontSize, FontStyleFlags styleFlags, TextureFilterMode filterMode, AlphabetFlags supportedAlphabetsFlags)
         {
-            Size = size;
+            FontSize = fontSize;
             FilterMode = filterMode;
             StyleFlags = styleFlags;
             SupportedAlphabetsFlags = supportedAlphabetsFlags;
@@ -105,7 +105,7 @@ namespace Glaives.Graphics
 
         public bool Equals(FontCreateOptions other)
         {
-            return Size.Equals(other.Size) && StyleFlags == other.StyleFlags && SupportedAlphabetsFlags == other.SupportedAlphabetsFlags && FilterMode == other.FilterMode;
+            return FontSize.Equals(other.FontSize) && StyleFlags == other.StyleFlags && SupportedAlphabetsFlags == other.SupportedAlphabetsFlags && FilterMode == other.FilterMode;
         }
 
         public override bool Equals(object obj)
@@ -118,7 +118,7 @@ namespace Glaives.Graphics
         {
             unchecked
             {
-                var hashCode = Size.GetHashCode();
+                var hashCode = FontSize.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int) StyleFlags;
                 hashCode = (hashCode * 397) ^ (int) SupportedAlphabetsFlags;
                 hashCode = (hashCode * 397) ^ (int) FilterMode;
@@ -128,7 +128,7 @@ namespace Glaives.Graphics
 
         public override string ToString()
         {
-            return $"(Size: {Size}, StyleFlags: {StyleFlags}, Filter: {FilterMode}, Alphabets: {SupportedAlphabetsFlags})";
+            return $"(Size: {FontSize}, StyleFlags: {StyleFlags}, Filter: {FilterMode}, Alphabets: {SupportedAlphabetsFlags})";
         }
 
         public static bool operator ==(FontCreateOptions left, FontCreateOptions right)

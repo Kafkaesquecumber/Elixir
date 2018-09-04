@@ -1,6 +1,6 @@
 ﻿// MIT License
 // 
-// Copyright(c) 2018 
+// Copyright(c) 2018 Glaives Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,7 @@ namespace Glaives.Graphics
         private readonly TextureCreateOptions _createOptions;
         
         /// <summary>
-        /// Create a new texture
+        /// Create a new empty texture without any initial pixel data
         /// </summary>
         /// <param name="width">The width of the texture</param>
         /// <param name="height">The height of the texture</param>
@@ -67,7 +67,21 @@ namespace Glaives.Graphics
         {
             _createOptions = createOptions;
             Size = new IntVector2(width, height);
-            LoadTexture(Enumerable.Repeat<byte>(0, Size.X * Size.Y * 4).ToArray());
+            LoadTexture(null); // Do not make a pixel byte array, when the dimensions are huge we could go out of CPU memory
+        }
+
+        /// <summary>
+        /// Create a new texture
+        /// </summary>
+        /// <param name="width">The width of the texture</param>
+        /// <param name="height">The height of the texture</param>
+        /// <param name="bytes">The RGBA bytes to load this texture with</param>
+        /// <param name="createOptions">The create options</param>
+        public Texture(int width, int height, byte[] bytes, TextureCreateOptions createOptions)
+        {
+            _createOptions = createOptions;
+            Size = new IntVector2(width, height);
+            LoadTexture(bytes);
         }
 
         /// <summary>

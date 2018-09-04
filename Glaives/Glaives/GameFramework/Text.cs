@@ -1,6 +1,6 @@
 ﻿// MIT License
 // 
-// Copyright(c) 2018 
+// Copyright(c) 2018 Glaives Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ namespace Glaives.GameFramework
 
             float advance = 0.0f;
             char prevChar = (char) 0;
-            FaceMetrics faceMetrics = Font.FontFace.GetFaceMetrics(Font.CreateOptions.Size);
+            FaceMetrics faceMetrics = Font.FontFace.GetFaceMetrics(Font.CreateOptions.FontSize);
 
             int line = 0;
             Texture = Font.Texture; // We need to do this because the font texture might change
@@ -97,7 +97,7 @@ namespace Glaives.GameFramework
                 float y = faceMetrics.LineHeight - glyphInfo.BearingY;
                 y += faceMetrics.LineHeight * line;
 
-                float kerning = Font.FontFace.GetKerning(curChar, prevChar, Font.CreateOptions.Size);
+                float kerning = Font.FontFace.GetKerning(curChar, prevChar, Font.CreateOptions.FontSize);
                 float x = (float)Math.Ceiling(advance + glyphInfo.BearingX + kerning);
 
                 Matrix mat = WorldMatrix;
