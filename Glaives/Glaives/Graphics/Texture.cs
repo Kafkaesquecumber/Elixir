@@ -67,7 +67,7 @@ namespace Glaives.Graphics
         {
             _createOptions = createOptions;
             Size = new IntVector2(width, height);
-            LoadTexture(null); // Do not make a pixel byte array, when the dimensions are huge we could go out of CPU memory
+            LoadTexture(new byte[Size.X * Size.Y * 4]);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Glaives.Graphics
                 GL.BindTexture(TextureTarget.Texture2D, Handle);
                 
                 GL.TexSubImage2D(TextureTarget.Texture2D, 0, region.X, region.Y, region.Width, region.Height, 
-                    PixelFormat, PixelType.UnsignedByte, bytes);
+                    PixelFormat, PixelType.UnsignedByte, bytes); 
 
                 ApplyTextureParameters();
 

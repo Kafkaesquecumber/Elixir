@@ -25,7 +25,7 @@ using System;
 namespace Glaives.Graphics
 {
     [Flags]
-    public enum FontStyleFlags
+    public enum TextStyleFlags
     {
         Regular = 0,
         Bold = 1,

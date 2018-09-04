@@ -45,11 +45,11 @@ namespace Glaives.GameFramework
         /// Return loaded or cached font
         /// </summary>
         /// <param name="file">The font file</param>
-        /// <param name="createOptions">The create options</param>
+        /// <param name="fontSize">The desired size of the font</param>
         /// <returns></returns>
-        public Font LoadFont(string file, FontCreateOptions createOptions)
+        public Font LoadFont(string file, int fontSize)
         {
-            return Load<Font>(file, createOptions);
+            return Load<Font>(file, fontSize);
         }
 
         /// <summary>

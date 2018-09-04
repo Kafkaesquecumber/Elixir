@@ -23,8 +23,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Glaives.GameFramework;
+using Glaives.Internal;
 using Glaives.Internal.Graphics;
 using SharpFont;
 
@@ -32,31 +34,52 @@ namespace Glaives.Graphics
 {
     public class Font : LoadableContent, IDisposable
     {
-        internal override bool IsDisposed => FontFace == null; 
+        /// <summary>
+        /// The maximum size allowed for fonts
+        /// </summary>
+        public static int MaxFontSize => 1024;
+
+        // The size in pixels the rows start from
+        // this creates a free pixel stroke to be used for special rendering case such as lines
+        private const int RowOffset = 2;
+
+        internal override bool IsDisposed => FontFace == null;
         
-        internal FontCreateOptions CreateOptions { get; private set; }
-        
-        public FontFace FontFace { get; private set; }
-        
+        internal FontFace FontFace { get; private set; }
+
+        /// <summary>
+        /// The size of the font
+        /// </summary>
+        public readonly int FontSize;
+
         //TODO: What if the texture isnt big enough, we'll potentially need multiple texture
         internal Texture Texture { get; private set; }
 
-        private Dictionary<char, GlyphInfo> _pages = new Dictionary<char, GlyphInfo>();
-        private int _nextFreeColumn;
-        private int _nextFreeRow;
+        private readonly Dictionary<char, GlyphInfo> _pages = new Dictionary<char, GlyphInfo>();
+        private float _nextFreeColumn;
+        private float _nextFreeRow;
         
-        internal Font(string file, FontCreateOptions createOptions)
+        internal Font(string file, int fontSize)
         {
-            
-            CreateOptions = createOptions;
-            
+            FontSize = fontSize;
+            if (FontSize > MaxFontSize || FontSize < 0)
+            {
+                throw new GlaivesException($"Font size must be between 0 and {MaxFontSize}");
+            }
+
             FontFace = new FontFace(File.OpenRead(file));
-            Texture = new Texture(100, 100, new TextureCreateOptions(createOptions.FilterMode, TextureWrapMode.ClampToEdge));
+            Texture = new Texture(128, 128, new TextureCreateOptions(TextureFilterMode.Linear, TextureWrapMode.ClampToEdge));
+
+            // pixels in the top-left corner is used for strikeout/underlines... :)
+            // This has to be the same texture because of the way we do vertex batching
+            // more than just 1 because of anti aliasing on the texture
+            Texture.Update(Enumerable.Repeat<byte>(255, 4 * (RowOffset * RowOffset)).ToArray(), 
+                new IntRect(0, 0, RowOffset, RowOffset));
         }
         
         internal GlyphInfo LoadGlyph(char codePoint)
         {
-            Glyph glyph = FontFace.GetGlyph(codePoint, CreateOptions.FontSize);
+            Glyph glyph = FontFace.GetGlyph(codePoint, FontSize);
             if (glyph == null)
             {
                 if (codePoint == '\n')
@@ -81,11 +104,10 @@ namespace Glaives.Graphics
                 // Clear the memory region of the surface bits
                 Marshal.Copy(new byte[glyph.RenderWidth * glyph.RenderHeight], 0,
                     fontSurface.Bits, glyph.RenderWidth * glyph.RenderHeight);
-
+                
                 // Render the glyph to the surface
                 glyph.RenderTo(fontSurface);
-
-
+                
                 int width = fontSurface.Width;
                 int height = fontSurface.Height;
                 int len = width * height;
@@ -94,51 +116,61 @@ namespace Glaives.Graphics
                 // Copy the bits into the data bytes array
                 Marshal.Copy(fontSurface.Bits, data, 0, len);
 
-                // Create RGBA version of data bytes 
-                byte[] pixels = new byte[len * 4];
-                
-                int index = 0;
-
-                // Fill the RGBA pixels with the data 
-                for (int j = 0; j < len; j++)
-                {
-                    byte c = data[j];
-                    pixels[index++] = c;
-                    pixels[index++] = c;
-                    pixels[index++] = c;
-                    pixels[index++] = c;
-                }
-
                 // Free the memory of the surface bits
                 Marshal.FreeHGlobal(fontSurface.Bits);
 
-                //TODO: later: multiple pages per font
-
-                const int padding = 1; // padding between glyphs to avoid bleeding in rotated text
-
-                // Resize texture if the glyph does not fit
-                if (Texture.Size.X < (_nextFreeColumn + glyph.RenderWidth + padding))
+                // Create RGB version of data bytes 
+                byte[] pixels = new byte[len * 4];
+                int index = 0;
+                
+                // Fill the RGB pixels with the data 
+                for (int i = 0; i < len; i++)
                 {
-                    int newSizeX = Texture.Size.X + glyph.RenderWidth + padding;
-                    
-                    // Create a new, bigger texture
-                    Texture texture = new Texture(newSizeX, Texture.Size.Y,
-                        new TextureCreateOptions(CreateOptions.FilterMode, TextureWrapMode.ClampToEdge));
+                    byte c = data[i];
+                    pixels[index++] = c;
+                    pixels[index++] = c;
+                    pixels[index++] = c;
+                    pixels[index++] = c; 
+                }
 
-                    // Write bytes from the old texture into the new texture
-                    texture.Update(Texture.GetBytes(), new IntRect(0, 0, Texture.Size.X, Texture.Size.Y));
+                FaceMetrics faceMetrics = FontFace.GetFaceMetrics(FontSize);
 
-                    // Swap the old with the new texture
-                    SwapTexture(texture);
+                // padding between glyphs to avoid bleeding in rotated text
+                const int padding = 3;
+                
+                // Check if the glyph does not fit on the column
+                while (Texture.Size.X < (_nextFreeColumn + glyph.RenderWidth + padding + RowOffset))
+                {
+                    int newSizeX = Texture.Size.X * 2;
+
+                    // Check if the glyph does not fit on the row
+                    if (newSizeX > Texture.MaxTextureSize)
+                    {                        
+                        AddTextureRow();
+                    }
+                    else
+                    {
+                        // Make the texture wider
+                        ResizeTexture(newSizeX, Texture.Size.Y);
+                    }
+                }
+
+                while (Texture.Size.Y < (_nextFreeRow + glyph.RenderHeight + padding))
+                {
+                    AddTextureRow();
                 }
 
                 // Update texture with the glyph
-                Texture.Update(pixels, new IntRect(_nextFreeColumn, 0, glyph.RenderWidth, glyph.RenderHeight));
+                Texture.Update(pixels, new IntRect((int)_nextFreeColumn + RowOffset, (int)_nextFreeRow, glyph.RenderWidth, glyph.RenderHeight));
+
+                float sourceX = Math.Max(RowOffset, (_nextFreeColumn + RowOffset) - ((float)padding / 2));
                 
+
                 // Create the rect representing the region for this glyph on the updated texture
-                FloatRect sourceRect = new FloatRect(_nextFreeColumn, 0, glyph.RenderWidth, glyph.RenderHeight);
+                FloatRect sourceRect = new FloatRect(sourceX, _nextFreeRow , 
+                    glyph.RenderWidth + padding, glyph.RenderHeight );
                 
-                // Increment HACK endX
+                // Move column to next available
                 _nextFreeColumn += glyph.RenderWidth + padding;
 
                 // Create and add glyph info to the pages
@@ -149,14 +181,48 @@ namespace Glaives.Graphics
                     BearingY = glyph.HorizontalMetrics.Bearing.Y,
                     SourceRect = sourceRect
                 };
-
+                
                 DynamicTexture temp = new DynamicTexture(Texture);
-                temp.Save("Updated.png");
-
+                temp.Save("glyphs.png");
                 _pages.Add(codePoint, glyphInfo);
             }
             
             return _pages[codePoint];
+        }
+
+        private void AddTextureRow()
+        {
+            int newSizeY = Texture.Size.Y * 2;
+
+            if (newSizeY > Texture.MaxTextureSize)
+            {
+                // Is this a problem?
+                throw new GlaivesException("Glyph atlas texture has reached it's size limit");
+            }
+            else
+            {
+                // Make the texture taller
+                ResizeTexture(Texture.Size.X, newSizeY);
+
+                // Move row to the next available
+                _nextFreeRow = RowOffset;
+
+                // Reset the column to the start of the line
+                _nextFreeColumn = RowOffset;
+            }
+        }
+
+        private void ResizeTexture(int width, int height)
+        {
+            // Create a new, bigger texture
+            Texture texture = new Texture(width, height,
+                new TextureCreateOptions(TextureFilterMode.Linear, TextureWrapMode.ClampToEdge));
+
+            // Write bytes from the old texture into the new texture
+            texture.Update(Texture.GetBytes(), new IntRect(0, 0, Texture.Size.X, Texture.Size.Y));
+
+            // Swap the old with the new texture
+            SwapTexture(texture);
         }
 
         private void SwapTexture(Texture newTexture)

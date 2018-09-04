@@ -392,19 +392,30 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Glaives.GameFramework.Color.ToBgra(System.Byte[])">
+        <member name="M:Glaives.GameFramework.Color.RgbaToBgra(System.Byte[])">
             <summary>
             Convert a RGBA byte array to a BGRA byte array
             </summary>
             <param name="rgbaBytes">The bytes in RGBA order</param>
-            <returns>The bytes in BGRA order</returns>
         </member>
-        <member name="M:Glaives.GameFramework.Color.ToRgba(System.Byte[])">
+        <member name="M:Glaives.GameFramework.Color.BgraToRgba(System.Byte[])">
             <summary>
             Convert a BGRA byte array to a RGBA byte array
             </summary>
             <param name="bgraBytes">The bytes in BGRA order</param>
-            <returns>The bytes in RGBA order</returns>
+        </member>
+        <member name="M:Glaives.GameFramework.Color.RgbaToRgb(System.Byte[])">
+            <summary>
+            Convert a RGBA byte array to a RGB byte array
+            </summary>
+            <param name="rgbaBytes">The RGBA bytes</param>
+        </member>
+        <member name="M:Glaives.GameFramework.Color.RgbToRgba(System.Byte[],System.Byte)">
+            <summary>
+            Convert a RGB byte array to a RGBA byte array
+            </summary>
+            <param name="rgbBytes">The RGB bytes</param>
+            <param name="alpha">The value to use for the alpha channel</param>
         </member>
         <member name="M:Glaives.GameFramework.ColorExtensions.ToBytes(System.Collections.Generic.IEnumerable{Glaives.GameFramework.Color})">
             <summary>
@@ -429,12 +440,12 @@
             <para>If it is present in the content cache it will return the cached content, otherwise it will load it and add it to the content cache</para>
             </summary>
         </member>
-        <member name="M:Glaives.GameFramework.ContentLoader.LoadFont(System.String,Glaives.Graphics.FontCreateOptions)">
+        <member name="M:Glaives.GameFramework.ContentLoader.LoadFont(System.String,System.Int32)">
             <summary>
             Return loaded or cached font
             </summary>
             <param name="file">The font file</param>
-            <param name="createOptions">The create options</param>
+            <param name="fontSize">The desired size of the font</param>
             <returns></returns>
         </member>
         <member name="M:Glaives.GameFramework.ContentLoader.LoadTexture(System.String,Glaives.Graphics.TextureCreateOptions)">
@@ -970,63 +981,18 @@
             Dispose the dynamic texture
             </summary>
         </member>
-        <member name="T:Glaives.Graphics.FontCreateOptions">
+        <member name="P:Glaives.Graphics.Font.MaxFontSize">
             <summary>
-            The create options to use for the font
+            The maximum size allowed for fonts
             </summary>
         </member>
-        <member name="F:Glaives.Graphics.FontCreateOptions.Size">
+        <member name="F:Glaives.Graphics.Font.FontSize">
             <summary>
             The size of the font
             </summary>
         </member>
-        <member name="F:Glaives.Graphics.FontCreateOptions.StyleFlags">
-            <summary>
-            The styling of the font (flags)
-            </summary>
-        </member>
-        <member name="F:Glaives.Graphics.FontCreateOptions.SupportedAlphabetsFlags">
-            <summary>
-            The alphabets supported by the font (flags)
-            </summary>
-        </member>
-        <member name="F:Glaives.Graphics.FontCreateOptions.FilterMode">
-            <summary>
-            The filter mode for the font texture
-            </summary>
-        </member>
-        <member name="M:Glaives.Graphics.FontCreateOptions.#ctor(System.Single)">
+        <member name="M:Glaives.Graphics.Font.Dispose">
             <inheritdoc />
-            <summary>
-            Create new font create options
-            </summary>
-            <param name="size">The size of the font</param>
-        </member>
-        <member name="M:Glaives.Graphics.FontCreateOptions.#ctor(System.Single,Glaives.Graphics.FontStyleFlags)">
-            <inheritdoc />
-            <summary>
-            Create new font create options
-            </summary>
-            <param name="size">The size of the font</param>
-            <param name="styleFlags">The styling of the font (flags)</param>
-        </member>
-        <member name="M:Glaives.Graphics.FontCreateOptions.#ctor(System.Single,Glaives.Graphics.FontStyleFlags,Glaives.Graphics.TextureFilterMode)">
-            <inheritdoc />
-            <summary>
-            Create new font create options
-            </summary>
-            <param name="size">The size of the font</param>
-            <param name="styleFlags">The styling of the font (flags)</param>
-            <param name="filterMode">The filter mode for the font texture</param>
-        </member>
-        <member name="M:Glaives.Graphics.FontCreateOptions.#ctor(System.Single,Glaives.Graphics.FontStyleFlags,Glaives.Graphics.TextureFilterMode,Glaives.Graphics.AlphabetFlags)">
-            <summary>
-            Create new font create options
-            </summary>
-            <param name="size">The size of the font</param>
-            <param name="styleFlags">The styling of the font (flags)</param>
-            <param name="filterMode">The filter mode for the font texture</param>
-            <param name="supportedAlphabetsFlags">The alphabets supported by the font (flags)</param>
         </member>
         <member name="P:Glaives.Graphics.GraphicsDevice.DrawCalls">
             <summary>
@@ -1069,6 +1035,11 @@
             <para>A dynamic texture can be converted to a texture and vise-versa (do not forget to dispose the dynamic texture when you are done with it)</para>
             </summary>
         </member>
+        <member name="P:Glaives.Graphics.Texture.MaxTextureSize">
+            <summary>
+            The maximum width/height that a texture supports
+            </summary>
+        </member>
         <member name="P:Glaives.Graphics.Texture.Handle">
             <summary>
             The gl handle 
@@ -1081,10 +1052,19 @@
         </member>
         <member name="M:Glaives.Graphics.Texture.#ctor(System.Int32,System.Int32,Glaives.Graphics.TextureCreateOptions)">
             <summary>
+            Create a new empty texture without any initial pixel data
+            </summary>
+            <param name="width">The width of the texture</param>
+            <param name="height">The height of the texture</param>
+            <param name="createOptions">The create options</param>
+        </member>
+        <member name="M:Glaives.Graphics.Texture.#ctor(System.Int32,System.Int32,System.Byte[],Glaives.Graphics.TextureCreateOptions)">
+            <summary>
             Create a new texture
             </summary>
             <param name="width">The width of the texture</param>
             <param name="height">The height of the texture</param>
+            <param name="bytes">The RGBA bytes to load this texture with</param>
             <param name="createOptions">The create options</param>
         </member>
         <member name="M:Glaives.Graphics.Texture.#ctor(Glaives.Graphics.DynamicTexture,Glaives.Graphics.TextureCreateOptions)">
@@ -1113,6 +1093,11 @@
             </summary>
             <param name="bytes">The bytes to be submitted to the texture</param>
             <param name="region">The region of the sub texture</param>
+        </member>
+        <member name="M:Glaives.Graphics.Texture.GetBytes">
+            <summary>
+            Get the RGBA bytes of the texture from the GPU
+            </summary>
         </member>
         <member name="M:Glaives.Graphics.Texture.Dispose">
             <inheritdoc />

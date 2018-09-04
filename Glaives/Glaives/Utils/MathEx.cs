@@ -86,6 +86,11 @@ namespace Glaives.Utils
             return value > max ? max : (value < min ? min : value);
         }
 
+        public static int Clamp(int value, int min, int max)
+        {
+            return value > max ? max : (value < min ? min : value);
+        }
+
         internal static float Clamp360(float degrees)
         {
             if (degrees < -360.0f)

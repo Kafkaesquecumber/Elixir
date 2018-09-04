@@ -68,7 +68,7 @@ namespace Glaives.Graphics
 
             // Convert bitmap to RGBA
             byte[] bytes = ReadBytes();
-            WriteBytes(Color.ToRgba(bytes));
+            WriteBytes(Color.BgraToRgba(bytes));
         }
 
         /// <summary>

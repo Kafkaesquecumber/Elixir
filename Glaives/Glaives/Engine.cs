@@ -268,7 +268,7 @@ namespace Glaives
                 
                 EngineTimer.CaptureFrameStartTime();
 
-                Window.Interface.Clear(Color.Black);
+                Window.Interface.Clear(Color.White);
 
                 // Tick after first iteration so delta time is set
                 if (!EngineTimer.FirstIteration) 

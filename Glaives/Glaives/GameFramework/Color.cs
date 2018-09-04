@@ -151,8 +151,7 @@ namespace Glaives.GameFramework
         /// Convert a RGBA byte array to a BGRA byte array
         /// </summary>
         /// <param name="rgbaBytes">The bytes in RGBA order</param>
-        /// <returns>The bytes in BGRA order</returns>
-        public static byte[] ToBgra(byte[] rgbaBytes)
+        public static byte[] RgbaToBgra(byte[] rgbaBytes)
         {
             byte[] bgra = new byte[rgbaBytes.Length];
 
@@ -171,8 +170,7 @@ namespace Glaives.GameFramework
         /// Convert a BGRA byte array to a RGBA byte array
         /// </summary>
         /// <param name="bgraBytes">The bytes in BGRA order</param>
-        /// <returns>The bytes in RGBA order</returns>
-        public static byte[] ToRgba(byte[] bgraBytes)
+        public static byte[] BgraToRgba(byte[] bgraBytes)
         {
             byte[] rgba = new byte[bgraBytes.Length];
 
@@ -185,6 +183,45 @@ namespace Glaives.GameFramework
             }
 
             return rgba;
+        }
+
+        /// <summary>
+        /// Convert a RGBA byte array to a RGB byte array
+        /// </summary>
+        /// <param name="rgbaBytes">The RGBA bytes</param>
+        public static byte[] RgbaToRgb(byte[] rgbaBytes)
+        {
+            byte[] rgbBytes = new byte[(rgbaBytes.Length / 4) * 3];
+            int j = 0;
+            for (int i = 0; i < rgbaBytes.Length; i += 4, j += 3)
+            {
+                rgbBytes[j + 0] = rgbaBytes[i + 0];
+                rgbBytes[j + 1] = rgbaBytes[i + 1];
+                rgbBytes[j + 2] = rgbaBytes[i + 2];
+            }
+
+            return rgbBytes;
+        }
+
+        /// <summary>
+        /// Convert a RGB byte array to a RGBA byte array
+        /// </summary>
+        /// <param name="rgbBytes">The RGB bytes</param>
+        /// <param name="alpha">The value to use for the alpha channel</param>
+        public static byte[] RgbToRgba(byte[] rgbBytes, byte alpha = 255)
+        {
+            byte[] rgbaBytes = new byte[(rgbBytes.Length / 3) * 4];
+            int j = 0;
+
+            for (int i = 0; i < rgbaBytes.Length; i+=4,j+=3)
+            {
+                rgbaBytes[i + 0] = rgbBytes[j + 0];
+                rgbaBytes[i + 1] = rgbBytes[j + 1];
+                rgbaBytes[i + 2] = rgbBytes[j + 2];
+                rgbaBytes[i + 3] = alpha;
+            }
+
+            return rgbaBytes;
         }
 
     }
