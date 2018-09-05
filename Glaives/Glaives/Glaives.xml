@@ -986,6 +986,11 @@
             Dispose the dynamic texture
             </summary>
         </member>
+        <member name="T:Glaives.Graphics.Font">
+            <summary>
+            A font is used to draw text
+            </summary>
+        </member>
         <member name="P:Glaives.Graphics.Font.MaxFontSize">
             <summary>
             The maximum size allowed for fonts

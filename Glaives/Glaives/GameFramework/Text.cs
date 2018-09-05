@@ -82,15 +82,22 @@ namespace Glaives.GameFramework
             char prevChar = (char) 0;
             FaceMetrics faceMetrics = Font.FontFace.GetFaceMetrics(Font.FontSize);
             
-            int line = 0;
-            float lineWidth = 0.0f;
+            int line = 0;                   // The line count
+            float currentLineWidth = 0.0f;  // The width of the current line (without font metric additions)
             float bearingXFirstChar = 0.0f; // Bearing x for first char on the line
             float bearingXLastChar = 0.0f;  // Bearing x for last char on the line
-            Texture = Font.Texture;         // We need to do this because the font texture might change
+            Matrix mat = WorldMatrix;       // The world matrix to be used for vertex construction
 
+            // Make sure the texture still references the glyph atlas texture
+            // The font can swap the texture when loading glyphs
+            // When a new glyph does not fit on the texture, a new and bigger texture is generated
+            // If we do not do this, we will be left with a reference to the old, disposed texture 
+            Texture = Font.Texture;         
+
+            // New line info will be added after a line terminates
+            // Line info's are used later to draw strikeouts/underlines
             List<LineInfo> lines = new List<LineInfo>();
             
-
             for (int i = 0; i < String.Length; i++)
             {
                 int i0 = (i * 4);
@@ -99,9 +106,8 @@ namespace Glaives.GameFramework
                 int i3 = i0 + 3;
 
                 char curChar = String[i];
-                FloatRect srcRect = FloatRect.Zero;    
                 bool newLine = false;
-                bool glyphNotFound = false;
+                FloatRect srcRect = FloatRect.Zero;    
                 GlyphInfo glyphInfo = GlyphInfo.Empty;
 
                 switch (curChar)
@@ -129,7 +135,33 @@ namespace Glaives.GameFramework
                         if (glyphInfo == GlyphInfo.Empty)
                         {
                             // Glyph could not be loaded and is not a special case
-                            glyphInfo = Font.LoadGlyph('?');
+
+                            float errorVertexSize = faceMetrics.CellAscent;
+                            float errorVertexY = (faceMetrics.LineHeight * line) + faceMetrics.XHeight - errorVertexSize;
+                            Vertex[] errorVertices = new Vertex[4];
+                            errorVertices[0].Position = mat * new Vector2(advance, errorVertexY);
+                            errorVertices[1].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY);
+                            errorVertices[2].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY + errorVertexSize);
+                            errorVertices[3].Position = mat * new Vector2(advance, errorVertexY + errorVertexSize);
+
+                            errorVertices[0].TexCoords = new Vector2(0.0f, 0.0f);
+                            errorVertices[1].TexCoords = new Vector2(1.0f, 0.0f);
+                            errorVertices[2].TexCoords = new Vector2(1.0f, 1.0f);
+                            errorVertices[3].TexCoords = new Vector2(0.0f, 1.0f);
+
+                            Color errorVertexColor = Color.White;
+                            errorVertices[0].Color = errorVertexColor;
+                            errorVertices[1].Color = errorVertexColor;
+                            errorVertices[2].Color = errorVertexColor;
+                            errorVertices[3].Color = errorVertexColor;
+
+                            RenderProgram errorRenderProgram = new RenderProgram(
+                                BlendMode.Alpha, Engine.Get.DefaultContent.TextureGlyphNotFound, Shader.Default, DrawLayer);
+                            
+                            Engine.Get.Graphics.AddGeometry(errorVertices, errorRenderProgram);
+                            advance += errorVertexSize;
+                            continue;
+                            
                         }
 
                         srcRect = glyphInfo.SourceRect;
@@ -176,7 +208,7 @@ namespace Glaives.GameFramework
                         X = lineX,
                         UnderlineY = lineY - faceMetrics.UnderlinePosition,
                         StrikeoutY = lineY - faceMetrics.StrikeoutPosition,
-                        LineWidth = lineWidth + bearingXLastChar,
+                        LineWidth = currentLineWidth + bearingXLastChar,
                         StrikeoutThickness = faceMetrics.StrikeoutSize,
                         UnderlineThickness = faceMetrics.UnderlineSize
                     });
@@ -184,7 +216,7 @@ namespace Glaives.GameFramework
                 
                 // Advance
                 advance += (float)Math.Round(glyphInfo.Advance);
-                lineWidth = advance;
+                currentLineWidth = advance;
                 prevChar = curChar;
 
                 float skew = 0.0f;
@@ -196,9 +228,7 @@ namespace Glaives.GameFramework
                 {
                     skew = StyleFlags.HasFlag(TextStyleFlags.Italic) ? (float)Font.FontSize / 4 : 0.0f;
                 }
-
-             
-                Matrix mat = WorldMatrix;
+                
                 vertices[i0].Position = mat * new Vector2(x + skew, y);
                 vertices[i1].Position = mat * new Vector2(x + srcRect.Width + skew, y);
                 vertices[i2].Position = mat * new Vector2(x + srcRect.Width, srcRect.Height + y);

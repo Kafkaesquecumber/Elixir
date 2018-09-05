@@ -100,7 +100,8 @@ namespace Glaives.Internal.Graphics
             Vertex[] vertices = _vertices.ToArray(); 
 
             GL.PolygonMode(MaterialFace.Back, PolygonMode.Fill);
-            device.Draw(renderTarget.Size, _shaderProgram, vertices, _vbo, RenderProgram, Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
+            device.Draw(renderTarget.Size, _shaderProgram, vertices, _vbo, RenderProgram, 
+                Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
             
             _begun = false;
         }

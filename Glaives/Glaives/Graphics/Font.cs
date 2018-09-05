@@ -32,6 +32,9 @@ using SharpFont;
 
 namespace Glaives.Graphics
 {
+    /// <summary>
+    /// A font is used to draw text
+    /// </summary>
     public class Font : LoadableContent, IDisposable
     {
         /// <summary>
@@ -52,13 +55,12 @@ namespace Glaives.Graphics
         /// </summary>
         public readonly int FontSize;
 
-        //TODO: What if the texture isnt big enough, we'll potentially need multiple texture
         internal Texture Texture { get; private set; }
 
         private readonly List<char> _errorChars = new List<char>();
         private readonly Dictionary<char, GlyphInfo> _pages = new Dictionary<char, GlyphInfo>();
-        private float _nextFreeColumn;
-        private float _nextFreeRow;
+        private float _nextFreeColumnPosition;
+        private float _nextFreeRowPosition;
         
         internal Font(string file, int fontSize)
         {
@@ -143,15 +145,21 @@ namespace Glaives.Graphics
                 // padding between glyphs to avoid bleeding in rotated text
                 const int padding = 3;
                 
-                // Check if the glyph does not fit on the column
-                while (Texture.Size.X < (_nextFreeColumn + glyph.RenderWidth + padding + RowOffset))
+                // While the glyph does not fit on the x-axis, keep resizing the texture in the x-axis
+                while (Texture.Size.X <= (_nextFreeColumnPosition + glyph.RenderWidth + padding + RowOffset))
                 {
                     int newSizeX = Texture.Size.X * 2;
 
                     // Check if the glyph does not fit on the row
-                    if (newSizeX > Texture.MaxTextureSize)
+                    if (newSizeX >= Texture.MaxTextureSize)
                     {                        
                         AddTextureRow();
+
+                        // Move row to the next available
+                        _nextFreeRowPosition = RowOffset;
+
+                        // Reset the column to the start of the line
+                        _nextFreeColumnPosition = RowOffset;
                     }
                     else
                     {
@@ -160,23 +168,24 @@ namespace Glaives.Graphics
                     }
                 }
 
-                while (Texture.Size.Y < (_nextFreeRow + glyph.RenderHeight + padding))
+                // While the glyph does not fit on the y-axis, keep resizing the texture in the y-axis
+                while (Texture.Size.Y <= (_nextFreeRowPosition + glyph.RenderHeight + padding) )
                 {
                     AddTextureRow();
                 }
-
+                
                 // Update texture with the glyph
-                Texture.Update(pixels, new IntRect((int)_nextFreeColumn + RowOffset, (int)_nextFreeRow, glyph.RenderWidth, glyph.RenderHeight));
+                Texture.Update(pixels, new IntRect((int)_nextFreeColumnPosition + RowOffset, (int)_nextFreeRowPosition, glyph.RenderWidth, glyph.RenderHeight));
 
-                float sourceX = Math.Max(RowOffset, (_nextFreeColumn + RowOffset) - ((float)padding / 2));
+                float sourceX = Math.Max(RowOffset, (_nextFreeColumnPosition + RowOffset) - ((float)padding / 2));
                 
 
                 // Create the rect representing the region for this glyph on the updated texture
-                FloatRect sourceRect = new FloatRect(sourceX, _nextFreeRow , 
+                FloatRect sourceRect = new FloatRect(sourceX, _nextFreeRowPosition , 
                     glyph.RenderWidth + padding, glyph.RenderHeight );
                 
                 // Move column to next available
-                _nextFreeColumn += glyph.RenderWidth + padding;
+                _nextFreeColumnPosition += glyph.RenderWidth + padding;
 
                 // Create and add glyph info to the pages
                 GlyphInfo glyphInfo = new GlyphInfo
@@ -205,13 +214,7 @@ namespace Glaives.Graphics
             else
             {
                 // Make the texture taller
-                ResizeTexture(Texture.Size.X, newSizeY);
-
-                // Move row to the next available
-                _nextFreeRow = RowOffset;
-
-                // Reset the column to the start of the line
-                _nextFreeColumn = RowOffset;
+                ResizeTexture(Texture.Size.X, newSizeY);   
             }
         }
 

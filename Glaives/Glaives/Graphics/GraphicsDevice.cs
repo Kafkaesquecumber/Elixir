@@ -85,6 +85,7 @@ namespace Glaives.Graphics
         private RenderProgram _frameBufferRenderProgram;
         private int _frameBufferVertexShader = -1;
         private int _frameBufferFragmentShader = -1;
+        private bool _batchesAreHot; // Whether or not the batches have "begun" but not "ended" yet
 
         internal GraphicsDevice(Window window)
         {
@@ -97,6 +98,7 @@ namespace Glaives.Graphics
             _frameBuffer = new RenderTarget(window.Size, TextureFilterMode.Smooth);
         }
 
+        
         internal void AddDrawableActor(DrawableActor drawableActor)
         {
             _drawables.Add(drawableActor);
@@ -125,37 +127,62 @@ namespace Glaives.Graphics
             _batches.Sort((b1, b2) => b1.RenderProgram.DrawLayer.CompareTo(b2.RenderProgram.DrawLayer));
         }
 
+        internal void AddGeometry(Vertex[] vertices)
+        {
+            AddGeometry(vertices, RenderProgram.Default);
+        }
+
+        internal void AddGeometry(Vertex[] vertices, RenderProgram renderProgram)
+        {
+            // Find a batch with matching render programs or create a new one if it does not exist
+            GeometryBatch batch = FindBatch(renderProgram) ?? CreateBatch(renderProgram);
+
+            batch.AddVertices(vertices); 
+        }
+        
+        private GeometryBatch FindBatch(RenderProgram renderProgram)
+        {
+            foreach (GeometryBatch batch in _batches)
+            {
+                if (batch.RenderProgram == renderProgram)
+                {
+                    return batch;
+                }
+            }
+
+            return null;
+        }
+
+        private GeometryBatch CreateBatch(RenderProgram renderProgram)
+        {
+            GeometryBatch newBatch = new GeometryBatch(renderProgram);
+            _batches.Add(newBatch);
+            SortBatchesByDrawLayer();
+
+            if (_batchesAreHot)
+            {
+                newBatch.Begin();
+            }
+
+            return newBatch;
+        }
+
         internal void DrawBatches()
         {
             foreach(GeometryBatch batch in _batches)
             {
                 batch.Begin(); // clears all vertices
             }
-            
+
+            _batchesAreHot = true;
+
             foreach (DrawableActor drawable in _drawables)
             {
-                // Find an appropriate existing batch or create a new batch if no appropriate batch was found
                 if (drawable.RenderProgramIsDirty)
                 {
-                    drawable.Batch = null;
-                    foreach (GeometryBatch batch in _batches)
-                    {
-                        if (batch.RenderProgram == drawable.RenderProgram)
-                        {
-                            drawable.Batch = batch;
-                            break;
-                        }
-                    }
-
-                    if (drawable.Batch == null)
-                    {
-                        GeometryBatch newBatch = new GeometryBatch(drawable.RenderProgram);
-                        _batches.Add(newBatch);
-                        SortBatchesByDrawLayer();
-                        newBatch.Begin();
-                        drawable.Batch = newBatch;
-                    }
-
+                    // Find a batch with matching render programs, if such a batch does not exist, create a new one
+                    GeometryBatch batch = FindBatch(drawable.RenderProgram) ?? CreateBatch(drawable.RenderProgram);
+                    drawable.Batch = batch;
                     drawable.RenderProgramIsDirty = false;
                 }
 
@@ -176,6 +203,7 @@ namespace Glaives.Graphics
                 // Draw all vertices to the frame buffer
                 batch.End(this, _frameBuffer); 
             }
+            _batchesAreHot = false;
             _frameBuffer.UnBind();
 
             // Draw the screen quad (final image) using the frame buffer color texture
@@ -192,17 +220,17 @@ namespace Glaives.Graphics
             GL.BindFragDataLocation(shaderProgram, 0, Shader.FragOutName);
             GL.BufferData(BufferTarget.ArrayBuffer, Vertex.SizeInBytes * vertices.Length, vertices, BufferUsageHint.StaticDraw);
 
-            int posAttrib = GL.GetAttribLocation(shaderProgram, Shader.VertInPositionName);
-            GL.EnableVertexAttribArray(posAttrib);
-            GL.VertexAttribPointer(posAttrib, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 0);
+            int positionAttributeLocation = GL.GetAttribLocation(shaderProgram, Shader.VertInPositionName);
+            GL.EnableVertexAttribArray(positionAttributeLocation);
+            GL.VertexAttribPointer(positionAttributeLocation, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 0);
 
-            int colorAttrib = GL.GetAttribLocation(shaderProgram, Shader.VertInColorName);
-            GL.EnableVertexAttribArray(colorAttrib);
-            GL.VertexAttribPointer(colorAttrib, 4, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 2 * sizeof(float));
+            int colorAttributeLocation = GL.GetAttribLocation(shaderProgram, Shader.VertInColorName);
+            GL.EnableVertexAttribArray(colorAttributeLocation);
+            GL.VertexAttribPointer(colorAttributeLocation, 4, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 2 * sizeof(float));
 
-            int texCoordAttrib = GL.GetAttribLocation(shaderProgram, Shader.VertInTexCoordName);
-            GL.EnableVertexAttribArray(texCoordAttrib);
-            GL.VertexAttribPointer(texCoordAttrib, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 6 * sizeof(float));
+            int texCoordAttributeLocation = GL.GetAttribLocation(shaderProgram, Shader.VertInTexCoordName);
+            GL.EnableVertexAttribArray(texCoordAttributeLocation);
+            GL.VertexAttribPointer(texCoordAttributeLocation, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 6 * sizeof(float));
 
             int uniTrans = GL.GetUniformLocation(shaderProgram, Shader.VertUniTransformName);
             float[] trans = projection.ToMatrix4();
@@ -244,9 +272,9 @@ namespace Glaives.Graphics
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Blend);
             GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.DisableVertexAttribArray(posAttrib);
-            GL.DisableVertexAttribArray(colorAttrib);
-            GL.DisableVertexAttribArray(texCoordAttrib);
+            GL.DisableVertexAttribArray(positionAttributeLocation);
+            GL.DisableVertexAttribArray(colorAttributeLocation);
+            GL.DisableVertexAttribArray(texCoordAttributeLocation);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.UseProgram(0);
         }

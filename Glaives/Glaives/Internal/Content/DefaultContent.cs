@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Glaives.GameFramework;
 using Glaives.Graphics;
 
 // Note: do not use the ContentLoader in this class, it has not been created yet (by design)
@@ -29,12 +30,15 @@ namespace Glaives.Internal.Content
     internal class DefaultContent
     {
         internal Texture TextureWhite32x32;
+        internal Texture TextureGlyphNotFound;
         internal Font FontConsolasRegular32;
 
         internal DefaultContent()
         {
             TextureWhite32x32 = new Texture(32, 32, new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge));
-            FontConsolasRegular32 = new Font("EngineContent/ConsolasRegular.ttf", 32);
+            TextureWhite32x32.Update(Color.White);
+            TextureGlyphNotFound = new Texture("EngineContent/T_GlyphNotFound.png", TextureCreateOptions.Smooth);
+            FontConsolasRegular32 = new Font("EngineContent/F_ConsolasRegular.ttf", 32);
         }
     }
 }
