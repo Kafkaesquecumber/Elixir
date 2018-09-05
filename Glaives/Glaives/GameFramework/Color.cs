@@ -54,6 +54,11 @@ namespace Glaives.GameFramework
         public static Color Blue => new Color(0.0f, 0.0f, 1.0f, 1.0f);
 
         /// <summary>
+        /// (R=1, G=0, B=1, A=1);
+        /// </summary>
+        public static Color Magenta => new Color(1.0f, 0.0f, 1.0f, 1.0f);
+
+        /// <summary>
         /// (R=0, G=0, B=0, A=0);
         /// </summary>
         public static Color Transparant => new Color(0.0f, 0.0f, 0.0f, 0.0f);

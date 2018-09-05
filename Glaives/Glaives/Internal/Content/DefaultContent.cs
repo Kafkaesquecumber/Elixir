@@ -29,10 +29,12 @@ namespace Glaives.Internal.Content
     internal class DefaultContent
     {
         internal Texture TextureWhite32x32;
+        internal Font FontConsolasRegular32;
 
         internal DefaultContent()
         {
-            TextureWhite32x32 = new Texture(32, 32, new TextureCreateOptions(TextureFilterMode.Nearest, TextureWrapMode.ClampToEdge));
+            TextureWhite32x32 = new Texture(32, 32, new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge));
+            FontConsolasRegular32 = new Font("EngineContent/ConsolasRegular.ttf", 32);
         }
     }
 }

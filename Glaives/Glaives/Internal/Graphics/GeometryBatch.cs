@@ -97,14 +97,11 @@ namespace Glaives.Internal.Graphics
                 throw new GlaivesException("End may not be called before Begin is called");
             }
             
-            Vertex[] vertices = _vertices.ToArray(); //TODO: Optimize to be an array in the first place
+            Vertex[] vertices = _vertices.ToArray(); 
 
             GL.PolygonMode(MaterialFace.Back, PolygonMode.Fill);
             device.Draw(renderTarget.Size, _shaderProgram, vertices, _vbo, RenderProgram, Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
-
-            GL.PolygonMode(MaterialFace.Back, PolygonMode.Fill);
-            device.Draw(renderTarget.Size, _shaderProgram, vertices, _vbo, RenderProgram.Default, Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
-
+            
             _begun = false;
         }
 

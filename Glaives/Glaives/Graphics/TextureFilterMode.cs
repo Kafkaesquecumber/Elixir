@@ -22,15 +22,18 @@
 
 namespace Glaives.Graphics
 {
+    /// <summary>
+    /// The way the texture is filtered
+    /// </summary>
     public enum TextureFilterMode
     {
         /// <summary>
         /// For smoother textures
         /// </summary>
-        Linear,
+        Smooth,
         /// <summary>
         /// For pixel-perfect textures
         /// </summary>
-        Nearest
+        Sharp
     }
 }

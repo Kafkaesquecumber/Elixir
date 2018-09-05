@@ -30,16 +30,16 @@ namespace Glaives.Graphics
     public struct TextureCreateOptions : IEquatable<TextureCreateOptions>
     {
         /// <summary>
-        /// <para>FilterMode : Linear</para>
+        /// <para>FilterMode : Smooth</para>
         /// <para>WrapMode : ClampToEdge</para>
         /// </summary>
-        public static TextureCreateOptions Smooth => new TextureCreateOptions(TextureFilterMode.Linear, TextureWrapMode.ClampToEdge);
+        public static TextureCreateOptions Smooth => new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge);
 
         /// <summary>
-        /// <para>FilterMode : Nearest</para>
+        /// <para>FilterMode : Sharp</para>
         /// <para>WrapMode : ClampToEdge</para>
         /// </summary>
-        public static TextureCreateOptions Sharp => new TextureCreateOptions(TextureFilterMode.Nearest, TextureWrapMode.ClampToEdge);
+        public static TextureCreateOptions Sharp => new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge);
 
         /// <summary>
         /// The way the texture is filtered

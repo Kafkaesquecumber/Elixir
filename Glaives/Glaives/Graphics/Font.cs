@@ -41,7 +41,7 @@ namespace Glaives.Graphics
 
         // The size in pixels the rows start from
         // this creates a free pixel stroke to be used for special rendering case such as lines
-        private const int RowOffset = 2;
+        private const int RowOffset = 4;
 
         internal override bool IsDisposed => FontFace == null;
         
@@ -55,6 +55,7 @@ namespace Glaives.Graphics
         //TODO: What if the texture isnt big enough, we'll potentially need multiple texture
         internal Texture Texture { get; private set; }
 
+        private readonly List<char> _errorChars = new List<char>();
         private readonly Dictionary<char, GlyphInfo> _pages = new Dictionary<char, GlyphInfo>();
         private float _nextFreeColumn;
         private float _nextFreeRow;
@@ -68,30 +69,34 @@ namespace Glaives.Graphics
             }
 
             FontFace = new FontFace(File.OpenRead(file));
-            Texture = new Texture(128, 128, new TextureCreateOptions(TextureFilterMode.Linear, TextureWrapMode.ClampToEdge));
+            Texture = new Texture(128, 128, new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge));
 
             // pixels in the top-left corner is used for strikeout/underlines... :)
             // This has to be the same texture because of the way we do vertex batching
             // more than just 1 because of anti aliasing on the texture
-            Texture.Update(Enumerable.Repeat<byte>(255, 4 * (RowOffset * RowOffset)).ToArray(), 
-                new IntRect(0, 0, RowOffset, RowOffset));
+            Texture.Update(Enumerable.Repeat<byte>(255, 4 * (2 * 2)).ToArray(), 
+                new IntRect(0, 0, 2, 2));
+
+            // Temp fix for weird first character issue
+            LoadGlyph(' ');
         }
         
         internal GlyphInfo LoadGlyph(char codePoint)
         {
-            Glyph glyph = FontFace.GetGlyph(codePoint, FontSize);
-            if (glyph == null)
-            {
-                if (codePoint == '\n')
-                {
-                    return GlyphInfo.Empty;
-                }
-                Engine.Get.Debug.Warning($"Character '{codePoint}' not supported by font '{FontFace.FullName}'");
-                return GlyphInfo.Empty;
-            }
-            
             if (!_pages.ContainsKey(codePoint))
             {
+                // Load the glyph from the font face
+                Glyph glyph = FontFace.GetGlyph(codePoint, FontSize);
+                if (glyph == null)
+                {
+                    if (!_errorChars.Contains(codePoint))
+                    {
+                        Engine.Get.Debug.Warning($"Could not load character '{codePoint}' for font '{FontFace.FullName}'");
+                        _errorChars.Add(codePoint);
+                    }
+                    return GlyphInfo.Empty;
+                }
+
                 // Load the glyph into the texture
                 Surface fontSurface = new Surface
                 {
@@ -119,11 +124,11 @@ namespace Glaives.Graphics
                 // Free the memory of the surface bits
                 Marshal.FreeHGlobal(fontSurface.Bits);
 
-                // Create RGB version of data bytes 
+                // Create RGBA version of data bytes 
                 byte[] pixels = new byte[len * 4];
                 int index = 0;
                 
-                // Fill the RGB pixels with the data 
+                // Fill the RGBA pixels with the data 
                 for (int i = 0; i < len; i++)
                 {
                     byte c = data[i];
@@ -182,8 +187,6 @@ namespace Glaives.Graphics
                     SourceRect = sourceRect
                 };
                 
-                DynamicTexture temp = new DynamicTexture(Texture);
-                temp.Save("glyphs.png");
                 _pages.Add(codePoint, glyphInfo);
             }
             
@@ -216,7 +219,7 @@ namespace Glaives.Graphics
         {
             // Create a new, bigger texture
             Texture texture = new Texture(width, height,
-                new TextureCreateOptions(TextureFilterMode.Linear, TextureWrapMode.ClampToEdge));
+                new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge));
 
             // Write bytes from the old texture into the new texture
             texture.Update(Texture.GetBytes(), new IntRect(0, 0, Texture.Size.X, Texture.Size.Y));

@@ -52,10 +52,10 @@ namespace Glaives.Internal.Graphics
 
             switch (textureFilterMode)
             {
-                case TextureFilterMode.Linear:
+                case TextureFilterMode.Smooth:
                     filter = (int)TextureMagFilter.Linear;
                     break;
-                case TextureFilterMode.Nearest:
+                case TextureFilterMode.Sharp:
                     filter = (int) TextureMagFilter.Nearest;
                     break;
                 default:

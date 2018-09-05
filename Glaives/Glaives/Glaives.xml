@@ -381,6 +381,11 @@
             (R=0, G=0, B=1, A=1);
             </summary>
         </member>
+        <member name="P:Glaives.GameFramework.Color.Magenta">
+            <summary>
+            (R=1, G=0, B=1, A=1);
+            </summary>
+        </member>
         <member name="P:Glaives.GameFramework.Color.Transparant">
             <summary>
             (R=0, G=0, B=0, A=0);
@@ -1112,13 +1117,13 @@
         </member>
         <member name="P:Glaives.Graphics.TextureCreateOptions.Smooth">
             <summary>
-            <para>FilterMode : Linear</para>
+            <para>FilterMode : Smooth</para>
             <para>WrapMode : ClampToEdge</para>
             </summary>
         </member>
         <member name="P:Glaives.Graphics.TextureCreateOptions.Sharp">
             <summary>
-            <para>FilterMode : Nearest</para>
+            <para>FilterMode : Sharp</para>
             <para>WrapMode : ClampToEdge</para>
             </summary>
         </member>
@@ -1139,12 +1144,17 @@
             <param name="filterMode">The way the texture is filtered</param>
             <param name="wrapMode">The way the texture is wrapped outside of the texture coordinates</param>
         </member>
-        <member name="F:Glaives.Graphics.TextureFilterMode.Linear">
+        <member name="T:Glaives.Graphics.TextureFilterMode">
+            <summary>
+            The way the texture is filtered
+            </summary>
+        </member>
+        <member name="F:Glaives.Graphics.TextureFilterMode.Smooth">
             <summary>
             For smoother textures
             </summary>
         </member>
-        <member name="F:Glaives.Graphics.TextureFilterMode.Nearest">
+        <member name="F:Glaives.Graphics.TextureFilterMode.Sharp">
             <summary>
             For pixel-perfect textures
             </summary>
@@ -1316,6 +1326,15 @@
             <summary>
             Triggered when the trigger axis has reached a threshold
             </summary>
+        </member>
+        <member name="M:Glaives.Internal.Graphics.GlyphInfo.Equals(Glaives.Internal.Graphics.GlyphInfo)">
+            <inheritdoc />
+        </member>
+        <member name="M:Glaives.Internal.Graphics.GlyphInfo.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Glaives.Internal.Graphics.GlyphInfo.GetHashCode">
+            <inheritdoc />
         </member>
         <member name="T:Glaives.Internal.LevelManagment.LevelManager">
             <summary>

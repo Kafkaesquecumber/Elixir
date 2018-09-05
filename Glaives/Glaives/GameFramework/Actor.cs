@@ -37,7 +37,7 @@ namespace Glaives.GameFramework
         /// The unique name of the actor
         /// </summary>
         public UniqueString Name { get; set; }
-    
+        
         /// <summary>
         /// Enumerates the children for this actor (no sub-children)
         /// </summary>

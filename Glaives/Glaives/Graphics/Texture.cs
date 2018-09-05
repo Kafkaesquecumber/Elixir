@@ -185,9 +185,10 @@ namespace Glaives.Graphics
         internal void LoadTexture(byte[] bytes)
         {
             Handle = GL.GenTexture();
+            
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
-            
+
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Size.X, Size.Y, 0,
                 PixelFormat, PixelType.UnsignedByte, bytes);
 
@@ -199,15 +200,18 @@ namespace Glaives.Graphics
         private void ApplyTextureParameters()
         {
             int wrap;
-            int filter;
+            int minFilter;
+            int magFilter;
 
             switch (_createOptions.FilterMode)
             {
-                case TextureFilterMode.Linear:
-                    filter = (int)TextureMinFilter.Linear;
+                case TextureFilterMode.Smooth:
+                    minFilter = (int)TextureMinFilter.Linear;
+                    magFilter = (int)TextureMagFilter.Linear;
                     break;
-                case TextureFilterMode.Nearest:
-                    filter = (int)TextureMinFilter.Nearest;
+                case TextureFilterMode.Sharp:
+                    minFilter = (int)TextureMinFilter.Nearest;
+                    magFilter = (int)TextureMagFilter.Nearest;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -233,8 +237,8 @@ namespace Glaives.Graphics
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, wrap);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, wrap);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, filter);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, filter);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, minFilter);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, magFilter);
         }
     }
 }

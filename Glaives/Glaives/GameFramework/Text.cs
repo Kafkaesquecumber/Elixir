@@ -22,8 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using Glaives.Graphics;
 using Glaives.Internal.Graphics;
 using SharpFont;
@@ -38,7 +36,7 @@ namespace Glaives.GameFramework
             internal float X;
             internal float UnderlineY;
             internal float StrikeoutY;
-            internal float Width;
+            internal float LineWidth;
             internal float UnderlineThickness;
             internal float StrikeoutThickness;
         }
@@ -86,8 +84,12 @@ namespace Glaives.GameFramework
             
             int line = 0;
             float lineWidth = 0.0f;
-            Texture = Font.Texture; // We need to do this because the font texture might change
+            float bearingXFirstChar = 0.0f; // Bearing x for first char on the line
+            float bearingXLastChar = 0.0f;  // Bearing x for last char on the line
+            Texture = Font.Texture;         // We need to do this because the font texture might change
+
             List<LineInfo> lines = new List<LineInfo>();
+            
 
             for (int i = 0; i < String.Length; i++)
             {
@@ -97,52 +99,75 @@ namespace Glaives.GameFramework
                 int i3 = i0 + 3;
 
                 char curChar = String[i];
-                FloatRect srcRect = FloatRect.Zero;
-                
+                FloatRect srcRect = FloatRect.Zero;    
+                bool newLine = false;
+                bool glyphNotFound = false;
                 GlyphInfo glyphInfo = GlyphInfo.Empty;
-                 
-                if (curChar == '\n')
-                {
-                    // new line
-                    line++;
-                    advance = 0.0f;
-                }
-                else if (curChar == '\t')
-                {
-                    // tab = 4 spaces
-                    advance += Font.LoadGlyph(' ').Advance * 4;
-                }
-                else
-                {
-                    // Load glyph info
-                    glyphInfo = Font.LoadGlyph(curChar);
-                    srcRect = glyphInfo.SourceRect;
-                }
 
+                switch (curChar)
+                {
+                    case '\r':
+                        // Environment.Newline on windows results in a \r\n string, so we ignore \r and use \n for new line
+                        continue; // Continue the for loop
+                    case '\n':
+                    {
+                        // new line
+                        line++;
+                        advance = 0.0f;
+                        newLine = true;
+                        bearingXLastChar = glyphInfo.BearingX;
+                        break;
+                    }
+                    case '\t':
+                        // tab = 4 spaces
+                        advance += Font.LoadGlyph(' ').Advance * 4;
+                        break;
+                    default:
+                    {
+                        // Load glyph info
+                        glyphInfo = Font.LoadGlyph(curChar);
+                        if (glyphInfo == GlyphInfo.Empty)
+                        {
+                            // Glyph could not be loaded and is not a special case
+                            glyphInfo = Font.LoadGlyph('?');
+                        }
+
+                        srcRect = glyphInfo.SourceRect;
+                        bearingXLastChar = glyphInfo.SourceRect.Width;
+                        if (advance == 0.0f)
+                        {
+                            // Used to determine underline/strikeout start locations on the x-axis
+                            bearingXFirstChar = glyphInfo.BearingX;
+                        }
+
+                        break;
+                    }
+                }
+                
                 // Calculate offsets from bearing
                 float offsetY = (float)Math.Ceiling(glyphInfo.BearingY);
-                float offsetX = (float)Math.Floor(glyphInfo.BearingX);
-
+                float offsetX = (float)Math.Ceiling(glyphInfo.BearingX);
+                
                 // Apply x and y offsets, line offset, and advance
-                float y = (faceMetrics.XHeight - offsetY) + (faceMetrics.LineHeight * line);
-                float x = (offsetX + advance);
+                float y = (float)Math.Floor((faceMetrics.XHeight - offsetY) + (faceMetrics.LineHeight * line));
+                float x = (float)Math.Ceiling(offsetX + advance);
                 
                 // Apply kerning
                 float kerning = Font.FontFace.GetKerning(prevChar, curChar, Font.FontSize);
-                x += kerning;
-
+                x += (float)Math.Ceiling(kerning);
                 
-                if ((advance == 0.0f && i != 0)  // A line was added with \n
-                    || 
-                    (i == String.Length - 1)) // Last loop iteration, text is only single line
+                // New line added or last line
+                if (newLine  || (i == String.Length - 1))
                 {
-                    float lineX = x;
+                    float lineX = bearingXFirstChar;
                     float lineY = y - faceMetrics.LineHeight;
 
+                    // Last line?
                     if (i == String.Length - 1)
                     {
+                        // The line was not incremented so we need to do this manually for the last line
                         lineY += faceMetrics.LineHeight + offsetY;
-                        lineX = 0.0f;
+                        //lineX = 0.0f;
                     }
 
                     // Store the line info for adding underline/strikeout lines later
@@ -151,16 +176,14 @@ namespace Glaives.GameFramework
                         X = lineX,
                         UnderlineY = lineY - faceMetrics.UnderlinePosition,
                         StrikeoutY = lineY - faceMetrics.StrikeoutPosition,
-                        Width = lineWidth + glyphInfo.Advance, 
+                        LineWidth = lineWidth + bearingXLastChar,
                         StrikeoutThickness = faceMetrics.StrikeoutSize,
                         UnderlineThickness = faceMetrics.UnderlineSize
                     });
-
-                    throw new Exception("TODO: Why does the + advance in line 154 cause the line to bleed into the start location????");
                 }
                 
                 // Advance
-                advance += glyphInfo.Advance;
+                advance += (float)Math.Round(glyphInfo.Advance);
                 lineWidth = advance;
                 prevChar = curChar;
 
@@ -168,11 +191,13 @@ namespace Glaives.GameFramework
 
                 // Do not skew these characters
                 if (curChar != '.' && 
-                    curChar != '|')
+                    curChar != '|' &&
+                    curChar != ',')
                 {
                     skew = StyleFlags.HasFlag(TextStyleFlags.Italic) ? (float)Font.FontSize / 4 : 0.0f;
                 }
-                
+
+             
                 Matrix mat = WorldMatrix;
                 vertices[i0].Position = mat * new Vector2(x + skew, y);
                 vertices[i1].Position = mat * new Vector2(x + srcRect.Width + skew, y);
@@ -230,9 +255,9 @@ namespace Glaives.GameFramework
                 if (underline)
                 {
                     AddLine(
-                        lineInfo.X, 
+                        (float)Math.Ceiling(lineInfo.X), 
                         (float)Math.Ceiling(lineInfo.UnderlineY),
-                        (float)Math.Ceiling(lineInfo.Width), 
+                        (float)Math.Ceiling(lineInfo.LineWidth), 
                         (float)Math.Ceiling(lineInfo.UnderlineThickness), 
                         ref vertices);
                 }
@@ -240,9 +265,9 @@ namespace Glaives.GameFramework
                 if (strikeout)
                 {
                     AddLine(
-                        lineInfo.X, 
+                        (float)Math.Ceiling(lineInfo.X), 
                         (float)Math.Ceiling(lineInfo.StrikeoutY),
-                        (float)Math.Ceiling(lineInfo.Width), 
+                        (float)Math.Ceiling(lineInfo.LineWidth), 
                         (float)Math.Ceiling(lineInfo.StrikeoutThickness), 
                         ref vertices);
                 }
@@ -256,11 +281,13 @@ namespace Glaives.GameFramework
             // Grow the vertex array to fit the line quad
             Array.Resize(ref vertices, vertices.Length + 4);
 
-            int i0 = vertices.Length - 1;
-            int i1 = i0 - 1;
-            int i2 = i0 - 2;
-            int i3 = i0 - 3;
+            // The indices of the last 4 vertices that we appended to the vertex array
+            int i0 = vertices.Length - 4;
+            int i1 = i0 + 1;
+            int i2 = i0 + 2;
+            int i3 = i0 + 3;
             
+            // Line quad vertex positions
             Matrix mat = WorldMatrix;
             vertices[i0].Position = mat * new Vector2(x, y);
             vertices[i1].Position = mat * new Vector2(x + width, y);
@@ -270,8 +297,9 @@ namespace Glaives.GameFramework
             int textureWidth = Texture.Size.X;
             int textureHeight = Texture.Size.Y;
 
-            float pixelLocationMax = 1.0f;
-
+            // Line quad texture coords represent the first pixel in the glyph atlas
+            // This pixel is put there by the font in any font
+            const float pixelLocationMax = 1.0f;
             vertices[i0].TexCoords.X = 0.0f;
             vertices[i0].TexCoords.Y = 0.0f;
             vertices[i1].TexCoords.X = pixelLocationMax / textureWidth;
@@ -281,6 +309,7 @@ namespace Glaives.GameFramework
             vertices[i3].TexCoords.X = 0.0f;
             vertices[i3].TexCoords.Y = pixelLocationMax / textureHeight;
 
+            // Line quad vertex color
             vertices[i0].Color = Color;
             vertices[i1].Color = Color;
             vertices[i2].Color = Color;

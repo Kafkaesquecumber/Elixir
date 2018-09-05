@@ -94,7 +94,7 @@ namespace Glaives.Graphics
             _frameBufferVbo = GL.GenBuffer();
             PostProcessingShader = Shader.Default;
 
-            _frameBuffer = new RenderTarget(window.Size, TextureFilterMode.Linear);
+            _frameBuffer = new RenderTarget(window.Size, TextureFilterMode.Smooth);
         }
 
         internal void AddDrawableActor(DrawableActor drawableActor)
