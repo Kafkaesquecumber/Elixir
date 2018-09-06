@@ -36,7 +36,7 @@ namespace Glaives.Graphics
     /// <summary>
     /// A font is used to draw text
     /// </summary>
-    public class Font : LoadableContent, IDisposable
+    public class Font : LoadableContent
     {
         /// <summary>
         /// The maximum size allowed for fonts

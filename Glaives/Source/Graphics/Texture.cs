@@ -34,7 +34,7 @@ namespace Glaives.Graphics
     /// <para>Use a dynamic texture if you want access and/or modify the pixel data on the CPU</para>
     /// <para>A dynamic texture can be converted to a texture and vise-versa (do not forget to dispose the dynamic texture when you are done with it)</para>
     /// </summary>
-    public class Texture : LoadableContent, IDisposable
+    public class Texture : LoadableContent
     {
         internal const PixelFormat PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
 

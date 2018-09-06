@@ -569,13 +569,13 @@
         </member>
         <member name="M:Glaives.GameFramework.DrawableActor.ReconstructVertices">
             <summary>
-            <para>Marks the vertices as dirty, ConstructVertices will be called again by the GraphicsDevice in the render stage</para>
+            <para>Marks the vertices as dirty, CreateVertices will be called again by the GraphicsDevice in the render stage</para>
             <para>Construction will always happen initially when the drawable actor is created</para>
             <para>Call when a change was made that affects the vertices</para>
             <para>Transformational changes (Position, Rotation, Scale), Color and Flips will automatically cause the vertices to be re-constructed</para>
             </summary>
         </member>
-        <member name="M:Glaives.GameFramework.DrawableActor.ConstructVertices">
+        <member name="M:Glaives.GameFramework.DrawableActor.CreateVertices">
             <summary>
             <para>Defines the geometry of the drawable actor</para>
             </summary>
@@ -691,7 +691,7 @@
         <member name="P:Glaives.GameFramework.Sprite.LocalBounds">
             <inheritdoc />
         </member>
-        <member name="M:Glaives.GameFramework.Sprite.ConstructVertices">
+        <member name="M:Glaives.GameFramework.Sprite.CreateVertices">
             <inheritdoc />
         </member>
         <member name="P:Glaives.GameFramework.Text.String">

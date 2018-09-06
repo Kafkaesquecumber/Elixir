@@ -114,8 +114,8 @@ namespace Glaives.GameFramework
                 return FloatRect.Zero;
             }
         }
-        
-        protected override Vertex[] ConstructVertices()
+
+        protected override Vertex[] CreateVertices()
         {
             Vertex[] vertices = new Vertex[String.Length * 4];
 
@@ -128,17 +128,33 @@ namespace Glaives.GameFramework
             float bearingXFirstChar = 0.0f; // Bearing x for first char on the line
             float bearingXLastChar = 0.0f;  // Bearing x for last char on the line
             Matrix mat = WorldMatrix;       // The world matrix to be used for vertex construction
-
+            
+            // New line info will be added after a line terminates
+            // Line info's are used later to draw strikeouts/underlines
+            List<LineInfo> lines = new List<LineInfo>();
+            GlyphInfo[] glyphInfos = new GlyphInfo[String.Length];
+            
+            // Load the glyphs first
+            // This can not be done in the big loop because the texture might resize during a glyph load (to make it fit)
+            // When the texture is resized all tex coords of previous iterations are no longer valid because the texture size has changed
+            for (int i = 0; i < String.Length; i++)
+            {
+                char c = String[i];
+                if (c == '\r' || c == '\n' || c == '\t')
+                {
+                    glyphInfos[i] = GlyphInfo.Empty;
+                    continue;
+                }
+                glyphInfos[i] = Font.LoadGlyph(c);
+            }
+            
             // Make sure the texture still references the glyph atlas texture
             // The font can swap the texture when loading glyphs
             // When a new glyph does not fit on the texture, a new and bigger texture is generated
             // If we do not do this, we will be left with a reference to the old, disposed texture 
-            Texture = Font.Texture;         
+            Texture = Font.Texture;
 
-            // New line info will be added after a line terminates
-            // Line info's are used later to draw strikeouts/underlines
-            List<LineInfo> lines = new List<LineInfo>();
-            
+            // Create the vertices
             for (int i = 0; i < String.Length; i++)
             {
                 int i0 = (i * 4);
@@ -171,40 +187,43 @@ namespace Glaives.GameFramework
                         break;
                     default:
                     {
-                        // Load glyph info
-                        glyphInfo = Font.LoadGlyph(curChar);
+                        // Get glyph info from previously loaded array
+                        glyphInfo = glyphInfos[i];
+                            
                         if (glyphInfo == GlyphInfo.Empty)
                         {
                             // Glyph could not be loaded and is not a special case
-
                             float errorVertexSize = faceMetrics.CellAscent;
                             float errorVertexY = (faceMetrics.LineHeight * line) + faceMetrics.XHeight - errorVertexSize;
-                            Vertex[] errorVertices = new Vertex[4];
-                            errorVertices[0].Position = mat * new Vector2(advance, errorVertexY);
-                            errorVertices[1].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY);
-                            errorVertices[2].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY + errorVertexSize);
-                            errorVertices[3].Position = mat * new Vector2(advance, errorVertexY + errorVertexSize);
+                            //Vertex[] errorVertices = new Vertex[4];
+                            vertices[i0].Position = mat * new Vector2(advance, errorVertexY);
+                            vertices[i1].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY);
+                            vertices[i2].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY + errorVertexSize);
+                            vertices[i3].Position = mat * new Vector2(advance, errorVertexY + errorVertexSize);
+                                
+                            // Texture coords represent the first pixel in the glyph atlas
+                            // This pixel is put there by the font in any font
+                            const float pixelLocationMax = 1.0f;
 
-                            errorVertices[0].TexCoords = new Vector2(0.0f, 0.0f);
-                            errorVertices[1].TexCoords = new Vector2(1.0f, 0.0f);
-                            errorVertices[2].TexCoords = new Vector2(1.0f, 1.0f);
-                            errorVertices[3].TexCoords = new Vector2(0.0f, 1.0f);
+                            vertices[i0].TexCoords.X = 0.0f;
+                            vertices[i0].TexCoords.Y = 0.0f;
+                            vertices[i1].TexCoords.X = pixelLocationMax / Texture.Size.X;
+                            vertices[i1].TexCoords.Y = 0.0f;
+                            vertices[i2].TexCoords.X = pixelLocationMax / Texture.Size.X;
+                            vertices[i2].TexCoords.Y = pixelLocationMax / Texture.Size.Y;
+                            vertices[i3].TexCoords.X = 0.0f;
+                            vertices[i3].TexCoords.Y = pixelLocationMax / Texture.Size.Y;
+                                
+                            Color errorVertexColor = Color.Red;
+                            vertices[i0].Color = errorVertexColor;
+                            vertices[i1].Color = errorVertexColor;
+                            vertices[i2].Color = errorVertexColor;
+                            vertices[i3].Color = errorVertexColor;
 
-                            Color errorVertexColor = Color.White;
-                            errorVertices[0].Color = errorVertexColor;
-                            errorVertices[1].Color = errorVertexColor;
-                            errorVertices[2].Color = errorVertexColor;
-                            errorVertices[3].Color = errorVertexColor;
-
-                            RenderProgram errorRenderProgram = new RenderProgram(
-                                BlendMode.Alpha, Engine.Get.DefaultContent.TextureGlyphNotFound, Shader.Default, DrawLayer);
-                            
-                            Engine.Get.Graphics.AddGeometry(errorVertices, errorRenderProgram);
                             advance += errorVertexSize;
                             continue;
-                            
                         }
-
+                        
                         srcRect = glyphInfo.SourceRect;
                         bearingXLastChar = glyphInfo.SourceRect.Width;
                         if (advance == 0.0f)
@@ -222,7 +241,7 @@ namespace Glaives.GameFramework
                 float offsetX = (float)Math.Ceiling(glyphInfo.BearingX);
                 
                 // Apply x and y offsets, line offset, and advance
-                float y = (float)Math.Floor((faceMetrics.XHeight - offsetY) + (faceMetrics.LineHeight * line));
+                float y = (float)Math.Floor((faceMetrics.XHeight - offsetY) + (float)Math.Floor(faceMetrics.LineHeight * line));
                 float x = (float)Math.Ceiling(offsetX + advance);
                 
                 // Apply kerning
@@ -230,7 +249,7 @@ namespace Glaives.GameFramework
                 x += (float)Math.Ceiling(kerning);
                 
                 // New line added or last line
-                if (newLine  || (i == String.Length - 1))
+                if (newLine || (i == String.Length - 1))
                 {
                     float lineX = bearingXFirstChar;
                     float lineY = y - faceMetrics.LineHeight;
@@ -269,7 +288,7 @@ namespace Glaives.GameFramework
                 {
                     skew = StyleFlags.HasFlag(TextStyleFlags.Italic) ? (float)Font.FontSize / 4 : 0.0f;
                 }
-                
+
                 vertices[i0].Position = mat * new Vector2(x + skew, y);
                 vertices[i1].Position = mat * new Vector2(x + srcRect.Width + skew, y);
                 vertices[i2].Position = mat * new Vector2(x + srcRect.Width, srcRect.Height + y);
@@ -287,7 +306,7 @@ namespace Glaives.GameFramework
                 vertices[i2].TexCoords.Y = (srcRect.Y + srcRect.Height) / textureHeight;
                 vertices[i3].TexCoords.X = srcRect.X / textureWidth;
                 vertices[i3].TexCoords.Y = (srcRect.Y + srcRect.Height) / textureHeight;
-
+                
                 // Apply flips
                 if (FlipX)
                 {
@@ -343,6 +362,7 @@ namespace Glaives.GameFramework
                         ref vertices);
                 }
             }
+
             
             return vertices;
         }

@@ -30,14 +30,12 @@ namespace Glaives.Internal.Content
     internal class DefaultContent
     {
         internal Texture TextureWhite32x32;
-        internal Texture TextureGlyphNotFound;
         internal Font FontConsolasRegular32;
 
         internal DefaultContent()
         {
             TextureWhite32x32 = new Texture(32, 32, new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge));
             TextureWhite32x32.Update(Color.White);
-            TextureGlyphNotFound = new Texture("EngineContent/T_GlyphNotFound.png", TextureCreateOptions.Smooth);
             FontConsolasRegular32 = new Font("EngineContent/F_ConsolasRegular.ttf", new FontCreateOptions(32));
         }
     }

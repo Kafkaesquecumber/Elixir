@@ -224,7 +224,7 @@ namespace Glaives.GameFramework
         {
             if (_verticesAreDirty)
             {
-                _vertices = ConstructVertices();
+                _vertices = CreateVertices();
                 _verticesAreDirty = false;
             }
 
@@ -238,7 +238,7 @@ namespace Glaives.GameFramework
         }
 
         /// <summary>
-        /// <para>Marks the vertices as dirty, ConstructVertices will be called again by the GraphicsDevice in the render stage</para>
+        /// <para>Marks the vertices as dirty, CreateVertices will be called again by the GraphicsDevice in the render stage</para>
         /// <para>Construction will always happen initially when the drawable actor is created</para>
         /// <para>Call when a change was made that affects the vertices</para>
         /// <para>Transformational changes (Position, Rotation, Scale), Color and Flips will automatically cause the vertices to be re-constructed</para>
@@ -252,6 +252,6 @@ namespace Glaives.GameFramework
         /// <para>Defines the geometry of the drawable actor</para>
         /// </summary>
         /// <returns></returns>
-        protected abstract Vertex[] ConstructVertices();
+        protected abstract Vertex[] CreateVertices();
     }
 }

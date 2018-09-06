@@ -45,7 +45,7 @@ namespace Glaives.GameFramework
         public override FloatRect LocalBounds => new FloatRect(0, 0, SourceRect.Width, SourceRect.Height);
 
         /// <inheritdoc />
-        protected override Vertex[] ConstructVertices()
+        protected override Vertex[] CreateVertices()
         {
             Vertex[] vertices = new Vertex[4];
 
