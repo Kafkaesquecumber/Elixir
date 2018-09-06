@@ -195,33 +195,11 @@ namespace Glaives.GameFramework
                             // Glyph could not be loaded and is not a special case
                             float errorVertexSize = faceMetrics.CellAscent;
                             float errorVertexY = (faceMetrics.LineHeight * line) + faceMetrics.XHeight - errorVertexSize;
-                            //Vertex[] errorVertices = new Vertex[4];
-                            vertices[i0].Position = mat * new Vector2(advance, errorVertexY);
-                            vertices[i1].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY);
-                            vertices[i2].Position = mat * new Vector2(advance + errorVertexSize, errorVertexY + errorVertexSize);
-                            vertices[i3].Position = mat * new Vector2(advance, errorVertexY + errorVertexSize);
-                                
-                            // Texture coords represent the first pixel in the glyph atlas
-                            // This pixel is put there by the font in any font
-                            const float pixelLocationMax = 1.0f;
 
-                            vertices[i0].TexCoords.X = 0.0f;
-                            vertices[i0].TexCoords.Y = 0.0f;
-                            vertices[i1].TexCoords.X = pixelLocationMax / Texture.Size.X;
-                            vertices[i1].TexCoords.Y = 0.0f;
-                            vertices[i2].TexCoords.X = pixelLocationMax / Texture.Size.X;
-                            vertices[i2].TexCoords.Y = pixelLocationMax / Texture.Size.Y;
-                            vertices[i3].TexCoords.X = 0.0f;
-                            vertices[i3].TexCoords.Y = pixelLocationMax / Texture.Size.Y;
-                                
-                            Color errorVertexColor = Color.Red;
-                            vertices[i0].Color = errorVertexColor;
-                            vertices[i1].Color = errorVertexColor;
-                            vertices[i2].Color = errorVertexColor;
-                            vertices[i3].Color = errorVertexColor;
-
+                            // Add a red quad to indicate a missing glyph
+                            AddQuad(i0, advance, errorVertexY, errorVertexSize, errorVertexSize, Color.Red, ref vertices);
                             advance += errorVertexSize;
-                            continue;
+                            continue; // Next char
                         }
                         
                         srcRect = glyphInfo.SourceRect;
@@ -344,21 +322,23 @@ namespace Glaives.GameFramework
             {
                 if (underline)
                 {
-                    AddLine(
+                    AddQuad(vertices.Length,
                         (float)Math.Ceiling(lineInfo.X), 
                         (float)Math.Ceiling(lineInfo.UnderlineY),
                         (float)Math.Ceiling(lineInfo.LineWidth), 
                         (float)Math.Ceiling(lineInfo.UnderlineThickness), 
+                        Color,
                         ref vertices);
                 }
 
                 if (strikeout)
                 {
-                    AddLine(
+                    AddQuad(vertices.Length,
                         (float)Math.Ceiling(lineInfo.X), 
                         (float)Math.Ceiling(lineInfo.StrikeoutY),
                         (float)Math.Ceiling(lineInfo.LineWidth), 
-                        (float)Math.Ceiling(lineInfo.StrikeoutThickness), 
+                        (float)Math.Ceiling(lineInfo.StrikeoutThickness),
+                        Color,
                         ref vertices);
                 }
             }
@@ -367,28 +347,30 @@ namespace Glaives.GameFramework
             return vertices;
         }
 
-        private void AddLine(float x, float y, float width, float thickness, ref Vertex[] vertices)
+        private void AddQuad(int index, float x, float y, float width, float height, Color color, ref Vertex[] vertices)
         {
-            // Grow the vertex array to fit the line quad
-            Array.Resize(ref vertices, vertices.Length + 4);
+            if (index >= vertices.Length - 4)
+            {
+                // Grow the vertex array to fit the quad
+                Array.Resize(ref vertices, vertices.Length + 4);
+            }
 
-            // The indices of the last 4 vertices that we appended to the vertex array
-            int i0 = vertices.Length - 4;
+            int i0 = index;
             int i1 = i0 + 1;
             int i2 = i0 + 2;
             int i3 = i0 + 3;
             
-            // Line quad vertex positions
+            // Quad vertex positions
             Matrix mat = WorldMatrix;
             vertices[i0].Position = mat * new Vector2(x, y);
             vertices[i1].Position = mat * new Vector2(x + width, y);
-            vertices[i2].Position = mat * new Vector2(x + width, thickness + y);
-            vertices[i3].Position = mat * new Vector2(x, thickness + y);
+            vertices[i2].Position = mat * new Vector2(x + width, height + y);
+            vertices[i3].Position = mat * new Vector2(x, height + y);
 
             int textureWidth = Texture.Size.X;
             int textureHeight = Texture.Size.Y;
 
-            // Line quad texture coords represent the first pixel in the glyph atlas
+            // Quad texture coords represent the first pixel in the glyph atlas
             // This pixel is put there by the font in any font
             const float pixelLocationMax = 1.0f;
             vertices[i0].TexCoords.X = 0.0f;
@@ -400,11 +382,11 @@ namespace Glaives.GameFramework
             vertices[i3].TexCoords.X = 0.0f;
             vertices[i3].TexCoords.Y = pixelLocationMax / textureHeight;
 
-            // Line quad vertex color
-            vertices[i0].Color = Color;
-            vertices[i1].Color = Color;
-            vertices[i2].Color = Color;
-            vertices[i3].Color = Color;
+            // Quad vertex color
+            vertices[i0].Color = color;
+            vertices[i1].Color = color;
+            vertices[i2].Color = color;
+            vertices[i3].Color = color;
         }
     }
 }
