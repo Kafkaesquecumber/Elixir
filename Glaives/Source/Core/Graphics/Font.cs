@@ -90,6 +90,7 @@ namespace Glaives.Core.Graphics
             {
                 // Load the glyph from the font face
                 Glyph glyph = FontFace.GetGlyph(codePoint, FontSize);
+                
                 if (glyph == null)
                 {
                     if (!_errorChars.Contains(codePoint))

@@ -26,6 +26,9 @@ using System.Xml.Serialization;
 
 namespace Glaives.Core.Configuration
 {
+    /// <summary>
+    /// Root class for all engine settings
+    /// </summary>
     [Serializable]
     public class Settings 
     {

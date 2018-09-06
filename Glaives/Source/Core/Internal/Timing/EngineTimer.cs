@@ -68,7 +68,7 @@ namespace Glaives.Core.Internal.Timing
             ulong now = _nativeWindow.GetHighResTicks();
             double workTime = (double) ((now - _lastFrame) * 1000) / _nativeWindow.GetFrequency();
 
-            uint targetFps = Engine.Get.Settings.General.TargetFps;
+            uint targetFps = Engine.Get.Settings.Video.TargetFps;
 
             if (targetFps == 0) // 0 means unlimited, don't sleep
             {

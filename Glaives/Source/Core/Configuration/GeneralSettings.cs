@@ -24,14 +24,12 @@ using System;
 
 namespace Glaives.Core.Configuration
 {    
+    /// <summary>
+    /// General engine settings
+    /// </summary>
     [Serializable]
     public class GeneralSettings
     {
-        /// <summary>
-        /// <para>The desired frames per second</para>
-        /// <para>This is an approximation, actual fps may vary</para>
-        /// <para>0 means unlimited</para>
-        /// </summary>
-        public uint TargetFps { get; set; } = 200;
+        
     }
 }

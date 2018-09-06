@@ -22,9 +22,26 @@
 
 namespace Glaives.Core.Graphics
 {
+    /// <inheritdoc />
+    /// The sprite drawable actor
     public class Sprite : DrawableActor
     {
-        public IntRect SourceRect { get; set; }
+        private IntRect _sourceRect;
+        /// <summary>
+        /// The region on the texture to use to draw the sprite
+        /// </summary>
+        public IntRect SourceRect
+        {
+            get => _sourceRect;
+            set
+            {
+                if (_sourceRect != value)
+                {
+                    _sourceRect = value;
+                    ReconstructVertices();
+                }
+            }
+        }
         
         /// <inheritdoc />
         public Sprite(Texture texture)

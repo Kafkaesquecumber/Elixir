@@ -160,11 +160,14 @@
             <param name="value">The value of the axis (can be between 0 and 1 or -1 and 1 depending on the type of axis)</param>
             <param name="gamepadId">The id of the gamepad that triggered this event (if it is triggered by a gamepad)</param>
         </member>
-        <member name="P:Glaives.Core.Configuration.GeneralSettings.TargetFps">
+        <member name="T:Glaives.Core.Configuration.GeneralSettings">
             <summary>
-            <para>The desired frames per second</para>
-            <para>This is an approximation, actual fps may vary</para>
-            <para>0 means unlimited</para>
+            General engine settings
+            </summary>
+        </member>
+        <member name="T:Glaives.Core.Configuration.InputSettings">
+            <summary>
+            Engine settings related to input
             </summary>
         </member>
         <member name="P:Glaives.Core.Configuration.InputSettings.ActionBindings">
@@ -184,6 +187,11 @@
             <param name="axis"></param>
             <returns></returns>
         </member>
+        <member name="T:Glaives.Core.Configuration.Settings">
+            <summary>
+            Root class for all engine settings
+            </summary>
+        </member>
         <member name="M:Glaives.Core.Configuration.Settings.Save(System.String)">
             <summary>
             Serialize the settings to an XML file
@@ -195,6 +203,11 @@
             Load the settings from an XML file
             </summary>
             <param name="settingsFile">The XML file which contains the settings</param>
+        </member>
+        <member name="T:Glaives.Core.Configuration.VideoSettings">
+            <summary>
+            Engine settings related to windowing and graphics
+            </summary>
         </member>
         <member name="P:Glaives.Core.Configuration.VideoSettings.Width">
             <summary>
@@ -214,6 +227,13 @@
         <member name="P:Glaives.Core.Configuration.VideoSettings.VSync">
             <summary>
             Whether or not the window should use vertical synchronization
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Configuration.VideoSettings.TargetFps">
+            <summary>
+            <para>The desired frames per second</para>
+            <para>This is an approximation, actual fps may vary</para>
+            <para>0 means unlimited</para>
             </summary>
         </member>
         <member name="T:Glaives.Core.ContentCreateOptions">

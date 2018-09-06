@@ -27,7 +27,8 @@ namespace Glaives.Core.Graphics
 {
     /// <inheritdoc />
     /// <summary>
-    /// An actor that contains geometry that can be drawn to a render target
+    /// <para>An actor that contains geometry that can be drawn</para>
+    /// <para>You can create your own drawable actor by inheriting from drawable actor and implementing the necessary methods</para>
     /// </summary>
     public abstract class DrawableActor : Actor
     {

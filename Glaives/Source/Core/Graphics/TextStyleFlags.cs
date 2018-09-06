@@ -24,13 +24,31 @@ using System;
 
 namespace Glaives.Core.Graphics
 {
+    /// <summary>
+    /// <para>The italic flag skews the vertices to appear to be italic (if you use an italic font, don not include the italic flag)</para>
+    /// <para>The underline flag adds a underline to text lines as a generated quad</para>
+    /// <para>The strikeout flag adds a line through the text as a generated quad</para>
+    /// <para>At the moment, boldness can not be done artificially, if you want bold text you should load a bold font</para>
+    /// </summary>
     [Flags]
     public enum TextStyleFlags
     {
+        /// <summary>
+        /// No modifications are done to the text
+        /// </summary>
         Regular = 0,
-        Bold = 1,
-        Italic = 2,
-        Underline = 4,
-        Strikeout = 8,
+        /// <summary>
+        /// Skews the vertices to appear to be italic (if you use an italic font, don not include the italic flag)
+        /// </summary>
+        Italic = 1,
+        /// <summary>
+        /// Adds a underline to text lines as a generated quad
+        /// </summary>
+        Underline = 2,
+        /// <summary>
+        /// Adds a line through the text as a generated quad
+        /// </summary>
+        Strikeout = 4,
     }
+    //TODO: Add emboldening support (not supported by SharpFont)
 }

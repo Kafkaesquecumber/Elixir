@@ -25,6 +25,9 @@ using System.Reflection;
 
 namespace Glaives.Core.Configuration
 {
+    /// <summary>
+    /// Engine settings related to windowing and graphics
+    /// </summary>
     [Serializable]
     public class VideoSettings
     {
@@ -107,7 +110,14 @@ namespace Glaives.Core.Configuration
                 }
             }
         }
-        
+
+        /// <summary>
+        /// <para>The desired frames per second</para>
+        /// <para>This is an approximation, actual fps may vary</para>
+        /// <para>0 means unlimited</para>
+        /// </summary>
+        public uint TargetFps { get; set; } = 200;
+
         public VideoSettings()
         {
             Title = Assembly.GetEntryAssembly().GetName().Name;

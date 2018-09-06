@@ -27,6 +27,9 @@ using Glaives.Core.Internal;
 
 namespace Glaives.Core.Configuration
 {
+    /// <summary>
+    /// Engine settings related to input
+    /// </summary>
     [Serializable]
     public class InputSettings
     {

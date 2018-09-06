@@ -27,6 +27,8 @@ using SharpFont;
 
 namespace Glaives.Core.Graphics
 {
+    /// <inheritdoc />
+    /// The text drawable actor generates quads that represents characters from a font
     public class Text : DrawableActor
     {
         internal struct LineInfo
