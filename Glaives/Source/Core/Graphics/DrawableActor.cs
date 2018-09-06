@@ -20,12 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using Glaives.Core.Graphics;
 using Glaives.Core.Internal;
 using Glaives.Core.Internal.Graphics;
 
-namespace Glaives.Core
+namespace Glaives.Core.Graphics
 {
     /// <inheritdoc />
     /// <summary>

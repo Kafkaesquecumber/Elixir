@@ -160,88 +160,6 @@
             <param name="value">The value of the axis (can be between 0 and 1 or -1 and 1 depending on the type of axis)</param>
             <param name="gamepadId">The id of the gamepad that triggered this event (if it is triggered by a gamepad)</param>
         </member>
-        <member name="P:Glaives.Core.Color.White">
-            <summary>
-            (R=1, G=1, B=1, A=1);
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Color.Black">
-            <summary>
-            (R=0, G=0, B=0, A=1);
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Color.Red">
-            <summary>
-            (R=1, G=0, B=0, A=1);
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Color.Green">
-            <summary>
-            (R=0, G=1, B=0, A=1);
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Color.Blue">
-            <summary>
-            (R=0, G=0, B=1, A=1);
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Color.Magenta">
-            <summary>
-            (R=1, G=0, B=1, A=1);
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Color.Transparant">
-            <summary>
-            (R=0, G=0, B=0, A=0);
-            </summary>
-        </member>
-        <member name="M:Glaives.Core.Color.ToRgbaBytes">
-            <summary>
-            Create a byte array of rgba values (between 0 and 255)
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Glaives.Core.Color.RgbaToBgra(System.Byte[])">
-            <summary>
-            Convert a RGBA byte array to a BGRA byte array
-            </summary>
-            <param name="rgbaBytes">The bytes in RGBA order</param>
-        </member>
-        <member name="M:Glaives.Core.Color.BgraToRgba(System.Byte[])">
-            <summary>
-            Convert a BGRA byte array to a RGBA byte array
-            </summary>
-            <param name="bgraBytes">The bytes in BGRA order</param>
-        </member>
-        <member name="M:Glaives.Core.Color.RgbaToRgb(System.Byte[])">
-            <summary>
-            Convert a RGBA byte array to a RGB byte array
-            </summary>
-            <param name="rgbaBytes">The RGBA bytes</param>
-        </member>
-        <member name="M:Glaives.Core.Color.RgbToRgba(System.Byte[],System.Byte)">
-            <summary>
-            Convert a RGB byte array to a RGBA byte array
-            </summary>
-            <param name="rgbBytes">The RGB bytes</param>
-            <param name="alpha">The value to use for the alpha channel</param>
-        </member>
-        <member name="M:Glaives.Core.ColorExtensions.ToBytes(System.Collections.Generic.IEnumerable{Glaives.Core.Color})">
-            <summary>
-            <para>Create an RGBA byte array of rgba values (between 0 and 255)</para>
-            <para>The RGBA byte array will be 4 times the length of the color collection</para>
-            </summary>
-            <param name="colors">The colors to convert to RGBA bytes</param>
-            <returns>The RGBA bytes</returns>
-        </member>
-        <member name="M:Glaives.Core.ColorExtensions.ToColors(System.Collections.Generic.IEnumerable{System.Byte})">
-            <summary>
-            <para>Convert the RGBA bytes to colors</para>
-            <para>The color array will be a quarter the length of the byte array</para>
-            </summary>
-            <param name="bytes">The RGBA bytes to convert</param>
-            <returns>The colors</returns>
-        </member>
         <member name="P:Glaives.Core.Configuration.GeneralSettings.TargetFps">
             <summary>
             <para>The desired frames per second</para>
@@ -396,96 +314,6 @@
             <summary>
             The current frame rate 
             </summary>
-        </member>
-        <member name="T:Glaives.Core.DrawableActor">
-            <inheritdoc />
-            <summary>
-            An actor that contains geometry that can be drawn to a render target
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.Opacity">
-            <summary>
-            How transparent this actor is (between 0 and 1)
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.Color">
-            <summary>
-            The RGBA color of this actor
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.FlipX">
-            <summary>
-            Whether or not to flip the actor horizontally
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.FlipY">
-            <summary>
-            Whether or not to flip the actor vertically
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.LocalBounds">
-            <summary>
-            <para>The bounds of this drawable actor in local space</para>
-            <para>Ignores the transformations (translation, rotation ,scale) that are applied</para>
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.Origin">
-            <summary>
-            The normalized origin of the actor (between (0, 0) and (1, 1))
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.BlendMode">
-            <summary>
-            The blending modes to use for this drawable actor
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.Shader">
-            <summary>
-            The shader to use for this drawable actor
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.Texture">
-            <summary>
-            The texture of this drawable actor
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.DrawLayer">
-            <summary>
-            The draw layers manage the order at which the drawable actors are drawn (higher layers will overlap lower layers)
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.GlobalBounds">
-            <summary>
-            <para>The global bounds of this drawable actor</para>
-            <para>Takes into account the transformations (translation, rotation, scale) that are applied</para>
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.LocalBoundsInternal">
-            <summary>
-            Internal use for the Actor base class only
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.DrawableActor.OriginInternal">
-            <summary>
-            Internal use for the Actor base class only
-            </summary>
-        </member>
-        <member name="M:Glaives.Core.DrawableActor.Transformed">
-            <inheritdoc />
-        </member>
-        <member name="M:Glaives.Core.DrawableActor.ReconstructVertices">
-            <summary>
-            <para>Marks the vertices as dirty, CreateVertices will be called again by the GraphicsDevice in the render stage</para>
-            <para>Construction will always happen initially when the drawable actor is created</para>
-            <para>Call when a change was made that affects the vertices</para>
-            <para>Transformational changes (Position, Rotation, Scale), Color and Flips will automatically cause the vertices to be re-constructed</para>
-            </summary>
-        </member>
-        <member name="M:Glaives.Core.DrawableActor.CreateVertices">
-            <summary>
-            <para>Defines the geometry of the drawable actor</para>
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:Glaives.Core.Engine">
             <summary>
@@ -742,6 +570,178 @@
             </summary>
             <returns>Integer description of the object</returns>
         </member>
+        <member name="P:Glaives.Core.Graphics.Color.White">
+            <summary>
+            (R=1, G=1, B=1, A=1);
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Color.Black">
+            <summary>
+            (R=0, G=0, B=0, A=1);
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Color.Red">
+            <summary>
+            (R=1, G=0, B=0, A=1);
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Color.Green">
+            <summary>
+            (R=0, G=1, B=0, A=1);
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Color.Blue">
+            <summary>
+            (R=0, G=0, B=1, A=1);
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Color.Magenta">
+            <summary>
+            (R=1, G=0, B=1, A=1);
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Color.Transparant">
+            <summary>
+            (R=0, G=0, B=0, A=0);
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.Graphics.Color.ToRgbaBytes">
+            <summary>
+            Create a byte array of rgba values (between 0 and 255)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Glaives.Core.Graphics.Color.RgbaToBgra(System.Byte[])">
+            <summary>
+            Convert a RGBA byte array to a BGRA byte array
+            </summary>
+            <param name="rgbaBytes">The bytes in RGBA order</param>
+        </member>
+        <member name="M:Glaives.Core.Graphics.Color.BgraToRgba(System.Byte[])">
+            <summary>
+            Convert a BGRA byte array to a RGBA byte array
+            </summary>
+            <param name="bgraBytes">The bytes in BGRA order</param>
+        </member>
+        <member name="M:Glaives.Core.Graphics.Color.RgbaToRgb(System.Byte[])">
+            <summary>
+            Convert a RGBA byte array to a RGB byte array
+            </summary>
+            <param name="rgbaBytes">The RGBA bytes</param>
+        </member>
+        <member name="M:Glaives.Core.Graphics.Color.RgbToRgba(System.Byte[],System.Byte)">
+            <summary>
+            Convert a RGB byte array to a RGBA byte array
+            </summary>
+            <param name="rgbBytes">The RGB bytes</param>
+            <param name="alpha">The value to use for the alpha channel</param>
+        </member>
+        <member name="M:Glaives.Core.Graphics.ColorExtensions.ToBytes(System.Collections.Generic.IEnumerable{Glaives.Core.Graphics.Color})">
+            <summary>
+            <para>Create an RGBA byte array of rgba values (between 0 and 255)</para>
+            <para>The RGBA byte array will be 4 times the length of the color collection</para>
+            </summary>
+            <param name="colors">The colors to convert to RGBA bytes</param>
+            <returns>The RGBA bytes</returns>
+        </member>
+        <member name="M:Glaives.Core.Graphics.ColorExtensions.ToColors(System.Collections.Generic.IEnumerable{System.Byte})">
+            <summary>
+            <para>Convert the RGBA bytes to colors</para>
+            <para>The color array will be a quarter the length of the byte array</para>
+            </summary>
+            <param name="bytes">The RGBA bytes to convert</param>
+            <returns>The colors</returns>
+        </member>
+        <member name="T:Glaives.Core.Graphics.DrawableActor">
+            <inheritdoc />
+            <summary>
+            An actor that contains geometry that can be drawn to a render target
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.Opacity">
+            <summary>
+            How transparent this actor is (between 0 and 1)
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.Color">
+            <summary>
+            The RGBA color of this actor
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.FlipX">
+            <summary>
+            Whether or not to flip the actor horizontally
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.FlipY">
+            <summary>
+            Whether or not to flip the actor vertically
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.LocalBounds">
+            <summary>
+            <para>The bounds of this drawable actor in local space</para>
+            <para>Ignores the transformations (translation, rotation ,scale) that are applied</para>
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.Origin">
+            <summary>
+            The normalized origin of the actor (between (0, 0) and (1, 1))
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.BlendMode">
+            <summary>
+            The blending modes to use for this drawable actor
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.Shader">
+            <summary>
+            The shader to use for this drawable actor
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.Texture">
+            <summary>
+            The texture of this drawable actor
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.DrawLayer">
+            <summary>
+            The draw layers manage the order at which the drawable actors are drawn (higher layers will overlap lower layers)
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.GlobalBounds">
+            <summary>
+            <para>The global bounds of this drawable actor</para>
+            <para>Takes into account the transformations (translation, rotation, scale) that are applied</para>
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.LocalBoundsInternal">
+            <summary>
+            Internal use for the Actor base class only
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DrawableActor.OriginInternal">
+            <summary>
+            Internal use for the Actor base class only
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.Graphics.DrawableActor.Transformed">
+            <inheritdoc />
+        </member>
+        <member name="M:Glaives.Core.Graphics.DrawableActor.ReconstructVertices">
+            <summary>
+            <para>Marks the vertices as dirty, CreateVertices will be called again by the GraphicsDevice in the render stage</para>
+            <para>Construction will always happen initially when the drawable actor is created</para>
+            <para>Call when a change was made that affects the vertices</para>
+            <para>Transformational changes (Position, Rotation, Scale), Color and Flips will automatically cause the vertices to be re-constructed</para>
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.Graphics.DrawableActor.CreateVertices">
+            <summary>
+            <para>Defines the geometry of the drawable actor</para>
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Glaives.Core.Graphics.DynamicTexture">
             <inheritdoc />
             <summary>
@@ -812,27 +812,27 @@
             </summary>
             <param name="bytes">The RGBA bytes to write</param>
         </member>
-        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColors(Glaives.Core.Color[])">
+        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColors(Glaives.Core.Graphics.Color[])">
             <summary>
             <para>Write the colors to the dynamic texture</para>
             </summary>
             <param name="colors">The colors to write</param>
         </member>
-        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColors(Glaives.Core.Color[],Glaives.Core.IntRect)">
+        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColors(Glaives.Core.Graphics.Color[],Glaives.Core.IntRect)">
             <summary>
             <para>Write the colors to the dynamic texture in the specified region</para>
             </summary>
             <param name="colors">The colors to write</param>
             <param name="region">The region on the dynamic texture to write into</param>
         </member>
-        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColor(Glaives.Core.Color,Glaives.Core.IntRect)">
+        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColor(Glaives.Core.Graphics.Color,Glaives.Core.IntRect)">
             <summary>
             <para>Write a single color into all pixels in the region</para>
             </summary>
             <param name="color">The color to write</param>
             <param name="region">The region on the dynamic texture to write into</param>
         </member>
-        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColor(Glaives.Core.Color)">
+        <member name="M:Glaives.Core.Graphics.DynamicTexture.WriteColor(Glaives.Core.Graphics.Color)">
             <summary>
             <para>Write a single color into all pixels in the dynamic texture</para>
             </summary>
@@ -941,6 +941,33 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Glaives.Core.Graphics.Sprite.#ctor(Glaives.Core.Graphics.Texture)">
+            <inheritdoc />
+        </member>
+        <member name="M:Glaives.Core.Graphics.Sprite.#ctor(Glaives.Core.Graphics.Texture,Glaives.Core.IntRect)">
+            <inheritdoc />
+        </member>
+        <member name="P:Glaives.Core.Graphics.Sprite.LocalBounds">
+            <inheritdoc />
+        </member>
+        <member name="M:Glaives.Core.Graphics.Sprite.CreateVertices">
+            <inheritdoc />
+        </member>
+        <member name="P:Glaives.Core.Graphics.Text.String">
+            <summary>
+            The string to be drawn by the text actor
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Text.StyleFlags">
+            <summary>
+            The styling applied to the text (flags)
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Text.Font">
+            <summary>
+            The font used to draw the text
+            </summary>
+        </member>
         <member name="T:Glaives.Core.Graphics.Texture">
             <inheritdoc cref="T:Glaives.Core.LoadableContent" />
             <summary>
@@ -988,14 +1015,14 @@
             <param name="dynamicTexture">The dynamic texture to copy the pixel data from</param>
             <param name="createOptions">The create options</param>
         </member>
-        <member name="M:Glaives.Core.Graphics.Texture.Update(System.Collections.Generic.IEnumerable{Glaives.Core.Color},Glaives.Core.IntRect)">
+        <member name="M:Glaives.Core.Graphics.Texture.Update(System.Collections.Generic.IEnumerable{Glaives.Core.Graphics.Color},Glaives.Core.IntRect)">
             <summary>
             Update the texture on the GPU using 32-bit RGBA colors
             </summary>
             <param name="colors">The color pixels to be submitted to the texture</param>
             <param name="region">The region of the sub texture</param>
         </member>
-        <member name="M:Glaives.Core.Graphics.Texture.Update(Glaives.Core.Color)">
+        <member name="M:Glaives.Core.Graphics.Texture.Update(Glaives.Core.Graphics.Color)">
             <summary>
             Update all the pixels in the texture on the GPU to a single 32-bit RGBA color
             </summary>
@@ -1347,33 +1374,6 @@
         </member>
         <member name="M:Glaives.Core.LoadableContent.Dispose">
             <inheritdoc />
-        </member>
-        <member name="M:Glaives.Core.Sprite.#ctor(Glaives.Core.Graphics.Texture)">
-            <inheritdoc />
-        </member>
-        <member name="M:Glaives.Core.Sprite.#ctor(Glaives.Core.Graphics.Texture,Glaives.Core.IntRect)">
-            <inheritdoc />
-        </member>
-        <member name="P:Glaives.Core.Sprite.LocalBounds">
-            <inheritdoc />
-        </member>
-        <member name="M:Glaives.Core.Sprite.CreateVertices">
-            <inheritdoc />
-        </member>
-        <member name="P:Glaives.Core.Text.String">
-            <summary>
-            The string to be drawn by the text actor
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Text.StyleFlags">
-            <summary>
-            The styling applied to the text (flags)
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Text.Font">
-            <summary>
-            The font used to draw the text
-            </summary>
         </member>
         <member name="T:Glaives.Core.UniqueString">
             <summary>

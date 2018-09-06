@@ -20,17 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using Glaives.Core.Graphics;
-
 namespace Glaives.Core
 {
-    public class AnimatedSprite : Sprite
+    public class Viewport
     {
-        public AnimatedSprite(Texture texture)
-            : base(texture)
+        public IntVector2 Size
         {
-            throw new NotImplementedException();
+            get
+            {
+                Engine.Get.Window.GetFrameBufferSize(out int w, out int h);
+                return new IntVector2(w, h);
+            }
+        }
+
+        internal Viewport()
+        {
+            
         }
     }
 }

@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using Glaives.Core.Graphics;
 using Glaives.Core.Input;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;

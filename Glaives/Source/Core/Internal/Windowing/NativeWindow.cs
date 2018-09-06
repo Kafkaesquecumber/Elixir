@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using Glaives.Core.Graphics;
 using Glaives.Core.Input;
 
 namespace Glaives.Core.Internal.Windowing

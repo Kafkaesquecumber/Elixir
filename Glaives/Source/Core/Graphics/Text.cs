@@ -22,12 +22,10 @@
 
 using System;
 using System.Collections.Generic;
-using Glaives.Core.Graphics;
 using Glaives.Core.Internal.Graphics;
 using SharpFont;
-using Font = Glaives.Core.Graphics.Font;
 
-namespace Glaives.Core
+namespace Glaives.Core.Graphics
 {
     public class Text : DrawableActor
     {

@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Glaives.Core
+namespace Glaives.Core.Graphics
 {
     public struct Color : IEquatable<Color>
     {

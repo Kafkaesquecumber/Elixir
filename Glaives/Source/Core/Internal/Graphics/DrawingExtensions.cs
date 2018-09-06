@@ -20,6 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Glaives.Core.Graphics;
+
 namespace Glaives.Core.Internal.Graphics
 {
     internal static class DrawingExtensions
