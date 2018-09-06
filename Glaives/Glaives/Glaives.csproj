@@ -59,13 +59,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpFontCore" Version="0.1.1" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="OpenTK">
       <HintPath>Binaries\Assemblies\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpFontCore">
+      <HintPath>Binaries\Assemblies\SharpFontCore.dll</HintPath>
+    </Reference>
+    <Reference Include="SixLabors.Core">
+      <HintPath>Binaries\Assemblies\SixLabors.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SixLabors.ImageSharp">
+      <HintPath>Binaries\Assemblies\SixLabors.ImageSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.Common">
+      <HintPath>Binaries\Assemblies\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>Binaries\Assemblies\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>Binaries\Assemblies\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>Binaries\Assemblies\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -21,16 +21,14 @@
 // SOFTWARE.
 
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
 using Glaives.GameFramework;
 using Glaives.Internal;
-using OpenTK.Graphics.OpenGL;
-using Color = Glaives.GameFramework.Color;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Glaives.Graphics
 {
@@ -42,14 +40,12 @@ namespace Glaives.Graphics
     /// </summary>
     public class DynamicTexture : IDisposable
     {
-        private const PixelFormat BitmapPixelFormat = PixelFormat.Format32bppArgb;
-
         /// <summary>
         /// The dimensions of the dynamic texture
         /// </summary>
         public IntVector2 Size => new IntVector2(_bitmap.Width, _bitmap.Height);
 
-        private readonly Bitmap _bitmap;
+        private readonly Image<Rgba32> _bitmap;
 
 
         /// <summary>
@@ -64,11 +60,7 @@ namespace Glaives.Graphics
             }
 
             // Load the bitmap
-            _bitmap = new Bitmap(file);
-
-            // Convert bitmap to RGBA
-            byte[] bytes = ReadBytes();
-            WriteBytes(Color.BgraToRgba(bytes));
+            _bitmap = Image.Load(file);
         }
 
         /// <summary>
@@ -78,7 +70,7 @@ namespace Glaives.Graphics
         /// <param name="height">The height of the dynamic texture</param>
         public DynamicTexture(int width, int height)
         {
-            _bitmap = new Bitmap(width, height, BitmapPixelFormat);
+            _bitmap = new Image<Rgba32>(width, height);
         }
 
         /// <summary>
@@ -93,7 +85,7 @@ namespace Glaives.Graphics
             }
 
             byte[] bytes = texture.GetBytes();
-            _bitmap = new Bitmap(texture.Size.X, texture.Size.Y, BitmapPixelFormat);
+            _bitmap = new Image<Rgba32>(texture.Size.X, texture.Size.Y);
             WriteBytes(bytes);
         }
 
@@ -167,15 +159,13 @@ namespace Glaives.Graphics
             // Create RGBA byte array 
             byte[] bytes = new byte[region.Width * region.Height * 4];
 
-            // Lock the memory to retrieve the pixel data
-            BitmapData data = _bitmap.LockBits(new Rectangle(region.X, region.Y, region.Width, region.Height), 
-                ImageLockMode.ReadOnly, BitmapPixelFormat);
-
-            // Copy the pixel data into the byte array
-            Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
-
-            // Free the memory
-            _bitmap.UnlockBits(data);
+            unsafe
+            {
+                fixed(Rgba32* ptr = &MemoryMarshal.GetReference(_bitmap.GetPixelSpan()))
+                {
+                    Marshal.Copy(new IntPtr(ptr), bytes, 0, bytes.Length);
+                }
+            }
 
             return bytes;
         }
@@ -263,20 +253,21 @@ namespace Glaives.Graphics
                 return;
             }
             
-            // Lock the memory to retrieve the pixel data
-            BitmapData data = _bitmap.LockBits(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), 
-                ImageLockMode.ReadWrite, BitmapPixelFormat);
-
             // The bitmap bytes to be blended with the input bytes and ultimately copied to the bitmap
             byte[] bmpBytes = new byte[_bitmap.Width * _bitmap.Height * 4];
-
+            
             // Copy the full texture to the bitmap bytes
-            Marshal.Copy(data.Scan0, bmpBytes, 0, bmpBytes.Length);
+            unsafe
+            {
+                fixed (Rgba32* ptr = &MemoryMarshal.GetReference(_bitmap.GetPixelSpan()))
+                {
+                    Marshal.Copy(new IntPtr(ptr), bmpBytes, 0, bmpBytes.Length);
+                }
+            }
 
-            /*
-             * The loops below blend the bitmap bytes and the input bytes together using alpha blending
-             */
-
+            
+            // The loops below blend the bitmap bytes and the input bytes together using alpha blending
+            
             int bytesOffsetY = 0;
             for (int y = region.Y; y < region.Y + region.Height; y++, bytesOffsetY++)
             {
@@ -316,12 +307,16 @@ namespace Glaives.Graphics
                     bmpBytes[bmpStartY + bmpStartX + 3] = (byte)((bmpA * rem + bytesA * bytesA) / 255); // Alpha-blended bitmap bytes alpha
                 }
             }
+
+            unsafe
+            {
+                fixed (Rgba32* pixelPtr = &MemoryMarshal.GetReference(_bitmap.GetPixelSpan()))
+                {
+                    // Copy the bitmap bytes to the bitmap
+                    Marshal.Copy(bmpBytes, 0, new IntPtr(pixelPtr), bmpBytes.Length);
+                }
+            }
             
-            // Copy the bitmap bytes to the bitmap
-            Marshal.Copy(bmpBytes, 0, data.Scan0, bmpBytes.Length);
-            
-            // Free bitmap the memory
-            _bitmap.UnlockBits(data);
         }
 
         /// <summary>
