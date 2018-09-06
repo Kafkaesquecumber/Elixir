@@ -20,18 +20,18 @@
 
   <ItemGroup>
     <Compile Remove="Binaries\**" />
-    <Compile Remove="Internal\Library\OpenGL.Net\**" />
+    <Compile Remove="Core\Internal\Library\OpenGL.Net\**" />
     <Compile Remove="Localization\**" />
     <EmbeddedResource Remove="Binaries\**" />
-    <EmbeddedResource Remove="Internal\Library\OpenGL.Net\**" />
+    <EmbeddedResource Remove="Core\Internal\Library\OpenGL.Net\**" />
     <EmbeddedResource Remove="Localization\**" />
     <None Remove="Binaries\**" />
-    <None Remove="Internal\Library\OpenGL.Net\**" />
+    <None Remove="Core\Internal\Library\OpenGL.Net\**" />
     <None Remove="Localization\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Internal\Library\Khronos.Net\Khronos.Net.cs" />
+    <Compile Remove="Core\Internal\Library\Khronos.Net\Khronos.Net.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,13 +56,6 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>..\Dependancies\Binaries\Assemblies\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Internal\Library\Khronos.Net\Khronos.Net.projitems">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Khronos.Net.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
