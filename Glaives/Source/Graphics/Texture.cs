@@ -173,15 +173,6 @@ namespace Glaives.Graphics
             return bytes;
         }
 
-        /// <inheritdoc />
-        /// <summary>
-        /// Dispose the texture
-        /// </summary>
-        public void Dispose()
-        {
-            GL.DeleteTexture(Handle);
-        }
-
         internal void LoadTexture(byte[] bytes)
         {
             Handle = GL.GenTexture();
@@ -239,6 +230,12 @@ namespace Glaives.Graphics
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, wrap);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, minFilter);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, magFilter);
+        }
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            GL.DeleteTexture(Handle);
         }
     }
 }

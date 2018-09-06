@@ -283,7 +283,7 @@
         </member>
         <member name="P:Glaives.GameFramework.Actor.InputEnabled">
             <summary>
-            Wheter or not the actor should receive input events
+            Whether or not the actor should receive input events
             </summary>
         </member>
         <member name="P:Glaives.GameFramework.Actor.Engine">
@@ -438,6 +438,18 @@
             <param name="bytes">The RGBA bytes to convert</param>
             <returns>The colors</returns>
         </member>
+        <member name="T:Glaives.GameFramework.ContentCreateOptions">
+            <summary>
+            Base class for any content create options
+            </summary>
+        </member>
+        <member name="M:Glaives.GameFramework.ContentCreateOptions.IsEqualContent(Glaives.GameFramework.ContentCreateOptions)">
+            <summary>
+            Whether or not the content create options are identical
+            This check avoids duplicate content loading
+            </summary>
+            <param name="otherContent">The other content create options</param>
+        </member>
         <member name="T:Glaives.GameFramework.ContentLoader">
             <summary>
             <para>Loads and caches content files</para>
@@ -445,12 +457,12 @@
             <para>If it is present in the content cache it will return the cached content, otherwise it will load it and add it to the content cache</para>
             </summary>
         </member>
-        <member name="M:Glaives.GameFramework.ContentLoader.LoadFont(System.String,System.Int32)">
+        <member name="M:Glaives.GameFramework.ContentLoader.LoadFont(System.String,Glaives.Graphics.FontCreateOptions)">
             <summary>
             Return loaded or cached font
             </summary>
             <param name="file">The font file</param>
-            <param name="fontSize">The desired size of the font</param>
+            <param name="createOptions">The create options used to load the font</param>
             <returns></returns>
         </member>
         <member name="M:Glaives.GameFramework.ContentLoader.LoadTexture(System.String,Glaives.Graphics.TextureCreateOptions)">
@@ -458,7 +470,7 @@
             Return loaded or cached texture
             </summary>
             <param name="file">The texture file to load</param>
-            <param name="createOptions">The create options</param>
+            <param name="createOptions">The create options used to load the texture</param>
             <returns></returns>
         </member>
         <member name="M:Glaives.GameFramework.ContentLoader.LoadShader(System.String)">
@@ -467,6 +479,17 @@
             </summary>
             <param name="file">The shader file to load</param>
             <returns></returns>
+        </member>
+        <member name="M:Glaives.GameFramework.ContentLoader.UnloadAll">
+            <summary>
+            Unloads all cached content
+            </summary>
+        </member>
+        <member name="M:Glaives.GameFramework.ContentLoader.Unload(System.String)">
+            <summary>
+            Unload the specific cached content
+            </summary>
+            <param name="file">The same path used for loading the content</param>
         </member>
         <member name="T:Glaives.GameFramework.DrawableActor">
             <inheritdoc />
@@ -541,7 +564,18 @@
             Internal use for the Actor base class only
             </summary>
         </member>
-        <member name="M:Glaives.GameFramework.DrawableActor.GetVertices">
+        <member name="M:Glaives.GameFramework.DrawableActor.Transformed">
+            <inheritdoc />
+        </member>
+        <member name="M:Glaives.GameFramework.DrawableActor.ReconstructVertices">
+            <summary>
+            <para>Marks the vertices as dirty, ConstructVertices will be called again by the GraphicsDevice in the render stage</para>
+            <para>Construction will always happen initially when the drawable actor is created</para>
+            <para>Call when a change was made that affects the vertices</para>
+            <para>Transformational changes (Position, Rotation, Scale), Color and Flips will automatically cause the vertices to be re-constructed</para>
+            </summary>
+        </member>
+        <member name="M:Glaives.GameFramework.DrawableActor.ConstructVertices">
             <summary>
             <para>Defines the geometry of the drawable actor</para>
             </summary>
@@ -642,8 +676,11 @@
         </member>
         <member name="M:Glaives.GameFramework.Level.LoadLevel">
             <summary>
-            Method for loading objects into the level
+            Method for loading actors into the level
             </summary>
+        </member>
+        <member name="M:Glaives.GameFramework.LoadableContent.Dispose">
+            <inheritdoc />
         </member>
         <member name="M:Glaives.GameFramework.Sprite.#ctor(Glaives.Graphics.Texture)">
             <inheritdoc />
@@ -654,12 +691,22 @@
         <member name="P:Glaives.GameFramework.Sprite.LocalBounds">
             <inheritdoc />
         </member>
-        <member name="M:Glaives.GameFramework.Sprite.GetVertices">
+        <member name="M:Glaives.GameFramework.Sprite.ConstructVertices">
             <inheritdoc />
         </member>
         <member name="P:Glaives.GameFramework.Text.String">
             <summary>
             The string to be drawn by the text actor
+            </summary>
+        </member>
+        <member name="P:Glaives.GameFramework.Text.StyleFlags">
+            <summary>
+            The styling applied to the text (flags)
+            </summary>
+        </member>
+        <member name="P:Glaives.GameFramework.Text.Font">
+            <summary>
+            The font used to draw the text
             </summary>
         </member>
         <member name="T:Glaives.GameFramework.UniqueString">
@@ -987,6 +1034,7 @@
             </summary>
         </member>
         <member name="T:Glaives.Graphics.Font">
+            <inheritdoc cref="T:Glaives.GameFramework.LoadableContent" />
             <summary>
             A font is used to draw text
             </summary>
@@ -1002,6 +1050,26 @@
             </summary>
         </member>
         <member name="M:Glaives.Graphics.Font.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:Glaives.Graphics.FontCreateOptions">
+            <inheritdoc />
+            <summary>
+            The create options to use for the font
+            </summary>
+        </member>
+        <member name="F:Glaives.Graphics.FontCreateOptions.FontSize">
+            <summary>
+            The size of the font
+            </summary>
+        </member>
+        <member name="M:Glaives.Graphics.FontCreateOptions.#ctor(System.Int32)">
+            <summary>
+            Create options for fonts
+            </summary>
+            <param name="fontSize">The size of the font</param>
+        </member>
+        <member name="M:Glaives.Graphics.FontCreateOptions.IsEqualContent(Glaives.GameFramework.ContentCreateOptions)">
             <inheritdoc />
         </member>
         <member name="P:Glaives.Graphics.GraphicsDevice.DrawCalls">
@@ -1030,6 +1098,9 @@
             <para>To reduce draw calls, use the same shader instance for multiple actors</para>
             </summary>
             <param name="pixelShaderFile"></param>
+        </member>
+        <member name="M:Glaives.Graphics.Shader.Dispose">
+            <inheritdoc />
         </member>
         <member name="M:Glaives.Graphics.Shape.MakeQuad">
             <summary>
@@ -1111,25 +1182,11 @@
         </member>
         <member name="M:Glaives.Graphics.Texture.Dispose">
             <inheritdoc />
-            <summary>
-            Dispose the texture
-            </summary>
         </member>
         <member name="T:Glaives.Graphics.TextureCreateOptions">
+            <inheritdoc />
             <summary>
             The create options to use for the texture
-            </summary>
-        </member>
-        <member name="P:Glaives.Graphics.TextureCreateOptions.Smooth">
-            <summary>
-            <para>FilterMode : Smooth</para>
-            <para>WrapMode : ClampToEdge</para>
-            </summary>
-        </member>
-        <member name="P:Glaives.Graphics.TextureCreateOptions.Sharp">
-            <summary>
-            <para>FilterMode : Sharp</para>
-            <para>WrapMode : ClampToEdge</para>
             </summary>
         </member>
         <member name="F:Glaives.Graphics.TextureCreateOptions.FilterMode">
@@ -1148,6 +1205,24 @@
             </summary>
             <param name="filterMode">The way the texture is filtered</param>
             <param name="wrapMode">The way the texture is wrapped outside of the texture coordinates</param>
+        </member>
+        <member name="M:Glaives.Graphics.TextureCreateOptions.IsEqualContent(Glaives.GameFramework.ContentCreateOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:Glaives.Graphics.TextureCreateOptions.ToString">
+            <inheritdoc />
+        </member>
+        <member name="P:Glaives.Graphics.TextureCreateOptions.Smooth">
+            <summary>
+            <para>FilterMode : Smooth</para>
+            <para>WrapMode : ClampToEdge</para>
+            </summary>
+        </member>
+        <member name="P:Glaives.Graphics.TextureCreateOptions.Sharp">
+            <summary>
+            <para>FilterMode : Sharp</para>
+            <para>WrapMode : ClampToEdge</para>
+            </summary>
         </member>
         <member name="T:Glaives.Graphics.TextureFilterMode">
             <summary>
@@ -1330,6 +1405,14 @@
         <member name="F:Glaives.Input.Key.GamepadLeftTrigger">
             <summary>
             Triggered when the trigger axis has reached a threshold
+            </summary>
+        </member>
+        <member name="M:Glaives.Internal.Content.ContentInfo.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="P:Glaives.Internal.Graphics.GeometryBatch.VertexArrayPosition">
+            <summary>
+            Is the same as the amount of vertices to be drawn by this batch
             </summary>
         </member>
         <member name="M:Glaives.Internal.Graphics.GlyphInfo.Equals(Glaives.Internal.Graphics.GlyphInfo)">

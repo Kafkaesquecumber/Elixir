@@ -24,9 +24,9 @@ using System;
 using Glaives.GameFramework;
 using Glaives.Input;
 
-namespace Glaives.Internal.Interface
+namespace Glaives.Internal.Windowing
 {
-    internal abstract class WindowInterface : Interface
+    internal abstract class NativeWindow 
     {
         internal event Action<IntVector2, IntVector2> Resized = delegate { };
         internal event Action<KeyState, Key, int> InputActionEvent = delegate { };

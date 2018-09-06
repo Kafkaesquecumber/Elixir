@@ -21,14 +21,12 @@
 // SOFTWARE.
 
 using System;
-using Glaives.Internal.Graphics;
 using Glaives.GameFramework;
 using Glaives.Graphics;
-using Glaives.Internal.Interface;
 
 namespace Glaives.Internal.Windowing
 {
-    internal sealed class Window
+    internal sealed class Window : SdlWindow
     {
         internal IntPtr Handle { get; private set; }
         
@@ -38,8 +36,8 @@ namespace Glaives.Internal.Windowing
             get => _size;
             set
             {
-                Interface.ResizeWindow(value.X, value.Y);
-                Interface.GetWindowSize(out int newWidth, out int newHeight);
+                ResizeWindow(value.X, value.Y);
+                GetWindowSize(out int newWidth, out int newHeight);
                 _size = new IntVector2(newWidth, newHeight);
             }
         }
@@ -50,7 +48,7 @@ namespace Glaives.Internal.Windowing
             get => _title;
             set
             {
-                Interface.SetWindowTitle(value);
+                SetWindowTitle(value);
                 _title = value;
             }
         }
@@ -64,31 +62,24 @@ namespace Glaives.Internal.Windowing
                 if (_vSync != value)
                 {
                     _vSync = value;
-                    Interface.SetVSyncEnabled(value);
+                    SetVSyncEnabled(value);
                 }
             }
         }
 
         internal Viewport Viewport { get; private set; }
         
-        internal string OpenGlVersion => Interface.GetCurrentGraphicsApiVersion();
-        internal readonly WindowInterface Interface;
+        internal string OpenGlVersion => GetCurrentGraphicsApiVersion();
         
         internal Window(IntVector2 size, string title)
         {
-            Interface = (WindowInterface)InterfaceManager.CreateInterface(InterfaceType.Window);
             _size = size;   // set private member on purpose
             _title = title; // set private member on purpose
             
             Viewport = new Viewport();
 
-            Handle = Interface.OpenWindow(Size, title);
-            Interface.SetVSyncEnabled(VSync);
-        }
-        
-        internal void Center()
-        {
-            Interface.Center();
+            Handle = OpenWindow(Size, title);
+            SetVSyncEnabled(VSync);
         }        
     }
 }

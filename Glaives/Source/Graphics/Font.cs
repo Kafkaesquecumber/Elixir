@@ -32,6 +32,7 @@ using SharpFont;
 
 namespace Glaives.Graphics
 {
+    /// <inheritdoc cref="LoadableContent" />
     /// <summary>
     /// A font is used to draw text
     /// </summary>
@@ -62,9 +63,9 @@ namespace Glaives.Graphics
         private float _nextFreeColumnPosition;
         private float _nextFreeRowPosition;
         
-        internal Font(string file, int fontSize)
+        internal Font(string file, FontCreateOptions createOptions)
         {
-            FontSize = fontSize;
+            FontSize = createOptions.FontSize;
             if (FontSize > MaxFontSize || FontSize < 0)
             {
                 throw new GlaivesException($"Font size must be between 0 and {MaxFontSize}");
@@ -238,7 +239,7 @@ namespace Glaives.Graphics
         }
 
         /// <inheritdoc />
-        public void Dispose()
+        public override void Dispose()
         {
             Texture?.Dispose();
             FontFace = null;

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright(c) 2018 Glaives Game Engine.
+// Copyright (c) 2018 Glaives Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Glaives.GameFramework;
-
-namespace Glaives.Internal.Interface.Implementation.OpenTKImpl
+namespace Glaives.GameFramework
 {
-    internal static class OpenTKExtensions
+    /// <summary>
+    /// Base class for any content create options
+    /// </summary>
+    public abstract class ContentCreateOptions
     {
-        
-        internal static OpenTK.Color ToOpenTKColor(this Color color)
-        {
-            return new OpenTK.Color(
-                (byte)(color.R * 255),
-                (byte)(color.G * 255),
-                (byte)(color.B * 255),
-                (byte)(color.A * 255));
-        }
+        /// <summary>
+        /// Whether or not the content create options are identical
+        /// This check avoids duplicate content loading
+        /// </summary>
+        /// <param name="otherContent">The other content create options</param>
+        protected abstract bool IsEqualContent(ContentCreateOptions otherContent);
 
-        
+        internal bool IsEqualContentInternal(ContentCreateOptions otherContent)
+        {
+            return IsEqualContent(otherContent);
+        }
     }
 }

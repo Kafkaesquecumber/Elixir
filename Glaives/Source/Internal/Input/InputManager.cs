@@ -38,8 +38,8 @@ namespace Glaives.Internal.Input
         internal InputManager(Window window, InputSettings settings)
         {
             _settings = settings;
-            window.Interface.InputActionEvent += BufferInputActionEvent;
-            window.Interface.InputAxisEvent += BufferInputAxisEvent;
+            window.InputActionEvent += BufferInputActionEvent;
+            window.InputAxisEvent += BufferInputAxisEvent;
         }
 
         private void BufferInputActionEvent(KeyState keyState, Key key, int gamepadId)

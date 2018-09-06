@@ -25,19 +25,19 @@ using System.Collections.Generic;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using SDL2;
-using Glaives.Internal.Interface.Implementation.OpenTKImpl;
 using Glaives.GameFramework;
 using Glaives.Input;
+using Glaives.Internal.Graphics;
 
-namespace Glaives.Internal.Interface.Implementation.SDLImpl
+namespace Glaives.Internal.Windowing
 {
-    internal class SdlWindow : WindowInterface
+    internal class SdlWindow : NativeWindow
     {
         internal IntPtr NativeWindowHandle { get; private set; }
         internal IGraphicsContext GlContext { get; private set; }
         private bool _isOpen;
 
-        private Dictionary<int, IntPtr> _gamepads = new Dictionary<int, IntPtr>();
+        private readonly Dictionary<int, IntPtr> _gamepads = new Dictionary<int, IntPtr>();
 
         internal override bool IsOpen()
         {

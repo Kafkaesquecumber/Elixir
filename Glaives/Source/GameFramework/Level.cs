@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Glaives.Graphics;
+using Glaives.Input;
 using Glaives.Internal;
 
 namespace Glaives.GameFramework
@@ -77,7 +78,7 @@ namespace Glaives.GameFramework
             CurrentView = DefaultView;
 
             LoadLevel();
-            Root.InitializeRecursive();
+            ActorCount = Root.DoRecursive(actor => actor.InitializeInternal()) - 1;
         }
 
         internal void Tick(float deltaTime)
@@ -106,7 +107,7 @@ namespace Glaives.GameFramework
             PendingDestroyActors.Clear();
             if (actorsDestroyed > 0)
             {
-                GC.Collect();
+                //GC.Collect();
             }
         }
 
@@ -129,6 +130,28 @@ namespace Glaives.GameFramework
                 // This is legal in this case because PendingDestruction is true
                 actor.Parent = null;
             }
+        }
+
+        internal void OnInputActionEvent(KeyState keyState, Key key, int gamepadId)
+        {
+            Root.DoRecursive(x =>
+            {
+                if (x.InputEnabled)
+                {
+                    x.ReceiveInputActionInternal(keyState, key, gamepadId);
+                }
+            });
+        }
+
+        internal void OnInputAxisEvent(InputAxis axis, float value, int gamepadId)
+        {
+            Root.DoRecursive(x =>
+            {
+                if (x.InputEnabled)
+                {
+                    x.ReceiveInputAxisInternal(axis, value, gamepadId);
+                }
+            });
         }
 
         private void BuildHierarchyString(ref StringBuilder stringBuilder, Actor parent, int depth = 0)
@@ -157,7 +180,7 @@ namespace Glaives.GameFramework
         }
         
         /// <summary>
-        /// Method for loading objects into the level
+        /// Method for loading actors into the level
         /// </summary>
         protected abstract void LoadLevel();
     }

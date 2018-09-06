@@ -25,6 +25,7 @@ using Glaives.Configuration;
 using Glaives.Diagnostics;
 using Glaives.GameFramework;
 using Glaives.Graphics;
+using Glaives.Input;
 using Glaives.Internal;
 using Glaives.Internal.Content;
 using Glaives.Internal.Input;
@@ -192,6 +193,8 @@ namespace Glaives
             Settings = GameInstance.GetSettingsInternal();
             
             Window = new Window(new IntVector2(Settings.Video.Width, Settings.Video.Height), Settings.Video.Title);
+            Window.InputActionEvent += OnInputActionEvent;
+            Window.InputAxisEvent += OnInputAxisEvent;
 
             Debug.Info($"OpenGL version {Window.OpenGlVersion}");
 
@@ -207,6 +210,16 @@ namespace Glaives
             Run(initialLevelType); // Contains the program loop
         }
 
+        private void OnInputActionEvent(KeyState keyState, Key key, int gamepadId)
+        {
+            LevelManager.OnInputActionEvent(keyState, key, gamepadId);
+        }
+
+        private void OnInputAxisEvent(InputAxis axis, float value, int gamepadId)
+        {
+            LevelManager.OnInputAxisEvent(axis, value, gamepadId);
+        }
+        
         /// <summary>
         /// Load a new level and unload the current one
         /// </summary>
@@ -231,7 +244,7 @@ namespace Glaives
         public void Quit()
         {
             EnsureInit();
-            Window.Interface.CloseWindow();
+            Window.CloseWindow();
         }
 
         /// <summary>
@@ -259,16 +272,16 @@ namespace Glaives
 
         internal void Run(Type initialLevelType)
         {
-            EngineTimer = new EngineTimer(Window.Interface);
+            EngineTimer = new EngineTimer(Window);
             EngineTimer.Initialize();
 
-            while (Window.Interface.IsOpen())
+            while (Window.IsOpen())
             {
-                Window.Interface.PollEvents();
+                Window.PollEvents();
                 
                 EngineTimer.CaptureFrameStartTime();
 
-                Window.Interface.Clear(Color.White);
+                Window.Clear(Color.White);
 
                 // Tick after first iteration so delta time is set
                 if (!EngineTimer.FirstIteration) 
@@ -285,13 +298,13 @@ namespace Glaives
 
                 InputManager.Flush();
 
-                Window.Interface.Swap();
+                Window.Swap();
                 
                 EngineTimer.Sleep(); 
                 EngineTimer.RefreshDeltaTime();
             }
 
-            Window.Interface.Terminate();
+            Window.Terminate();
         }
 
         private void EnsureInit()

@@ -20,8 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using Glaives.GameFramework;
+using Glaives.Internal;
 using Glaives.Internal.Graphics;
 using Glaives.Internal.Windowing;
 using OpenTK.Graphics.OpenGL;
@@ -61,12 +63,17 @@ namespace Glaives.Graphics
                         GL.DeleteShader(_frameBufferFragmentShader);
                     }
 
-                    _frameBufferVertexShader = value.CreateVertexShader();
-                    _frameBufferFragmentShader = value.CreateFragmentShader();
+                    _frameBufferVertexShader = value.VertexShaderHandle;
+                    _frameBufferFragmentShader = value.FragmentShaderHandle;
 
                     GL.AttachShader(_frameBufferShaderProgram, _frameBufferVertexShader);
                     GL.AttachShader(_frameBufferShaderProgram, _frameBufferFragmentShader);
                     GL.LinkProgram(_frameBufferShaderProgram);
+
+                    _positionAttributeLocation = GL.GetAttribLocation(_frameBufferShaderProgram, Shader.VertInPositionName);
+                    _colorAttributeLocation = GL.GetAttribLocation(_frameBufferShaderProgram, Shader.VertInColorName);
+                    _texCoordAttributeLocation = GL.GetAttribLocation(_frameBufferShaderProgram, Shader.VertInTexCoordName);
+
                     _frameBufferRenderProgram = new RenderProgram(BlendMode.Alpha, null, value, 0);
                 }
             }
@@ -82,6 +89,9 @@ namespace Glaives.Graphics
         private readonly int _frameBufferVbo;
         private readonly Vertex[] _frameBufferVertices; 
         private readonly int _frameBufferShaderProgram;
+        private int _positionAttributeLocation;
+        private int _colorAttributeLocation;
+        private int _texCoordAttributeLocation;
         private RenderProgram _frameBufferRenderProgram;
         private int _frameBufferVertexShader = -1;
         private int _frameBufferFragmentShader = -1;
@@ -176,6 +186,7 @@ namespace Glaives.Graphics
 
             _batchesAreHot = true;
 
+            // Iterate over the drawable and submit their vertices to the appropriate batch
             foreach (DrawableActor drawable in _drawables)
             {
                 if (drawable.RenderProgramIsDirty)
@@ -196,6 +207,15 @@ namespace Glaives.Graphics
                     }
                 }
             }
+
+            // Remove empty batches
+            for (int i = _batches.Count - 1; i >= 0; i--)
+            {
+                if (_batches[i].VertexArrayPosition == 0)
+                {
+                    _batches.RemoveAt(i);
+                }
+            }
             
             _frameBuffer.Bind();
             foreach (GeometryBatch batch in _batches)
@@ -208,29 +228,30 @@ namespace Glaives.Graphics
 
             // Draw the screen quad (final image) using the frame buffer color texture
             Viewport viewport = Engine.Get.Viewport;
-            Draw(viewport.Size, _frameBufferShaderProgram, _frameBufferVertices, _frameBufferVbo, _frameBufferRenderProgram, Matrix.Identity, _frameBuffer.ColorTexture);
+            Draw(viewport.Size, _frameBufferShaderProgram, _frameBufferVertices, _frameBufferVertices.Length, _frameBufferVbo, 
+                _positionAttributeLocation, _colorAttributeLocation, _texCoordAttributeLocation,
+                 _frameBufferRenderProgram, Matrix.Identity, _frameBuffer.ColorTexture);
         }
 
-        internal void Draw(IntVector2 viewport, int shaderProgram, Vertex[] vertices, int vbo, RenderProgram renderProgram, Matrix projection, int textureOverride = -1)
+        internal void Draw(IntVector2 viewport, int shaderProgram, Vertex[] vertices, int length, int vbo, 
+            int posAttribLocation, int colorAttribLocation, int texCoordAttribLocation, 
+            RenderProgram renderProgram, Matrix projection, int textureOverride = -1)
         {
             GL.Viewport(0, 0, viewport.X, viewport.Y);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             GL.UseProgram(shaderProgram);
             GL.BindFragDataLocation(shaderProgram, 0, Shader.FragOutName);
-            GL.BufferData(BufferTarget.ArrayBuffer, Vertex.SizeInBytes * vertices.Length, vertices, BufferUsageHint.StaticDraw);
-
-            int positionAttributeLocation = GL.GetAttribLocation(shaderProgram, Shader.VertInPositionName);
-            GL.EnableVertexAttribArray(positionAttributeLocation);
-            GL.VertexAttribPointer(positionAttributeLocation, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 0);
-
-            int colorAttributeLocation = GL.GetAttribLocation(shaderProgram, Shader.VertInColorName);
-            GL.EnableVertexAttribArray(colorAttributeLocation);
-            GL.VertexAttribPointer(colorAttributeLocation, 4, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 2 * sizeof(float));
-
-            int texCoordAttributeLocation = GL.GetAttribLocation(shaderProgram, Shader.VertInTexCoordName);
-            GL.EnableVertexAttribArray(texCoordAttributeLocation);
-            GL.VertexAttribPointer(texCoordAttributeLocation, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 6 * sizeof(float));
+            GL.BufferData(BufferTarget.ArrayBuffer, Vertex.SizeInBytes * length, vertices, BufferUsageHint.StaticDraw);
+            
+            GL.EnableVertexAttribArray(posAttribLocation);
+            GL.VertexAttribPointer(posAttribLocation, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 0);
+            
+            GL.EnableVertexAttribArray(colorAttribLocation);
+            GL.VertexAttribPointer(colorAttribLocation, 4, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 2 * sizeof(float));
+            
+            GL.EnableVertexAttribArray(texCoordAttribLocation);
+            GL.VertexAttribPointer(texCoordAttribLocation, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 6 * sizeof(float));
 
             int uniTrans = GL.GetUniformLocation(shaderProgram, Shader.VertUniTransformName);
             float[] trans = projection.ToMatrix4();
@@ -267,14 +288,14 @@ namespace Glaives.Graphics
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, texture);
 
-            GL.DrawArrays(PrimitiveType.Quads, 0, vertices.Length);
+            GL.DrawArrays(PrimitiveType.Quads, 0, length);
 
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Blend);
             GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.DisableVertexAttribArray(positionAttributeLocation);
-            GL.DisableVertexAttribArray(colorAttributeLocation);
-            GL.DisableVertexAttribArray(texCoordAttributeLocation);
+            GL.DisableVertexAttribArray(posAttribLocation);
+            GL.DisableVertexAttribArray(colorAttribLocation);
+            GL.DisableVertexAttribArray(texCoordAttribLocation);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.UseProgram(0);
         }

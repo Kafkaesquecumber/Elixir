@@ -21,15 +21,16 @@
 // SOFTWARE.
 
 using System;
+using Glaives.GameFramework;
 
 namespace Glaives.Internal.Content
 {
     internal struct ContentInfo : IEquatable<ContentInfo>
     {
         internal readonly string File;
-        internal readonly object CreateOptions;
+        internal readonly ContentCreateOptions CreateOptions;
 
-        public ContentInfo(string file, object createOptions)
+        public ContentInfo(string file, ContentCreateOptions createOptions)
         {
             File = file;
             CreateOptions = createOptions;
@@ -37,7 +38,7 @@ namespace Glaives.Internal.Content
 
         public bool Equals(ContentInfo other)
         {
-            return string.Equals(File, other.File) && Equals(CreateOptions, other.CreateOptions);
+            return string.Equals(File, other.File) && CreateOptions.IsEqualContentInternal(other.CreateOptions);
         }
 
         public override bool Equals(object obj)
@@ -46,6 +47,7 @@ namespace Glaives.Internal.Content
             return obj is ContentInfo && Equals((ContentInfo) obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             unchecked

@@ -30,7 +30,7 @@ namespace Glaives.Graphics
         {
             get
             {
-                Engine.Get.Window.Interface.GetFrameBufferSize(out int w, out int h);
+                Engine.Get.Window.GetFrameBufferSize(out int w, out int h);
                 return new IntVector2(w, h);
             }
         }

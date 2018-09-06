@@ -389,7 +389,7 @@ namespace Glaives.GameFramework
             {
                 if (WorldMatrixIsDirty)
                 {
-                    ForceUpdateWorldMatrix();
+                    UpdateWorldMatrix();
                 }
 
                 return _worldMatrix;
@@ -406,39 +406,18 @@ namespace Glaives.GameFramework
             {
                 if (InverseWorldMatrixIsDirty)
                 {
-                    ForceUpdateInverseWorldMatrix();
+                    UpdateInverseWorldMatrix();
                 }
 
                 return _inverseWorldMatrix;
             }
         }
 
-        private bool _inputEnabled;
         /// <summary>
-        /// Wheter or not the actor should receive input events
+        /// Whether or not the actor should receive input events
         /// </summary>
-        public bool InputEnabled
-        {
-            get => _inputEnabled;
-            set
-            {
-                if (_inputEnabled != value)
-                {
-                    _inputEnabled = value;
-                    if (value)
-                    {
-                        Engine.Get.Window.Interface.InputActionEvent += ReceiveInputAction;
-                        Engine.Get.Window.Interface.InputAxisEvent += ReceiveInputAxis;
-                    }
-                    else
-                    {
-                        Engine.Get.Window.Interface.InputActionEvent -= ReceiveInputAction;
-                        Engine.Get.Window.Interface.InputAxisEvent -= ReceiveInputAxis;
-                    }
-                }
-            }
-        }
-        
+        public bool InputEnabled { get; set; }
+
         /// <summary>
         /// A shorthand to the engine singleton
         /// </summary>
@@ -449,9 +428,9 @@ namespace Glaives.GameFramework
         /// <para>Each actor has it's own input binder</para>
         /// </summary>
         protected InputBinder InputBinder { get; } = new InputBinder();
-
-        protected internal virtual FloatRect LocalBoundsInternal { get; } = FloatRect.Zero;
-        protected internal virtual Vector2 OriginInternal { get; } = Vector2.Zero;
+        
+        internal virtual FloatRect LocalBoundsInternal { get; } = FloatRect.Zero;
+        internal virtual Vector2 OriginInternal { get; } = Vector2.Zero;
 
         internal Vector2 LocalAbsoluteOrigin => new Vector2(LocalBoundsInternal.Width * OriginInternal.X, LocalBoundsInternal.Height * OriginInternal.Y);
         private readonly List<Actor> _children = new List<Actor>();
@@ -463,8 +442,8 @@ namespace Glaives.GameFramework
         /// </summary>
         internal readonly bool Immutable;
 
-        protected internal bool WorldMatrixIsDirty;
-        protected internal bool InverseWorldMatrixIsDirty;
+        internal bool WorldMatrixIsDirty;
+        internal bool InverseWorldMatrixIsDirty;
 
         /// <inheritdoc />
         public Actor()
@@ -540,9 +519,9 @@ namespace Glaives.GameFramework
             return Name.String;
         }
 
-        internal void InitializeRecursive()
+        internal void InitializeInternal()
         {
-            DoRecursive(x => x.Initialize());
+            Initialize();
         }
 
         internal void TickInternal(float deltaTime)
@@ -569,12 +548,17 @@ namespace Glaives.GameFramework
             Tick(deltaTime);
         }
 
-        internal void ReceiveInputInternal(KeyState keyState, Key key, int gamepadId)
+        internal void ReceiveInputActionInternal(KeyState keyState, Key key, int gamepadId)
         {
             ReceiveInputAction(keyState, key, gamepadId);
         }
 
-        private void ForceUpdateWorldMatrix()
+        internal void ReceiveInputAxisInternal(InputAxis axis, float value, int gamepadId)
+        {
+            ReceiveInputAxis(axis, value, gamepadId);
+        }
+
+        private void UpdateWorldMatrix()
         {
             float cosine = Utils.MathEx.FastCos(Utils.MathEx.ToRadians(_localRotation));
             float sine = Utils.MathEx.FastSin(Utils.MathEx.ToRadians(_localRotation));
@@ -621,11 +605,12 @@ namespace Glaives.GameFramework
             _up.Y = -Utils.MathEx.FastSin(upRot);
             _right.X = Utils.MathEx.FastCos(rot);
             _right.Y = -Utils.MathEx.FastSin(rot);
-
+            
             WorldMatrixIsDirty = false;
+            Transformed();
         }
 
-        private void ForceUpdateInverseWorldMatrix()
+        private void UpdateInverseWorldMatrix()
         {
             _inverseWorldMatrix = WorldMatrix.GetInverse();
             InverseWorldMatrixIsDirty = false;
@@ -635,12 +620,12 @@ namespace Glaives.GameFramework
         {
             if (WorldMatrixIsDirty)
             {
-                ForceUpdateWorldMatrix();
+                UpdateWorldMatrix();
             }
 
             if (InverseWorldMatrixIsDirty)
             {
-                ForceUpdateInverseWorldMatrix();
+                UpdateInverseWorldMatrix();
             }
         }
 
@@ -696,6 +681,8 @@ namespace Glaives.GameFramework
             Engine.CurrentLevel.PendingDestroyActors.Add(this);
             PendingDestruction = true;
         }
+
+        internal virtual void Transformed() { }
         
         /// <summary>
         /// Initialization happens after the whole level is loaded or immediately if the actor is created after level loading (base call not needed)

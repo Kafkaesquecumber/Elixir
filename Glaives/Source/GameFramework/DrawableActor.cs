@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Glaives.Graphics;
 using Glaives.Internal;
 using Glaives.Internal.Graphics;
@@ -48,20 +49,56 @@ namespace Glaives.GameFramework
             }
         }
 
+        private Color _color = Color.White;
         /// <summary>
         /// The RGBA color of this actor
         /// </summary>
-        public Color Color { get; set; } = Color.White;
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                if (_color != value)
+                {
+                    _color = value;
+                    ReconstructVertices();
+                }
+            }
+        } 
 
+        private bool _flipX;
         /// <summary>
         /// Whether or not to flip the actor horizontally
         /// </summary>
-        public bool FlipX { get; set; }
+        public bool FlipX
+        {
+            get => _flipX;
+            set
+            {
+                if (_flipX != value)
+                {
+                    _flipX = value;
+                    ReconstructVertices();
+                }
+            }
+        }
 
+        private bool _flipY;
         /// <summary>
         /// Whether or not to flip the actor vertically
         /// </summary>
-        public bool FlipY { get; set; }
+        public bool FlipY
+        {
+            get => _flipY;
+            set
+            {
+                if (_flipY != value)
+                {
+                    _flipY = value;
+                    ReconstructVertices();
+                }
+            }
+        }
     
         /// <summary>
         /// <para>The bounds of this drawable actor in local space</para>
@@ -169,21 +206,52 @@ namespace Glaives.GameFramework
         /// <summary>
         /// Internal use for the Actor base class only
         /// </summary>
-        protected internal override FloatRect LocalBoundsInternal => LocalBounds;
+        internal override FloatRect LocalBoundsInternal => LocalBounds;
 
         /// <summary>
         /// Internal use for the Actor base class only
         /// </summary>
-        protected internal override Vector2 OriginInternal => Origin;
+        internal override Vector2 OriginInternal => Origin;
         
         internal RenderProgram RenderProgram = RenderProgram.Default;
         internal GeometryBatch Batch;
         internal bool RenderProgramIsDirty = true;
+
+        private bool _verticesAreDirty = true;
+        private Vertex[] _vertices = new Vertex[0];
+
+        internal Vertex[] GetVertices()
+        {
+            if (_verticesAreDirty)
+            {
+                _vertices = ConstructVertices();
+                _verticesAreDirty = false;
+            }
+
+            return _vertices;
+        }
+
+        /// <inheritdoc />
+        internal override void Transformed()
+        {
+            ReconstructVertices();
+        }
+
+        /// <summary>
+        /// <para>Marks the vertices as dirty, ConstructVertices will be called again by the GraphicsDevice in the render stage</para>
+        /// <para>Construction will always happen initially when the drawable actor is created</para>
+        /// <para>Call when a change was made that affects the vertices</para>
+        /// <para>Transformational changes (Position, Rotation, Scale), Color and Flips will automatically cause the vertices to be re-constructed</para>
+        /// </summary>
+        protected void ReconstructVertices()
+        {
+            _verticesAreDirty = true;
+        }
         
         /// <summary>
         /// <para>Defines the geometry of the drawable actor</para>
         /// </summary>
         /// <returns></returns>
-        protected internal abstract Vertex[] GetVertices();
+        protected abstract Vertex[] ConstructVertices();
     }
 }

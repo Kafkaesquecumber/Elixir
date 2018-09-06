@@ -22,7 +22,7 @@
 
 using Glaives.GameFramework;
 
-namespace Glaives.Internal
+namespace Glaives.Internal.Graphics
 {
     internal static class DrawingExtensions
     {

@@ -45,18 +45,18 @@ namespace Glaives.GameFramework
         /// Return loaded or cached font
         /// </summary>
         /// <param name="file">The font file</param>
-        /// <param name="fontSize">The desired size of the font</param>
+        /// <param name="createOptions">The create options used to load the font</param>
         /// <returns></returns>
-        public Font LoadFont(string file, int fontSize)
+        public Font LoadFont(string file, FontCreateOptions createOptions)
         {
-            return Load<Font>(file, fontSize);
+            return Load<Font>(file, createOptions);
         }
 
         /// <summary>
         /// Return loaded or cached texture
         /// </summary>
         /// <param name="file">The texture file to load</param>
-        /// <param name="createOptions">The create options</param>
+        /// <param name="createOptions">The create options used to load the texture</param>
         /// <returns></returns>
         public Texture LoadTexture(string file, TextureCreateOptions createOptions)
         {
@@ -73,11 +73,45 @@ namespace Glaives.GameFramework
             return Load<Shader>(file, null);
         }
 
-        private T Load<T>(string file, object importOptions) where T : LoadableContent
+        /// <summary>
+        /// Unloads all cached content
+        /// </summary>
+        public void UnloadAll()
         {
-            object[] ctorParams = importOptions == null ? new object[] { file } : new[] { file, importOptions };
-            object createOptions = ctorParams.Length < 2 ? null : ctorParams[1];
+            foreach (KeyValuePair<ContentInfo, LoadableContent> content in _contentCache)
+            {
+                content.Value.Dispose();
+            }
+            _contentCache.Clear();
+            GC.Collect();
+        }
 
+        /// <summary>
+        /// Unload the specific cached content
+        /// </summary>
+        /// <param name="file">The same path used for loading the content</param>
+        public void Unload(string file)
+        {
+            ContentInfo? key = null;
+            foreach (KeyValuePair<ContentInfo, LoadableContent> content in _contentCache)
+            {
+                if (content.Key.File == file)
+                {
+                    content.Value.Dispose();
+                    key = content.Key;
+                }
+            }
+
+            if (key.HasValue)
+            {
+                _contentCache.Remove(key.Value);
+            }
+        }
+
+        private T Load<T>(string file, ContentCreateOptions createOptions) where T : LoadableContent
+        {
+            object[] ctorParams = { file, createOptions };
+            
             LoadableContent cached = GetCachedContent(file, createOptions);
             if (cached != null)
             {
@@ -94,8 +128,8 @@ namespace Glaives.GameFramework
                 : $"Loaded {typeof(T).Name} '{file}'");
             return (T)content;
         }
-
-        private LoadableContent GetCachedContent(string file, object createOptions)
+        
+        private LoadableContent GetCachedContent(string file, ContentCreateOptions createOptions)
         {
             LoadableContent cached = null;
             ContentInfo? contentInfo = null;
@@ -106,7 +140,7 @@ namespace Glaives.GameFramework
                 {
                     if (createOptions != null)
                     {
-                        if (loadableContent.Key.CreateOptions == createOptions)
+                        if (loadableContent.Key.CreateOptions.IsEqualContentInternal(createOptions)) 
                         {
                             cached = loadableContent.Value;
                             contentInfo = loadableContent.Key;

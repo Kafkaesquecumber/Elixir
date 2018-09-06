@@ -29,17 +29,28 @@ namespace Glaives.Internal.Graphics
 {
     internal class GeometryBatch : IDisposable
     {
+        private const int InitialVertexArraySize = 512;
+
         internal readonly RenderProgram RenderProgram;
         
         private bool _begun;
 
-        private readonly List<Vertex> _vertices = new List<Vertex>();
+        private Vertex[] _vertexArray = new Vertex[InitialVertexArraySize];
         private readonly int _shaderProgram; 
 
         private readonly int _vbo;
         private readonly int _vao;
         private readonly int _vertexShader;
         private readonly int _fragmentShader;
+
+        private readonly int _positionAttributeLocation;
+        private readonly int _colorAttributeLocation;
+        private readonly int _texCoordAttributeLocation;
+
+        /// <summary>
+        /// Is the same as the amount of vertices to be drawn by this batch
+        /// </summary>
+        internal int VertexArrayPosition { get; private set; }
 
         internal GeometryBatch()
             : this(RenderProgram.Default)
@@ -54,8 +65,8 @@ namespace Glaives.Internal.Graphics
             _vao = GL.GenVertexArray();
             _vbo = GL.GenBuffer();
 
-            _vertexShader = renderProgram.Shader.CreateVertexShader();
-            _fragmentShader = renderProgram.Shader.CreateFragmentShader();
+            _vertexShader = renderProgram.Shader.VertexShaderHandle;
+            _fragmentShader = renderProgram.Shader.FragmentShaderHandle;
 
             if (_vertexShader != -1)
             {
@@ -68,6 +79,10 @@ namespace Glaives.Internal.Graphics
             }
 
             GL.LinkProgram(_shaderProgram);
+            
+            _positionAttributeLocation = GL.GetAttribLocation(_shaderProgram, Shader.VertInPositionName);
+            _colorAttributeLocation = GL.GetAttribLocation(_shaderProgram, Shader.VertInColorName);
+            _texCoordAttributeLocation = GL.GetAttribLocation(_shaderProgram, Shader.VertInTexCoordName);
         }
 
         internal void AddVertex(Vertex vertex)
@@ -76,17 +91,32 @@ namespace Glaives.Internal.Graphics
             {
                 throw new GlaivesException("Vertices may not be added before Begin is called");
             }
-            _vertices.Add(vertex);
+            
+            if (VertexArrayPosition >= _vertexArray.Length - 1)
+            {
+                // Vertex array is too small, make it bigger first
+                Array.Resize(ref _vertexArray, _vertexArray.Length * 2);
+            }
+
+            _vertexArray[VertexArrayPosition++] = vertex;
         }
 
-        internal void AddVertices(IEnumerable<Vertex> vertices)
+        internal void AddVertices(Vertex[] vertices)
         {
-            _vertices.AddRange(vertices);
+            while (VertexArrayPosition >= _vertexArray.Length - vertices.Length)
+            {
+                Array.Resize(ref _vertexArray, _vertexArray.Length * 2);
+            }
+
+            Array.Copy(vertices, 0, _vertexArray, VertexArrayPosition, vertices.Length);
+            VertexArrayPosition += vertices.Length;
         }
 
         internal void Begin()
         {
-            _vertices.Clear();
+            // _vertexArrayPosition is used as length, no need to clear array
+            // This gives us a bit of performance
+            VertexArrayPosition = 0;
             _begun = true;
         }
         
@@ -97,11 +127,11 @@ namespace Glaives.Internal.Graphics
                 throw new GlaivesException("End may not be called before Begin is called");
             }
             
-            Vertex[] vertices = _vertices.ToArray(); 
-
             GL.PolygonMode(MaterialFace.Back, PolygonMode.Fill);
-            device.Draw(renderTarget.Size, _shaderProgram, vertices, _vbo, RenderProgram, 
-                Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
+
+            device.Draw(renderTarget.Size, _shaderProgram, _vertexArray, VertexArrayPosition, _vbo, 
+                _positionAttributeLocation, _colorAttributeLocation, _texCoordAttributeLocation, 
+                RenderProgram, Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
             
             _begun = false;
         }

@@ -41,15 +41,56 @@ namespace Glaives.GameFramework
             internal float StrikeoutThickness;
         }
 
+        private string _string;
         /// <summary>
         /// The string to be drawn by the text actor
         /// </summary>
-        public string String { get; set; }
+        public string String
+        {
+            get => _string;
+            set
+            {
+                if (_string != value)
+                {
+                    _string = value;
+                    ReconstructVertices();
+                }
+            }
+        }
 
-        
-        public TextStyleFlags StyleFlags { get; set; }
-        
-        public Font Font { get; set; }
+        private TextStyleFlags _styleFlags;
+        /// <summary>
+        /// The styling applied to the text (flags)
+        /// </summary>
+        public TextStyleFlags StyleFlags
+        {
+            get => _styleFlags;
+            set
+            {
+                if (_styleFlags != value)
+                {
+                    _styleFlags = value;
+                    ReconstructVertices();
+                }
+            }
+        }
+
+        private Font _font;
+        /// <summary>
+        /// The font used to draw the text
+        /// </summary>
+        public Font Font
+        {
+            get => _font;
+            set
+            {
+                if (_font != value)
+                {
+                    _font = value;
+                    ReconstructVertices();
+                }
+            }
+        }
 
         public Text(Font font, string text)
             : this(font, text, TextStyleFlags.Regular)
@@ -73,8 +114,8 @@ namespace Glaives.GameFramework
                 return FloatRect.Zero;
             }
         }
-
-        protected internal override Vertex[] GetVertices()
+        
+        protected override Vertex[] ConstructVertices()
         {
             Vertex[] vertices = new Vertex[String.Length * 4];
 

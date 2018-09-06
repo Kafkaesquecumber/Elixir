@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright(c) 2018 Glaives Game Engine.
+// Copyright (c) 2018 Glaives Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Glaives.Internal.Interface
+using Glaives.GameFramework;
+
+namespace Glaives.Graphics
 {
-    internal enum InterfaceType
+    /// <inheritdoc />
+    /// <summary>
+    /// The create options to use for the font
+    /// </summary>
+    public class FontCreateOptions : ContentCreateOptions
     {
-        None,
-        Window,
-        Audio
+        /// <summary>
+        /// The size of the font
+        /// </summary>
+        public readonly int FontSize;
+
+        /// <summary>
+        /// Create options for fonts
+        /// </summary>
+        /// <param name="fontSize">The size of the font</param>
+        public FontCreateOptions(int fontSize)
+        {
+            FontSize = fontSize;
+        }
+
+        /// <inheritdoc />
+        protected override bool IsEqualContent(ContentCreateOptions otherContent)
+        {
+            FontCreateOptions other = (FontCreateOptions) otherContent;
+            if (other != null)
+            {
+                if (FontSize == other.FontSize)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 using System.Diagnostics;
-using Glaives.Internal.Interface;
+using Glaives.Internal.Windowing;
 
 namespace Glaives.Internal.Timing
 {
@@ -34,11 +34,11 @@ namespace Glaives.Internal.Timing
         private Stopwatch _fpsTimer;
         private int _frames;
         private ulong _lastFrame;
-        private readonly WindowInterface _windowInterface;
+        private readonly NativeWindow _nativeWindow;
 
-        internal EngineTimer(WindowInterface windowInterface)
+        internal EngineTimer(NativeWindow nativeWindow)
         {
-            _windowInterface = windowInterface;
+            _nativeWindow = nativeWindow;
         }
 
         internal void Initialize()
@@ -59,14 +59,14 @@ namespace Glaives.Internal.Timing
                 _fpsTimer.Restart();
             }
 
-            _lastFrame = _windowInterface.GetHighResTicks();
+            _lastFrame = _nativeWindow.GetHighResTicks();
         }
 
         internal void Sleep()
         {
             FirstIteration = false;
-            ulong now = _windowInterface.GetHighResTicks();
-            double workTime = (double) ((now - _lastFrame) * 1000) / _windowInterface.GetFrequency();
+            ulong now = _nativeWindow.GetHighResTicks();
+            double workTime = (double) ((now - _lastFrame) * 1000) / _nativeWindow.GetFrequency();
 
             uint targetFps = Engine.Get.Settings.General.TargetFps;
 
@@ -84,14 +84,14 @@ namespace Glaives.Internal.Timing
 
                 if (sleep > 0)
                 {
-                    _windowInterface.Sleep(sleep);
+                    _nativeWindow.Sleep(sleep);
                 }
             }
         }
 
         internal void RefreshDeltaTime()
         {
-            ulong now = _windowInterface.GetHighResTicks();
+            ulong now = _nativeWindow.GetHighResTicks();
             DeltaTime = ((double)(now - _lastFrame) / 1000000);
         }
     }

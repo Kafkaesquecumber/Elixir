@@ -20,10 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace Glaives.GameFramework
 {
-    public abstract class LoadableContent 
+    public abstract class LoadableContent : IDisposable
     {
         internal abstract bool IsDisposed { get; }
+
+        /// <inheritdoc />
+        public abstract void Dispose();
     }
 }

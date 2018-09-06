@@ -22,6 +22,7 @@
 
 using System;
 using Glaives.GameFramework;
+using Glaives.Input;
 
 namespace Glaives.Internal.LevelManagment
 {
@@ -72,6 +73,20 @@ namespace Glaives.Internal.LevelManagment
                 Level.DestroyPendingActors();
                 Level = null;
             }
+
+            // Unload all cached content
+            Engine.Get.Content.UnloadAll();
+            GC.Collect();
+        }
+
+        internal void OnInputActionEvent(KeyState keyState, Key key, int gamepadId)
+        {
+            Level?.OnInputActionEvent(keyState, key, gamepadId);
+        }
+
+        internal void OnInputAxisEvent(InputAxis axis, float value, int gamepadId)
+        {
+            Level?.OnInputAxisEvent(axis, value, gamepadId);
         }
     }
 }

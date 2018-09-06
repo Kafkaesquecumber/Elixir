@@ -20,10 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Glaives.Internal.Interface
+using Glaives.GameFramework;
+
+namespace Glaives.Internal.Graphics
 {
-    internal abstract class Interface
+    internal static class OpenTKExtensions
     {
+        
+        internal static OpenTK.Color ToOpenTKColor(this Color color)
+        {
+            return new OpenTK.Color(
+                (byte)(color.R * 255),
+                (byte)(color.G * 255),
+                (byte)(color.B * 255),
+                (byte)(color.A * 255));
+        }
+
         
     }
 }

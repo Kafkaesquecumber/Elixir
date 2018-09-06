@@ -68,6 +68,7 @@ namespace Glaives.Graphics
             {
                 PixelShaderString = pixelShaderString
             };
+            shader.LoadShaders();
             return shader;
         }
         
@@ -76,6 +77,10 @@ namespace Glaives.Graphics
         // We dont dispose shaders
         internal override bool IsDisposed => false;
 
+        internal int VertexShaderHandle { get; private set; }
+        internal int FragmentShaderHandle { get; private set; }
+
+        // Used for the FromString method
         private Shader() { }
 
         /// <summary>
@@ -92,44 +97,37 @@ namespace Glaives.Graphics
             }
 
             PixelShaderString = File.ReadAllText(pixelShaderFile);
-        }
-        
-        internal int CreateVertexShader()
-        {
-            int vertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(vertexShaderHandle, VertexShaderString);
-            GL.CompileShader(vertexShaderHandle);
-            GL.GetShader(vertexShaderHandle, ShaderParameter.CompileStatus, out int vertexShaderCompileStatus);
-            if (vertexShaderCompileStatus != 1)
-            {
-                GL.GetShaderInfoLog(vertexShaderHandle, out string vertexShaderInfo);
-                Engine.Get.Debug.Error("Failed to compile vertex shader\n" + vertexShaderInfo);
-            }
-          
-            return vertexShaderHandle;
+            LoadShaders();
         }
 
-        internal int CreateFragmentShader()
+        private void LoadShaders()
         {
+            VertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
+            GL.ShaderSource(VertexShaderHandle, VertexShaderString);
+            GL.CompileShader(VertexShaderHandle);
+            GL.GetShader(VertexShaderHandle, ShaderParameter.CompileStatus, out int vertexShaderCompileStatus);
+            if (vertexShaderCompileStatus != 1)
+            {
+                GL.GetShaderInfoLog(VertexShaderHandle, out string vertexShaderInfo);
+                Engine.Get.Debug.Error("Failed to compile vertex shader\n" + vertexShaderInfo);
+            }
+
             if (!EvaluateFragmentShaderString())
             {
                 Engine.Get.Debug.Error("Failed to compile pixel shader");
-                return -1;
             }
 
-            int fragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(fragmentShaderHandle, PixelShaderString);
-            GL.CompileShader(fragmentShaderHandle);
-            GL.GetShader(fragmentShaderHandle, ShaderParameter.CompileStatus, out int fragmentShaderCompileStatus);
+            FragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
+            GL.ShaderSource(FragmentShaderHandle, PixelShaderString);
+            GL.CompileShader(FragmentShaderHandle);
+            GL.GetShader(FragmentShaderHandle, ShaderParameter.CompileStatus, out int fragmentShaderCompileStatus);
             if (fragmentShaderCompileStatus != 1)
             {
-                GL.GetShaderInfoLog(fragmentShaderHandle, out string fragmentShaderInfo);
+                GL.GetShaderInfoLog(FragmentShaderHandle, out string fragmentShaderInfo);
                 Engine.Get.Debug.Error("Failed to compile pixel shader\n" + fragmentShaderInfo);
             }
-            
-            return fragmentShaderHandle;
         }
-
+        
         private bool EvaluateFragmentShaderString()
         {
             string[] requirements = 
@@ -159,7 +157,14 @@ namespace Glaives.Graphics
 
             return valid;
         }
-        
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            GL.DeleteShader(VertexShaderHandle);
+            GL.DeleteShader(FragmentShaderHandle);
+        }
+
         internal static string VertexShaderString =
         $@"
         #version 150 core

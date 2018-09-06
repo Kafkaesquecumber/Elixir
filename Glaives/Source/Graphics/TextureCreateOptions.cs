@@ -21,26 +21,16 @@
 // SOFTWARE.
 
 using System;
+using Glaives.GameFramework;
 
 namespace Glaives.Graphics
 {
+    /// <inheritdoc />
     /// <summary>
     /// The create options to use for the texture
     /// </summary>
-    public struct TextureCreateOptions : IEquatable<TextureCreateOptions>
+    public class TextureCreateOptions : ContentCreateOptions
     {
-        /// <summary>
-        /// <para>FilterMode : Smooth</para>
-        /// <para>WrapMode : ClampToEdge</para>
-        /// </summary>
-        public static TextureCreateOptions Smooth => new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge);
-
-        /// <summary>
-        /// <para>FilterMode : Sharp</para>
-        /// <para>WrapMode : ClampToEdge</para>
-        /// </summary>
-        public static TextureCreateOptions Sharp => new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge);
-
         /// <summary>
         /// The way the texture is filtered
         /// </summary>
@@ -62,38 +52,38 @@ namespace Glaives.Graphics
             WrapMode = wrapMode;
         }
 
-        public bool Equals(TextureCreateOptions other)
+        /// <inheritdoc />
+        protected override bool IsEqualContent(ContentCreateOptions otherContent)
         {
-            return FilterMode == other.FilterMode && WrapMode == other.WrapMode;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is TextureCreateOptions && Equals((TextureCreateOptions) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
+            TextureCreateOptions other = (TextureCreateOptions) otherContent;
+            if (other != null)
             {
-                return ((int) FilterMode * 397) ^ (int) WrapMode;
+                if (FilterMode == other.FilterMode &&
+                    WrapMode == other.WrapMode)
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"(Filter: {FilterMode}, Wrap: {WrapMode})";
         }
+        
+        /// <summary>
+        /// <para>FilterMode : Smooth</para>
+        /// <para>WrapMode : ClampToEdge</para>
+        /// </summary>
+        public static TextureCreateOptions Smooth => new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge);
 
-        public static bool operator ==(TextureCreateOptions left, TextureCreateOptions right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(TextureCreateOptions left, TextureCreateOptions right)
-        {
-            return !left.Equals(right);
-        }
+        /// <summary>
+        /// <para>FilterMode : Sharp</para>
+        /// <para>WrapMode : ClampToEdge</para>
+        /// </summary>
+        public static TextureCreateOptions Sharp => new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge);
     }
 }
