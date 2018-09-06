@@ -27,12 +27,12 @@ using Glaives.Graphics;
 
 namespace Glaives.Internal.Content
 {
-    internal class DefaultContent
+    internal class EngineContent
     {
         internal Texture TextureWhite32x32;
         internal Font FontConsolasRegular32;
 
-        internal DefaultContent()
+        internal EngineContent()
         {
             TextureWhite32x32 = new Texture(32, 32, new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge));
             TextureWhite32x32.Update(Color.White);

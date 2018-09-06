@@ -131,7 +131,7 @@ namespace Glaives
         internal EngineTimer EngineTimer { get; private set; }
         internal InputManager InputManager { get; private set; }
         internal LevelManager LevelManager { get; private set; }
-        internal DefaultContent DefaultContent { get; private set; }
+        internal EngineContent EngineContent { get; private set; }
         internal bool AllowGameInstanceInstantiation { get; private set; }
         internal  bool Initialized { get; private set; }
         
@@ -198,7 +198,7 @@ namespace Glaives
 
             Debug.Info($"OpenGL version {Window.OpenGlVersion}");
 
-            DefaultContent = new DefaultContent();
+            EngineContent = new EngineContent();
             Stats = new Statistics();
 
             InputManager = new InputManager(Window, Settings.Input);

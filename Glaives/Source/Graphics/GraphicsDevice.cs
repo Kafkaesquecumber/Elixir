@@ -280,7 +280,7 @@ namespace Glaives.Graphics
                 }
                 else
                 {
-                    texture = Engine.Get.DefaultContent.TextureWhite32x32.Handle;
+                    texture = Engine.Get.EngineContent.TextureWhite32x32.Handle;
                 }
             }
 
