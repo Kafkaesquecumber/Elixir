@@ -60,7 +60,7 @@ namespace Glaives.Core.Graphics
         public override FloatRect LocalBounds => new FloatRect(0, 0, SourceRect.Width, SourceRect.Height);
 
         /// <inheritdoc />
-        protected override void CreateVertices()
+        protected override void FillVertexArray(ref Vertex[] vertices)
         {
             if (vertices.Length != 4)
             {

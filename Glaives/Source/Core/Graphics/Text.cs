@@ -115,7 +115,7 @@ namespace Glaives.Core.Graphics
         private FloatRect _localBounds;
         public override FloatRect LocalBounds => _localBounds;
 
-        protected override void CreateVertices()
+        protected override void FillVertexArray(ref Vertex[] vertices)
         {
             if (string.IsNullOrEmpty(String))
             {

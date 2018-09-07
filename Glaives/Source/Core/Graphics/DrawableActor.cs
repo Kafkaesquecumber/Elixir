@@ -219,17 +219,17 @@ namespace Glaives.Core.Graphics
         internal bool RenderProgramIsDirty = true;
 
         private bool _verticesAreDirty = true;
-        protected Vertex[] vertices = new Vertex[0];
+        private Vertex[] _vertices = new Vertex[0];
         
         internal Vertex[] ConstructVertices()
         {
             if (_verticesAreDirty)
             {
-                CreateVertices();
+                FillVertexArray(ref _vertices);
                 _verticesAreDirty = false;
             }
 
-            return vertices;
+            return _vertices;
         }
 
         /// <inheritdoc />
@@ -239,7 +239,7 @@ namespace Glaives.Core.Graphics
         }
 
         /// <summary>
-        /// <para>Marks the vertices as dirty, CreateVertices will be called again by the GraphicsDevice in the render stage</para>
+        /// <para>Marks the vertices as dirty, FillVertexArray will be called again by the GraphicsDevice in the render stage</para>
         /// <para>Construction will always happen initially when the drawable actor is created</para>
         /// <para>Call when a change was made that affects the vertices</para>
         /// <para>Transformational changes (Position, Rotation, Scale), Color and Flips will automatically cause the vertices to be re-constructed</para>
@@ -250,10 +250,12 @@ namespace Glaives.Core.Graphics
         }
         
         /// <summary>
+        /// <para>Do not CALL this function ever, it is merely meant to implement</para>
         /// <para>Defines the geometry of the drawable actor</para>
         /// <para>Fill the vertex array (vertices) in this function</para>
+        /// <para>Tip: don't re-create or resize the vertex array when it is not needed (to minimize CPU usage and GC collections)</para>
         /// </summary>
         /// <returns></returns>
-        protected abstract void CreateVertices();
+        protected abstract void FillVertexArray(ref Vertex[] vertices);
     }
 }
