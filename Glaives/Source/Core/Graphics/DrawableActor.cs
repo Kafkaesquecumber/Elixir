@@ -122,7 +122,7 @@ namespace Glaives.Core.Graphics
 
                 if (_origin != value)
                 {
-                    _origin = value;
+                    _origin = value;   
                     WorldMatrixIsDirty = true;
                     InverseWorldMatrixIsDirty = true;
                     TryUpdateMatrices();
@@ -219,17 +219,17 @@ namespace Glaives.Core.Graphics
         internal bool RenderProgramIsDirty = true;
 
         private bool _verticesAreDirty = true;
-        private Vertex[] _vertices = new Vertex[0];
+        protected Vertex[] vertices = new Vertex[0];
         
         internal Vertex[] ConstructVertices()
         {
             if (_verticesAreDirty)
             {
-                _vertices = CreateVertices();
+                CreateVertices();
                 _verticesAreDirty = false;
             }
 
-            return _vertices;
+            return vertices;
         }
 
         /// <inheritdoc />
@@ -251,8 +251,9 @@ namespace Glaives.Core.Graphics
         
         /// <summary>
         /// <para>Defines the geometry of the drawable actor</para>
+        /// <para>Fill the vertex array (vertices) in this function</para>
         /// </summary>
         /// <returns></returns>
-        protected abstract Vertex[] CreateVertices();
+        protected abstract void CreateVertices();
     }
 }

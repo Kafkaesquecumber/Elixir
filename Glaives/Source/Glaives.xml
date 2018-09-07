@@ -755,6 +755,7 @@
         <member name="M:Glaives.Core.Graphics.DrawableActor.CreateVertices">
             <summary>
             <para>Defines the geometry of the drawable actor</para>
+            <para>Fill the vertex array (vertices) in this function</para>
             </summary>
             <returns></returns>
         </member>
@@ -1446,6 +1447,12 @@
             <summary>
             Method for loading actors into the level
             </summary>
+        </member>
+        <member name="M:Glaives.Core.Level.Tick(System.Single)">
+            <summary>
+            Called every tick 
+            </summary>
+            <param name="deltaTime">The elapsed time in seconds since the last tick</param>
         </member>
         <member name="M:Glaives.Core.LoadableContent.Dispose">
             <inheritdoc />

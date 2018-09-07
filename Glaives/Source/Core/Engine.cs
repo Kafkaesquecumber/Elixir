@@ -286,7 +286,7 @@ namespace Glaives.Core
                 if (!EngineTimer.FirstIteration) 
                 {
                     Level level = LevelManager.Level;
-                    level?.Tick((float)EngineTimer.DeltaTime);  // Tick the level (with all its actors)
+                    level?.TickInternal((float)EngineTimer.DeltaTime);  // TickInternal the level (with all its actors)
                     level?.DestroyPendingActors();              // Destroy pending actors    
                 }
                 else

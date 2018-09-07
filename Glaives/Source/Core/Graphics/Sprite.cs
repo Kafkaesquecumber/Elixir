@@ -60,9 +60,12 @@ namespace Glaives.Core.Graphics
         public override FloatRect LocalBounds => new FloatRect(0, 0, SourceRect.Width, SourceRect.Height);
 
         /// <inheritdoc />
-        protected override Vertex[] CreateVertices()
+        protected override void CreateVertices()
         {
-            Vertex[] vertices = new Vertex[4];
+            if (vertices.Length != 4)
+            {
+                vertices = new Vertex[4];
+            }
 
             Matrix mat = WorldMatrix;
             vertices[0].Position = mat * new Vector2(0.0f, 0.0f);
@@ -110,8 +113,6 @@ namespace Glaives.Core.Graphics
             vertices[1].Color = Color;
             vertices[2].Color = Color;
             vertices[3].Color = Color;
-
-            return vertices;
         }
     }
 }

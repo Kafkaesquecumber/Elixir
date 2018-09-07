@@ -81,10 +81,11 @@ namespace Glaives.Core
             ActorCount = Root.DoRecursive(actor => actor.InitializeInternal()) - 1;
         }
 
-        internal void Tick(float deltaTime)
+        internal void TickInternal(float deltaTime)
         {
-            ActorCount = Root.DoRecursive(actor => actor.TickInternal(deltaTime)) - 1;
-            Engine.Get.Graphics.DrawBatches();
+            Tick(deltaTime);                                                            // Tick the level
+            ActorCount = Root.DoRecursive(actor => actor.TickInternal(deltaTime)) - 1;  // Tick the actors
+            Engine.Get.Graphics.DrawBatches();                                          // Draw
         }
 
         internal void DestroyPendingActors()
@@ -183,5 +184,11 @@ namespace Glaives.Core
         /// Method for loading actors into the level
         /// </summary>
         protected abstract void LoadLevel();
+
+        /// <summary>
+        /// Called every tick 
+        /// </summary>
+        /// <param name="deltaTime">The elapsed time in seconds since the last tick</param>
+        protected virtual void Tick(float deltaTime) { }
     }
 }

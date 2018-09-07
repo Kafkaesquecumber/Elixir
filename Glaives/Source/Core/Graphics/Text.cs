@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Glaives.Core.Internal.Graphics;
 using SharpFont;
 
@@ -114,14 +115,25 @@ namespace Glaives.Core.Graphics
         private FloatRect _localBounds;
         public override FloatRect LocalBounds => _localBounds;
 
-        protected override Vertex[] CreateVertices()
+        protected override void CreateVertices()
         {
             if (string.IsNullOrEmpty(String))
             {
-                return new Vertex[0];
+                vertices = null;
             }
 
-            Vertex[] vertices = new Vertex[String.Length * 4];
+            int underline = StyleFlags.HasFlag(TextStyleFlags.Underline) ? 1 : 0;
+            int strikeout = StyleFlags.HasFlag(TextStyleFlags.Strikeout) ? 1 : 0;
+
+            int totalLines = String.Count(x => x == '\n') + 1;
+            // Grow the vertex array to fit the underlines and strikeout quads
+            int styleVerticesLength = (underline + strikeout) * totalLines * 4;
+
+            int arrayLength = (String.Length * 4) + styleVerticesLength;
+            if (vertices.Length != arrayLength)
+            {
+                vertices = new Vertex[arrayLength];
+            }
 
             float minX = Font.FontSize;
             float minY = Font.FontSize;
@@ -338,49 +350,44 @@ namespace Glaives.Core.Graphics
                 vertices[i2].Color = Color;
                 vertices[i3].Color = Color;
             }
-
-            bool underline = StyleFlags.HasFlag(TextStyleFlags.Underline);
-            bool strikeout = StyleFlags.HasFlag(TextStyleFlags.Strikeout);
             
+            // Position in the vertex used to insert underline/strikeout quads
+            int arrayPosition = vertices.Length - styleVerticesLength;
+
             // Add strikeout/underline lines
             foreach (LineInfo lineInfo in lines)
             {
-                if (underline)
+                if (underline == 1)
                 {
-                    AddQuad(vertices.Length,
+                    AddQuad(arrayPosition,
                         (float)Math.Ceiling(lineInfo.X), 
                         (float)Math.Ceiling(lineInfo.UnderlineY),
                         (float)Math.Ceiling(lineInfo.LineWidth), 
                         (float)Math.Ceiling(lineInfo.UnderlineThickness), 
                         Color,
                         ref vertices);
+                    arrayPosition += 4;
                 }
 
-                if (strikeout)
+                if (strikeout == 1)
                 {
-                    AddQuad(vertices.Length,
+                    AddQuad(arrayPosition,
                         (float)Math.Ceiling(lineInfo.X), 
                         (float)Math.Ceiling(lineInfo.StrikeoutY),
                         (float)Math.Ceiling(lineInfo.LineWidth), 
                         (float)Math.Ceiling(lineInfo.StrikeoutThickness),
                         Color,
                         ref vertices);
+                    arrayPosition += 4;
                 }
             }
 
             // Set the local bounds
             _localBounds = new FloatRect(minX, minY, maxX, maxY);
-            return vertices;
         }
 
         private void AddQuad(int index, float x, float y, float width, float height, Color color, ref Vertex[] vertices)
         {
-            if (index >= vertices.Length - 4)
-            {
-                // Grow the vertex array to fit the quad
-                Array.Resize(ref vertices, vertices.Length + 4);
-            }
-
             int i0 = index;
             int i1 = i0 + 1;
             int i2 = i0 + 2;
