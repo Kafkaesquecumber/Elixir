@@ -50,5 +50,5 @@ namespace Glaives.Core.Graphics
         /// </summary>
         Strikeout = 4,
     }
-    //TODO: Add emboldening support (not supported by SharpFont)
+    //TODO: Add emboldening support to SharpFont (not supported)
 }

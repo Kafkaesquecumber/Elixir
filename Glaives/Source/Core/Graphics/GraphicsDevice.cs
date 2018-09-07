@@ -54,13 +54,11 @@ namespace Glaives.Core.Graphics
                     if (_frameBufferVertexShader != -1)
                     {
                         GL.DetachShader(_frameBufferShaderProgram, _frameBufferVertexShader);
-                        GL.DeleteShader(_frameBufferVertexShader);
                     }
 
                     if (_frameBufferFragmentShader != -1)
                     {
                         GL.DetachShader(_frameBufferShaderProgram, _frameBufferFragmentShader);
-                        GL.DeleteShader(_frameBufferFragmentShader);
                     }
 
                     _frameBufferVertexShader = value.VertexShaderHandle;

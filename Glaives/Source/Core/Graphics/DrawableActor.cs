@@ -65,41 +65,7 @@ namespace Glaives.Core.Graphics
                 }
             }
         } 
-
-        private bool _flipX;
-        /// <summary>
-        /// Whether or not to flip the actor horizontally
-        /// </summary>
-        public bool FlipX
-        {
-            get => _flipX;
-            set
-            {
-                if (_flipX != value)
-                {
-                    _flipX = value;
-                    ReconstructVertices();
-                }
-            }
-        }
-
-        private bool _flipY;
-        /// <summary>
-        /// Whether or not to flip the actor vertically
-        /// </summary>
-        public bool FlipY
-        {
-            get => _flipY;
-            set
-            {
-                if (_flipY != value)
-                {
-                    _flipY = value;
-                    ReconstructVertices();
-                }
-            }
-        }
-    
+        
         /// <summary>
         /// <para>The bounds of this drawable actor in local space</para>
         /// <para>Ignores the transformations (translation, rotation ,scale) that are applied</para>

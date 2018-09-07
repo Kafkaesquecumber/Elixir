@@ -684,16 +684,6 @@
             The RGBA color of this actor
             </summary>
         </member>
-        <member name="P:Glaives.Core.Graphics.DrawableActor.FlipX">
-            <summary>
-            Whether or not to flip the actor horizontally
-            </summary>
-        </member>
-        <member name="P:Glaives.Core.Graphics.DrawableActor.FlipY">
-            <summary>
-            Whether or not to flip the actor vertically
-            </summary>
-        </member>
         <member name="P:Glaives.Core.Graphics.DrawableActor.LocalBounds">
             <summary>
             <para>The bounds of this drawable actor in local space</para>
@@ -985,6 +975,16 @@
         <member name="P:Glaives.Core.Graphics.Sprite.SourceRect">
             <summary>
             The region on the texture to use to draw the sprite
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Sprite.FlipX">
+            <summary>
+            Whether or not to flip the sprite horizontally
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Sprite.FlipY">
+            <summary>
+            Whether or not to flip the sprite vertically
             </summary>
         </member>
         <member name="M:Glaives.Core.Graphics.Sprite.#ctor(Glaives.Core.Graphics.Texture)">

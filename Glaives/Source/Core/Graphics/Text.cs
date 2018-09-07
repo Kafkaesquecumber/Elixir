@@ -318,32 +318,6 @@ namespace Glaives.Core.Graphics
                 vertices[i3].TexCoords.X = srcRect.X / textureWidth;
                 vertices[i3].TexCoords.Y = (srcRect.Y + srcRect.Height) / textureHeight;
 
-                // Apply flips
-                if (FlipX)
-                {
-                    Vector2 v0 = vertices[i0].TexCoords;
-                    vertices[i0].TexCoords = vertices[i1].TexCoords;
-                    vertices[i1].TexCoords = v0;
-
-                    Vector2 v3 = vertices[i3].TexCoords;
-                    vertices[i3].TexCoords = vertices[i2].TexCoords;
-                    vertices[i2].TexCoords = v3;
-
-                    //TODO: Re-arrange X positions so it looks like the line is flipped horizontally
-                }
-                if (FlipY)
-                {
-                    Vector2 v0 = vertices[i0].TexCoords;
-                    vertices[i0].TexCoords = vertices[i3].TexCoords;
-                    vertices[i3].TexCoords = v0;
-
-                    Vector2 v1 = vertices[i1].TexCoords;
-                    vertices[i1].TexCoords = vertices[i2].TexCoords;
-                    vertices[i2].TexCoords = v1;
-
-                    //TODO: Re-arrange lines so it looks like the lines are flipped vertically
-                }
-
                 // Set vertex colors
                 vertices[i0].Color = Color;
                 vertices[i1].Color = Color;

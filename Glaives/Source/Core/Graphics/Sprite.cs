@@ -42,7 +42,41 @@ namespace Glaives.Core.Graphics
                 }
             }
         }
-        
+
+        private bool _flipX;
+        /// <summary>
+        /// Whether or not to flip the sprite horizontally
+        /// </summary>
+        public bool FlipX
+        {
+            get => _flipX;
+            set
+            {
+                if (_flipX != value)
+                {
+                    _flipX = value;
+                    ReconstructVertices();
+                }
+            }
+        }
+
+        private bool _flipY;
+        /// <summary>
+        /// Whether or not to flip the sprite vertically
+        /// </summary>
+        public bool FlipY
+        {
+            get => _flipY;
+            set
+            {
+                if (_flipY != value)
+                {
+                    _flipY = value;
+                    ReconstructVertices();
+                }
+            }
+        }
+
         /// <inheritdoc />
         public Sprite(Texture texture)
             : this(texture, new IntRect(0, 0, texture.Size.X, texture.Size.Y))
