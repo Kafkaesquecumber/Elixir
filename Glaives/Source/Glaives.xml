@@ -257,7 +257,7 @@
         </member>
         <member name="M:Glaives.Core.ContentLoader.LoadFont(System.String,Glaives.Core.Graphics.FontCreateOptions)">
             <summary>
-            Return loaded or cached font
+            Load a font file (supported formats: TTF and OTF)
             </summary>
             <param name="file">The font file</param>
             <param name="createOptions">The create options used to load the font</param>
@@ -265,29 +265,24 @@
         </member>
         <member name="M:Glaives.Core.ContentLoader.LoadTexture(System.String,Glaives.Core.Graphics.TextureCreateOptions)">
             <summary>
-            Return loaded or cached texture
+            Load a texture (supported formats: Png, Jpeg, Bmp and Gif)
             </summary>
             <param name="file">The texture file to load</param>
             <param name="createOptions">The create options used to load the texture</param>
             <returns></returns>
         </member>
-        <member name="M:Glaives.Core.ContentLoader.LoadShader(System.String)">
+        <member name="M:Glaives.Core.ContentLoader.LoadShader(System.String,System.String)">
             <summary>
             Return loaded or cached shader
             </summary>
-            <param name="file">The shader file to load</param>
-            <returns></returns>
+            <param name="vertexShaderFile">The vertex shader file to load</param>
+            <param name="fragmentShaderFile">The fragment shader file to load</param>
+            <returns>The shader</returns>
         </member>
-        <member name="M:Glaives.Core.ContentLoader.UnloadAll">
+        <member name="M:Glaives.Core.ContentLoader.DisposeAllContent">
             <summary>
-            Unloads all cached content
+            Disposes all cached content
             </summary>
-        </member>
-        <member name="M:Glaives.Core.ContentLoader.Unload(System.String)">
-            <summary>
-            Unload the specific cached content
-            </summary>
-            <param name="file">The same path used for loading the content</param>
         </member>
         <member name="M:Glaives.Core.Diagnostics.Debugger.Info(System.Object)">
             <summary>
@@ -675,7 +670,8 @@
         <member name="T:Glaives.Core.Graphics.DrawableActor">
             <inheritdoc />
             <summary>
-            An actor that contains geometry that can be drawn to a render target
+            <para>An actor that contains geometry that can be drawn</para>
+            <para>You can create your own drawable actor by inheriting from drawable actor and implementing the necessary methods</para>
             </summary>
         </member>
         <member name="P:Glaives.Core.Graphics.DrawableActor.Opacity">
@@ -729,7 +725,7 @@
             The draw layers manage the order at which the drawable actors are drawn (higher layers will overlap lower layers)
             </summary>
         </member>
-        <member name="P:Glaives.Core.Graphics.DrawableActor.GlobalBounds">
+        <member name="P:Glaives.Core.Graphics.DrawableActor.Bounds">
             <summary>
             <para>The global bounds of this drawable actor</para>
             <para>Takes into account the transformations (translation, rotation, scale) that are applied</para>
@@ -768,6 +764,7 @@
             <para>Unlike a normal texture, a dynamic texture has direct access to it's pixel data</para>
             <para>Use a dynamic texture if you need flexible access to read and write pixel data</para>
             <para>A dynamic texture can be convert to a normal texture and vise-versa (do not forget to dispose the dynamic texture when you are done with it)</para>
+            <para>Supported formats: Png, Jpeg, Bmp and Gif</para>
             </summary>
         </member>
         <member name="P:Glaives.Core.Graphics.DynamicTexture.Size">
@@ -777,7 +774,7 @@
         </member>
         <member name="M:Glaives.Core.Graphics.DynamicTexture.#ctor(System.String)">
             <summary>
-            Create a new dynamic texture
+            Load a dynamic texture (supported formats: Png, Jpeg, Bmp and Gif)
             </summary>
             <param name="file">The path to the file (with extension)</param>
         </member>
@@ -889,7 +886,7 @@
         <member name="T:Glaives.Core.Graphics.Font">
             <inheritdoc cref="T:Glaives.Core.LoadableContent" />
             <summary>
-            A font is used to draw text
+            A font is used to draw text, it supports TTF (TrueTypeFont) and OTF (OpenTypeFont) files
             </summary>
         </member>
         <member name="P:Glaives.Core.Graphics.Font.MaxFontSize">
@@ -925,32 +922,49 @@
         <member name="M:Glaives.Core.Graphics.FontCreateOptions.IsEqualContent(Glaives.Core.ContentCreateOptions)">
             <inheritdoc />
         </member>
+        <member name="M:Glaives.Core.Graphics.FontCreateOptions.ToString">
+            <inheritdoc />
+        </member>
         <member name="P:Glaives.Core.Graphics.GraphicsDevice.DrawCalls">
             <summary>
             <para>The amount of draw calls to the GPU needed to render the level</para>
             <para>Actors with the same Shader, Texture, BlendMode and DrawLayer will be batched together into the same draw call</para>
             </summary>
         </member>
-        <member name="P:Glaives.Core.Graphics.GraphicsDevice.PostProcessingShader">
+        <member name="P:Glaives.Core.Graphics.GraphicsDevice.ScreenShader">
             <summary>
-            <para>The shader used to apply full-screen effects</para>
-            <para>It is applied after all drawing is done over the whole screen</para>
+            <para>The screen shader is used to apply full-screen effects</para>
+            <para>It is applied after all drawing is done</para>
             </summary>
         </member>
-        <member name="M:Glaives.Core.Graphics.Shader.FromString(System.String)">
+        <member name="T:Glaives.Core.Graphics.Shader">
+            <summary>
+            <para>A shader is a set of GLSL scripts that run on the GPU</para>
+            <para>Glaives uses special variable names to identify different "in" and "out" variables</para>
+            <para>To create your own shaders, follow the instruction at: http://www.TODOPLACELINKHERE.net/Shaders </para>
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Shader.Default">
+            <summary>
+            A simple textured vertex and fragment shader
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.Graphics.Shader.FromString(System.String,System.String)">
             <summary>
             Construct a new shader from memory directly
             </summary>
-            <param name="pixelShaderString"></param>
+            <param name="vertexShaderString"></param>
+            <param name="fragmentShaderString"></param>
             <returns></returns>
         </member>
-        <member name="M:Glaives.Core.Graphics.Shader.#ctor(System.String)">
+        <member name="M:Glaives.Core.Graphics.Shader.#ctor(System.String,System.String)">
             <summary>
-            <para>Create a new shader instance from file</para>
+            <para>Create a new shader instance from files</para>
             <para>Actors with different shader instances will be drawn in different draw calls</para>
             <para>To reduce draw calls, use the same shader instance for multiple actors</para>
             </summary>
-            <param name="pixelShaderFile"></param>
+            <param name="vertexShaderFile"></param>
+            <param name="fragmentShaderFile"></param>
         </member>
         <member name="M:Glaives.Core.Graphics.Shader.Dispose">
             <inheritdoc />
@@ -960,6 +974,15 @@
             Create a vertex array that represents a quad
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Glaives.Core.Graphics.Sprite">
+            <inheritdoc />
+            The sprite drawable actor
+        </member>
+        <member name="P:Glaives.Core.Graphics.Sprite.SourceRect">
+            <summary>
+            The region on the texture to use to draw the sprite
+            </summary>
         </member>
         <member name="M:Glaives.Core.Graphics.Sprite.#ctor(Glaives.Core.Graphics.Texture)">
             <inheritdoc />
@@ -972,6 +995,10 @@
         </member>
         <member name="M:Glaives.Core.Graphics.Sprite.CreateVertices">
             <inheritdoc />
+        </member>
+        <member name="T:Glaives.Core.Graphics.Text">
+            <inheritdoc />
+            The text drawable actor generates quads that represents characters from a font
         </member>
         <member name="P:Glaives.Core.Graphics.Text.String">
             <summary>
@@ -986,6 +1013,34 @@
         <member name="P:Glaives.Core.Graphics.Text.Font">
             <summary>
             The font used to draw the text
+            </summary>
+        </member>
+        <member name="T:Glaives.Core.Graphics.TextStyleFlags">
+            <summary>
+            <para>The italic flag skews the vertices to appear to be italic (if you use an italic font, don not include the italic flag)</para>
+            <para>The underline flag adds a underline to text lines as a generated quad</para>
+            <para>The strikeout flag adds a line through the text as a generated quad</para>
+            <para>At the moment, boldness can not be done artificially, if you want bold text you should load a bold font</para>
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Graphics.TextStyleFlags.Regular">
+            <summary>
+            No modifications are done to the text
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Graphics.TextStyleFlags.Italic">
+            <summary>
+            Skews the vertices to appear to be italic (if you use an italic font, don not include the italic flag)
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Graphics.TextStyleFlags.Underline">
+            <summary>
+            Adds a underline to text lines as a generated quad
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Graphics.TextStyleFlags.Strikeout">
+            <summary>
+            Adds a line through the text as a generated quad
             </summary>
         </member>
         <member name="T:Glaives.Core.Graphics.Texture">

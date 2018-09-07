@@ -37,6 +37,7 @@ namespace Glaives.Core.Graphics
     /// <para>Unlike a normal texture, a dynamic texture has direct access to it's pixel data</para>
     /// <para>Use a dynamic texture if you need flexible access to read and write pixel data</para>
     /// <para>A dynamic texture can be convert to a normal texture and vise-versa (do not forget to dispose the dynamic texture when you are done with it)</para>
+    /// <para>Supported formats: Png, Jpeg, Bmp and Gif</para>
     /// </summary>
     public class DynamicTexture : IDisposable
     {
@@ -49,7 +50,7 @@ namespace Glaives.Core.Graphics
 
 
         /// <summary>
-        /// Create a new dynamic texture
+        /// Load a dynamic texture (supported formats: Png, Jpeg, Bmp and Gif)
         /// </summary>
         /// <param name="file">The path to the file (with extension)</param>
         public DynamicTexture(string file)

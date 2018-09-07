@@ -22,11 +22,15 @@
 
 using System.IO;
 using Glaives.Core.Internal;
-using Glaives.Core;
 using OpenTK.Graphics.OpenGL;
 
 namespace Glaives.Core.Graphics
 {
+    /// <summary>
+    /// <para>A shader is a set of GLSL scripts that run on the GPU</para>
+    /// <para>Glaives uses special variable names to identify different "in" and "out" variables</para>
+    /// <para>To create your own shaders, follow the instruction at: http://www.TODOPLACELINKHERE.net/Shaders </para>
+    /// </summary>
     public class Shader : LoadableContent
     {
         // vertex shader in-attributes
@@ -43,39 +47,34 @@ namespace Glaives.Core.Graphics
 
         // fragment shader final out
         internal const string FragOutName = "finalColor";
-        
-        private static Shader _defaultShader;
-        public static Shader Default
-        {
-            get
-            {
-                if(_defaultShader == null)
-                {
-                    _defaultShader = FromString(DefaultFragmentShaderString);
-                }
-                return _defaultShader;
-            }
-        }
+
+        /// <summary>
+        /// A simple textured vertex and fragment shader
+        /// </summary>
+        public static Shader Default => Engine.Get.EngineContent.ShaderTextured;
 
         /// <summary>
         /// Construct a new shader from memory directly
         /// </summary>
-        /// <param name="pixelShaderString"></param>
+        /// <param name="vertexShaderString"></param>
+        /// <param name="fragmentShaderString"></param>
         /// <returns></returns>
-        public static Shader FromString(string pixelShaderString)
+        public static Shader FromString(string vertexShaderString, string fragmentShaderString)
         {
+            
             Shader shader = new Shader
             {
-                PixelShaderString = pixelShaderString
+                _vertexShaderString =  vertexShaderString,
+                _fragmentShaderString = fragmentShaderString
             };
             shader.LoadShaders();
             return shader;
         }
-        
-        public string PixelShaderString { get; private set; }
 
-        // We dont dispose shaders
-        internal override bool IsDisposed => false;
+        private string _fragmentShaderString;
+        private string _vertexShaderString;
+
+        internal override bool IsDisposed => VertexShaderHandle == 0;
 
         internal int VertexShaderHandle { get; private set; }
         internal int FragmentShaderHandle { get; private set; }
@@ -84,26 +83,29 @@ namespace Glaives.Core.Graphics
         private Shader() { }
 
         /// <summary>
-        /// <para>Create a new shader instance from file</para>
+        /// <para>Create a new shader instance from files</para>
         /// <para>Actors with different shader instances will be drawn in different draw calls</para>
         /// <para>To reduce draw calls, use the same shader instance for multiple actors</para>
         /// </summary>
-        /// <param name="pixelShaderFile"></param>
-        internal Shader(string pixelShaderFile)
+        /// <param name="vertexShaderFile"></param>
+        /// <param name="fragmentShaderFile"></param>
+        internal Shader(string vertexShaderFile, string fragmentShaderFile)
         {
-            if (!File.Exists(pixelShaderFile))
+            if (!File.Exists(fragmentShaderFile))
             {
-                throw new GlaivesException($"No shader file exists in path '{pixelShaderFile}'");
+                throw new GlaivesException($"No shader file exists in path '{fragmentShaderFile}'");
             }
 
-            PixelShaderString = File.ReadAllText(pixelShaderFile);
+            _vertexShaderString = File.ReadAllText(vertexShaderFile);
+            _fragmentShaderString = File.ReadAllText(fragmentShaderFile);
             LoadShaders();
         }
 
         private void LoadShaders()
         {
+            // Create and compile the vertex shader
             VertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(VertexShaderHandle, VertexShaderString);
+            GL.ShaderSource(VertexShaderHandle, _vertexShaderString);
             GL.CompileShader(VertexShaderHandle);
             GL.GetShader(VertexShaderHandle, ShaderParameter.CompileStatus, out int vertexShaderCompileStatus);
             if (vertexShaderCompileStatus != 1)
@@ -112,50 +114,20 @@ namespace Glaives.Core.Graphics
                 Engine.Get.Debug.Error("Failed to compile vertex shader\n" + vertexShaderInfo);
             }
 
-            if (!EvaluateFragmentShaderString())
-            {
-                Engine.Get.Debug.Error("Failed to compile pixel shader");
-            }
-
+            // Create and compile the fragment shader
             FragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(FragmentShaderHandle, PixelShaderString);
+            GL.ShaderSource(FragmentShaderHandle, _fragmentShaderString);
             GL.CompileShader(FragmentShaderHandle);
             GL.GetShader(FragmentShaderHandle, ShaderParameter.CompileStatus, out int fragmentShaderCompileStatus);
             if (fragmentShaderCompileStatus != 1)
             {
                 GL.GetShaderInfoLog(FragmentShaderHandle, out string fragmentShaderInfo);
-                Engine.Get.Debug.Error("Failed to compile pixel shader\n" + fragmentShaderInfo);
-            }
-        }
-        
-        private bool EvaluateFragmentShaderString()
-        {
-            string[] requirements = 
-            {
-                $"in vec4 {VertOutFragInColorName};",
-                $"in vec2 {VertOutFragInTexCoordName};",
-                $"out vec4 {FragOutName};"
-            };
-
-            bool valid = true;
-            foreach (string requirement in requirements)
-            {
-                if (!PixelShaderString.Contains(requirement))
-                {
-                    Engine.Get.Debug.Error($"Pixel shader is missing required line: {requirement}");
-                    valid = false;
-                }
+                Engine.Get.Debug.Error("Failed to compile fragment shader\n" + fragmentShaderInfo);
             }
 
-            string unspaced = PixelShaderString.Replace(" ", "");
-            if (!unspaced.Contains($"{FragOutName}="))
-            {
-                Engine.Get.Debug.Error($"Pixel shader is missing out color assignment ({FragOutName} = <your vec4 value>), " +
-                                     $"out color name must be '{FragOutName}' and should not be declared");
-                valid = false;
-            }
-
-            return valid;
+            // Remove the strings from memory
+            _vertexShaderString = null;
+            _fragmentShaderString = null;
         }
 
         /// <inheritdoc />
@@ -164,38 +136,5 @@ namespace Glaives.Core.Graphics
             GL.DeleteShader(VertexShaderHandle);
             GL.DeleteShader(FragmentShaderHandle);
         }
-
-        internal static string VertexShaderString =
-        $@"
-        #version 150 core
-        in vec2 {VertInPositionName};
-        in vec4 {VertInColorName};
-        in vec2 {VertInTexCoordName};
-
-        out vec4 {VertOutFragInColorName};
-        out vec2 {VertOutFragInTexCoordName};
-
-        uniform mat4 {VertUniTransformName};
-        void main()
-        {{
-            {VertOutFragInColorName} = {VertInColorName};
-            {VertOutFragInTexCoordName} = {VertInTexCoordName};
-            gl_Position = {VertUniTransformName} * vec4({VertInPositionName}, 0.0, 1.0);
-        }}";
-
-        internal static string DefaultFragmentShaderString =
-        $@" 
-        #version 150 core 
-        in vec4 {VertOutFragInColorName};
-        in vec2 {VertOutFragInTexCoordName};
-        out vec4 {FragOutName};
-
-        uniform sampler2D textureSampler;
-        void main() 
-        {{ 
-            {FragOutName} = texture(textureSampler, {VertOutFragInTexCoordName}.xy) * {VertOutFragInColorName};
-        }}";
-
-        
     }
 }

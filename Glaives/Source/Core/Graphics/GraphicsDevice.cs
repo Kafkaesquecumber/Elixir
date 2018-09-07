@@ -38,19 +38,19 @@ namespace Glaives.Core.Graphics
         /// </summary>
         public int DrawCalls => _batches.Count;
         
-        private Shader _postProcessingShader;
+        private Shader _screenShader;
         /// <summary>
-        /// <para>The shader used to apply full-screen effects</para>
-        /// <para>It is applied after all drawing is done over the whole screen</para>
+        /// <para>The screen shader is used to apply full-screen effects</para>
+        /// <para>It is applied after all drawing is done</para>
         /// </summary>
-        public Shader PostProcessingShader
+        public Shader ScreenShader
         {
-            get => _postProcessingShader;
+            get => _screenShader;
             set
             {
-                if (_postProcessingShader != value)
+                if (_screenShader != value)
                 {
-                    _postProcessingShader = value;
+                    _screenShader = value;
                     if (_frameBufferVertexShader != -1)
                     {
                         GL.DetachShader(_frameBufferShaderProgram, _frameBufferVertexShader);
@@ -103,7 +103,7 @@ namespace Glaives.Core.Graphics
             _frameBufferShaderProgram = GL.CreateProgram();
             _frameBufferVertices = Shapes.MakeQuad();
             _frameBufferVbo = GL.GenBuffer();
-            PostProcessingShader = Shader.Default;
+            ScreenShader = Shader.Default;
 
             _frameBuffer = new RenderTarget(window.Size, TextureFilterMode.Smooth);
         }
@@ -198,7 +198,7 @@ namespace Glaives.Core.Graphics
                 }
 
                 // Submit vertices
-                Vertex[] vertices = drawable.GetVertices();
+                Vertex[] vertices = drawable.ConstructVertices();
                 if (vertices != null)
                 {
                     if (vertices.Length > 0)
@@ -228,12 +228,12 @@ namespace Glaives.Core.Graphics
 
             // Draw the screen quad (final image) using the frame buffer color texture
             Viewport viewport = Engine.Get.Viewport;
-            Draw(viewport.Size, _frameBufferShaderProgram, _frameBufferVertices, _frameBufferVertices.Length, _frameBufferVbo, 
+            Draw(PrimitiveType.Quads, viewport.Size, _frameBufferShaderProgram, _frameBufferVertices, _frameBufferVertices.Length, _frameBufferVbo, 
                 _positionAttributeLocation, _colorAttributeLocation, _texCoordAttributeLocation,
                  _frameBufferRenderProgram, Matrix.Identity, _frameBuffer.ColorTexture);
         }
 
-        internal void Draw(IntVector2 viewport, int shaderProgram, Vertex[] vertices, int length, int vbo, 
+        internal void Draw(PrimitiveType primitiveType, IntVector2 viewport, int shaderProgram, Vertex[] vertices, int length, int vbo, 
             int posAttribLocation, int colorAttribLocation, int texCoordAttribLocation, 
             RenderProgram renderProgram, Matrix projection, int textureOverride = -1)
         {
@@ -288,7 +288,7 @@ namespace Glaives.Core.Graphics
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, texture);
 
-            GL.DrawArrays(PrimitiveType.Quads, 0, length);
+            GL.DrawArrays(primitiveType, 0, length);
 
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Blend);

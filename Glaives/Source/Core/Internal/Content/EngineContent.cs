@@ -30,12 +30,14 @@ namespace Glaives.Core.Internal.Content
     {
         internal Texture TextureWhite32x32;
         internal Font FontConsolasRegular32;
+        internal Shader ShaderTextured;
 
         internal EngineContent()
         {
             TextureWhite32x32 = new Texture(32, 32, new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge));
             TextureWhite32x32.Update(Color.White);
             FontConsolasRegular32 = new Font("EngineContent/F_ConsolasRegular.ttf", new FontCreateOptions(32));
+            ShaderTextured = new Shader("EngineContent/S_Textured.vs", "EngineContent/S_Textured.fs");
         }
     }
 }

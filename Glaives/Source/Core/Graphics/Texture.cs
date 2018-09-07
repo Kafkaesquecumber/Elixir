@@ -67,7 +67,7 @@ namespace Glaives.Core.Graphics
         {
             _createOptions = createOptions;
             Size = new IntVector2(width, height);
-            LoadTexture(new byte[Size.X * Size.Y * 4]);
+            LoadTexture(new byte[Size.Y * Size.X * 4]);
         }
 
         /// <summary>
@@ -237,5 +237,7 @@ namespace Glaives.Core.Graphics
         {
             GL.DeleteTexture(Handle);
         }
+
+        public static Texture Default => Engine.Get.EngineContent.TextureWhite32x32;
     }
 }

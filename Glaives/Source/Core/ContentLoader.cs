@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Glaives.Core.Graphics;
 using Glaives.Core.Internal.Content;
@@ -42,41 +43,42 @@ namespace Glaives.Core
         }
 
         /// <summary>
-        /// Return loaded or cached font
+        /// Load a font file (supported formats: TTF and OTF)
         /// </summary>
         /// <param name="file">The font file</param>
         /// <param name="createOptions">The create options used to load the font</param>
         /// <returns></returns>
         public Font LoadFont(string file, FontCreateOptions createOptions)
         {
-            return Load<Font>(file, createOptions);
+            return Load<Font>(new [] { file }, createOptions);
         }
 
         /// <summary>
-        /// Return loaded or cached texture
+        /// Load a texture (supported formats: Png, Jpeg, Bmp and Gif)
         /// </summary>
         /// <param name="file">The texture file to load</param>
         /// <param name="createOptions">The create options used to load the texture</param>
         /// <returns></returns>
         public Texture LoadTexture(string file, TextureCreateOptions createOptions)
         {
-            return Load<Texture>(file, createOptions);
+            return Load<Texture>(new [] { file }, createOptions);
         }
 
         /// <summary>
         /// Return loaded or cached shader
         /// </summary>
-        /// <param name="file">The shader file to load</param>
-        /// <returns></returns>
-        public Shader LoadShader(string file)
+        /// <param name="vertexShaderFile">The vertex shader file to load</param>
+        /// <param name="fragmentShaderFile">The fragment shader file to load</param>
+        /// <returns>The shader</returns>
+        public Shader LoadShader(string vertexShaderFile, string fragmentShaderFile)
         {
-            return Load<Shader>(file, null);
+            return Load<Shader>(new [] { vertexShaderFile, fragmentShaderFile }, null);
         }
 
         /// <summary>
-        /// Unloads all cached content
+        /// Disposes all cached content
         /// </summary>
-        public void UnloadAll()
+        public void DisposeAllContent()
         {
             foreach (KeyValuePair<ContentInfo, LoadableContent> content in _contentCache)
             {
@@ -86,57 +88,65 @@ namespace Glaives.Core
             GC.Collect();
         }
 
-        /// <summary>
-        /// Unload the specific cached content
-        /// </summary>
-        /// <param name="file">The same path used for loading the content</param>
-        public void Unload(string file)
+        // files is an array as oppose to just 1 file because things like shaders consist of multiple files
+        private T Load<T>(string[] files, ContentCreateOptions createOptions) where T : LoadableContent
         {
-            ContentInfo? key = null;
-            foreach (KeyValuePair<ContentInfo, LoadableContent> content in _contentCache)
+            object[] ctorParams;
+
+            if (createOptions != null)
             {
-                if (content.Key.File == file)
-                {
-                    content.Value.Dispose();
-                    key = content.Key;
-                }
+                // Files + 1 for create options
+                ctorParams = new object[files.Length + 1];
+
+                // Assign last element for create options
+                ctorParams[ctorParams.Length - 1] = createOptions;
+            }
+            else
+            {
+                // No create options just allocate space for files
+                ctorParams = new object[files.Length];
             }
 
-            if (key.HasValue)
+            // Assign files to constructor parameters
+            for (int i = 0; i < files.Length; i++)
             {
-                _contentCache.Remove(key.Value);
+                ctorParams[i] = files[i];
             }
-        }
 
-        private T Load<T>(string file, ContentCreateOptions createOptions) where T : LoadableContent
-        {
-            object[] ctorParams = { file, createOptions };
-            
-            LoadableContent cached = GetCachedContent(file, createOptions);
+            // Check if we have this content cached before loading a new one
+            LoadableContent cached = GetCachedContent(files, createOptions);
             if (cached != null)
             {
                 return (T)cached;
             }
 
+            // Create content instance from constructor parameters
             const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
             LoadableContent content = (LoadableContent)Activator.CreateInstance(typeof(T), bindingFlags, null, ctorParams, null);
 
-            _contentCache.Add(new ContentInfo(file, createOptions), content);
+            // Cache the new content
+            _contentCache.Add(new ContentInfo(files, createOptions), content);
 
-            Engine.Get.Debug.Info(createOptions != null
-                ? $"Loaded {typeof(T).Name} '{file}' {createOptions}"
-                : $"Loaded {typeof(T).Name} '{file}'");
+            string logString = $"Loaded {typeof(T).Name}";
+            logString = files.Aggregate(logString, (current, file) => current + $" '{file}'");
+
+            if (createOptions != null)
+            {
+                logString += $" {createOptions}";
+            }
+
+            Engine.Get.Debug.Info(logString);
             return (T)content;
         }
         
-        private LoadableContent GetCachedContent(string file, ContentCreateOptions createOptions)
+        private LoadableContent GetCachedContent(string[] files, ContentCreateOptions createOptions)
         {
             LoadableContent cached = null;
             ContentInfo? contentInfo = null;
 
             foreach (KeyValuePair<ContentInfo, LoadableContent> loadableContent in _contentCache)
             {
-                if (loadableContent.Key.File == file)
+                if (loadableContent.Key.Files.SequenceEqual(files))
                 {
                     if (createOptions != null)
                     {

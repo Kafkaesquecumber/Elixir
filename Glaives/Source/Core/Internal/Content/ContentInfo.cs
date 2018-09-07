@@ -21,23 +21,24 @@
 // SOFTWARE.
 
 using System;
+using System.Linq;
 
 namespace Glaives.Core.Internal.Content
 {
     internal struct ContentInfo : IEquatable<ContentInfo>
     {
-        internal readonly string File;
+        internal readonly string[] Files;
         internal readonly ContentCreateOptions CreateOptions;
 
-        public ContentInfo(string file, ContentCreateOptions createOptions)
+        public ContentInfo(string[] files, ContentCreateOptions createOptions)
         {
-            File = file;
+            Files = files;
             CreateOptions = createOptions;
         }
 
         public bool Equals(ContentInfo other)
         {
-            return string.Equals(File, other.File) && CreateOptions.IsEqualContentInternal(other.CreateOptions);
+            return Files.SequenceEqual(other.Files) && CreateOptions.IsEqualContentInternal(other.CreateOptions);
         }
 
         public override bool Equals(object obj)
@@ -51,7 +52,8 @@ namespace Glaives.Core.Internal.Content
         {
             unchecked
             {
-                return ((File != null ? File.GetHashCode() : 0) * 397) ^ (CreateOptions != null ? CreateOptions.GetHashCode() : 0);
+                int hc = Files.Aggregate(0, (current, file) => (current * 314159 + file.GetHashCode()));
+                return hc * 397 ^ (CreateOptions != null ? CreateOptions.GetHashCode() : 0);
             }
         }
 

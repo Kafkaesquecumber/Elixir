@@ -58,5 +58,11 @@ namespace Glaives.Core.Graphics
 
             return false;
         }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"(FontSize: {FontSize})";
+        }
     }
 }

@@ -22,7 +22,6 @@
 
 using System;
 using Glaives.Core.Input;
-using Glaives.Core.Internal;
 
 namespace Glaives.Core.Internal.LevelManagment
 {
@@ -75,7 +74,7 @@ namespace Glaives.Core.Internal.LevelManagment
             }
 
             // Unload all cached content
-            Engine.Get.Content.UnloadAll();
+            Engine.Get.Content.DisposeAllContent();
             GC.Collect();
         }
 

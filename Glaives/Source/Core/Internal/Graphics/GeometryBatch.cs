@@ -22,7 +22,6 @@
 
 using System;
 using Glaives.Core.Graphics;
-using Glaives.Core.Internal;
 using OpenTK.Graphics.OpenGL;
 
 namespace Glaives.Core.Internal.Graphics
@@ -129,7 +128,7 @@ namespace Glaives.Core.Internal.Graphics
             
             GL.PolygonMode(MaterialFace.Back, PolygonMode.Fill);
 
-            device.Draw(renderTarget.Size, _shaderProgram, _vertexArray, VertexArrayPosition, _vbo, 
+            device.Draw(PrimitiveType.Quads, renderTarget.Size, _shaderProgram, _vertexArray, VertexArrayPosition, _vbo, 
                 _positionAttributeLocation, _colorAttributeLocation, _texCoordAttributeLocation, 
                 RenderProgram, Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
             

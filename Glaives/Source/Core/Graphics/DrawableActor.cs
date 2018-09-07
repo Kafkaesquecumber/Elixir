@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Glaives.Core.Internal;
 using Glaives.Core.Internal.Graphics;
 
@@ -124,6 +125,7 @@ namespace Glaives.Core.Graphics
                     _origin = value;
                     WorldMatrixIsDirty = true;
                     InverseWorldMatrixIsDirty = true;
+                    TryUpdateMatrices();
                 }
             }
         }
@@ -195,12 +197,12 @@ namespace Glaives.Core.Graphics
                 }
             }
         }
-        
+
         /// <summary>
         /// <para>The global bounds of this drawable actor</para>
         /// <para>Takes into account the transformations (translation, rotation, scale) that are applied</para>
         /// </summary>
-        public FloatRect GlobalBounds => WorldMatrix.TransformRect(LocalBounds);
+        public FloatRect Bounds => WorldMatrix.TransformRect(LocalBounds);
         
         /// <summary>
         /// Internal use for the Actor base class only
@@ -218,8 +220,8 @@ namespace Glaives.Core.Graphics
 
         private bool _verticesAreDirty = true;
         private Vertex[] _vertices = new Vertex[0];
-
-        internal Vertex[] GetVertices()
+        
+        internal Vertex[] ConstructVertices()
         {
             if (_verticesAreDirty)
             {

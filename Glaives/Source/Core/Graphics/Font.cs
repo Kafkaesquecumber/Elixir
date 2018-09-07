@@ -34,7 +34,7 @@ namespace Glaives.Core.Graphics
 {
     /// <inheritdoc cref="LoadableContent" />
     /// <summary>
-    /// A font is used to draw text
+    /// A font is used to draw text, it supports TTF (TrueTypeFont) and OTF (OpenTypeFont) files
     /// </summary>
     public class Font : LoadableContent
     {

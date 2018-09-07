@@ -92,32 +92,41 @@ namespace Glaives.Core.Graphics
             }
         }
 
-        public Text(Graphics.Font font, string text)
+        public Text(Font font, string text)
             : this(font, text, TextStyleFlags.Regular)
         {
         }
 
-        public Text(Graphics.Font font, string text, TextStyleFlags styleFlags)
+        public Text(Font font, string text, TextStyleFlags styleFlags)
         {
             StyleFlags = styleFlags;
             Font = font;
             String = text;
             Texture = font.Texture;
+
+            // Override the origin to be top-left (text center is very volatile)
+            Origin = Vector2.Zero; 
+
+            // Cache the vertices immediately so the bounds are valid after creation
+            ConstructVertices(); 
         }
         
         private FloatRect _localBounds;
-        public override FloatRect LocalBounds
-        {
-            get
-            {
-                //TODO: Calc bounds
-                return FloatRect.Zero;
-            }
-        }
+        public override FloatRect LocalBounds => _localBounds;
 
         protected override Vertex[] CreateVertices()
         {
+            if (string.IsNullOrEmpty(String))
+            {
+                return new Vertex[0];
+            }
+
             Vertex[] vertices = new Vertex[String.Length * 4];
+
+            float minX = Font.FontSize;
+            float minY = Font.FontSize;
+            float maxX = 0.0f;
+            float maxY = 0.0f;
 
             float advance = 0.0f;
             char prevChar = (char) 0;
@@ -128,7 +137,7 @@ namespace Glaives.Core.Graphics
             float bearingXFirstChar = 0.0f; // Bearing x for first char on the line
             float bearingXLastChar = 0.0f;  // Bearing x for last char on the line
             Matrix mat = WorldMatrix;       // The world matrix to be used for vertex construction
-            
+
             // New line info will be added after a line terminates
             // Line info's are used later to draw strikeouts/underlines
             List<LineInfo> lines = new List<LineInfo>();
@@ -179,11 +188,13 @@ namespace Glaives.Core.Graphics
                         advance = 0.0f;
                         newLine = true;
                         bearingXLastChar = glyphInfo.BearingX;
+                        //maxY = Math.Max(maxY, (float)Math.Floor(faceMetrics.LineHeight * line));
                         break;
                     }
                     case '\t':
                         // tab = 4 spaces
                         advance += Font.LoadGlyph(' ').Advance * 4;
+                        maxX = Math.Max(maxX, advance);
                         break;
                     default:
                     {
@@ -199,6 +210,7 @@ namespace Glaives.Core.Graphics
                             // Add a red quad to indicate a missing glyph
                             AddQuad(i0, advance, errorVertexY, errorVertexSize, errorVertexSize, Color.Red, ref vertices);
                             advance += errorVertexSize;
+                            maxX = Math.Max(maxX, advance);
                             continue; // Next char
                         }
                         
@@ -237,7 +249,7 @@ namespace Glaives.Core.Graphics
                     {
                         // The line was not incremented so we need to do this manually for the last line
                         lineY += faceMetrics.LineHeight + offsetY;
-                        //lineX = 0.0f;
+                        maxY = Math.Max(maxY, (float)Math.Floor(faceMetrics.LineHeight * (line + 1)));
                     }
 
                     // Store the line info for adding underline/strikeout lines later
@@ -266,12 +278,21 @@ namespace Glaives.Core.Graphics
                 {
                     skew = StyleFlags.HasFlag(TextStyleFlags.Italic) ? (float)Font.FontSize / 4 : 0.0f;
                 }
-
+                
                 vertices[i0].Position = mat * new Vector2(x + skew, y);
                 vertices[i1].Position = mat * new Vector2(x + srcRect.Width + skew, y);
                 vertices[i2].Position = mat * new Vector2(x + srcRect.Width, srcRect.Height + y);
                 vertices[i3].Position = mat * new Vector2(x, srcRect.Height + y);
-                
+
+                // for char 'space', x and y are max float, ignore this character
+                if (curChar != ' ')
+                {
+                    minX = Math.Min(minX, x);
+                    maxX = Math.Max(maxX, x + glyphInfo.BearingX + srcRect.Width - skew * glyphInfo.BearingY);
+                    minY = Math.Min(minY, y);
+                    maxY = Math.Max(maxY, faceMetrics.LineHeight * line); // Maxed by line height
+                }
+
                 int textureWidth = Texture.Size.X;
                 int textureHeight = Texture.Size.Y;
 
@@ -284,7 +305,7 @@ namespace Glaives.Core.Graphics
                 vertices[i2].TexCoords.Y = (srcRect.Y + srcRect.Height) / textureHeight;
                 vertices[i3].TexCoords.X = srcRect.X / textureWidth;
                 vertices[i3].TexCoords.Y = (srcRect.Y + srcRect.Height) / textureHeight;
-                
+
                 // Apply flips
                 if (FlipX)
                 {
@@ -295,6 +316,8 @@ namespace Glaives.Core.Graphics
                     Vector2 v3 = vertices[i3].TexCoords;
                     vertices[i3].TexCoords = vertices[i2].TexCoords;
                     vertices[i2].TexCoords = v3;
+
+                    //TODO: Re-arrange X positions so it looks like the line is flipped horizontally
                 }
                 if (FlipY)
                 {
@@ -305,6 +328,8 @@ namespace Glaives.Core.Graphics
                     Vector2 v1 = vertices[i1].TexCoords;
                     vertices[i1].TexCoords = vertices[i2].TexCoords;
                     vertices[i2].TexCoords = v1;
+
+                    //TODO: Re-arrange lines so it looks like the lines are flipped vertically
                 }
 
                 // Set vertex colors
@@ -343,7 +368,8 @@ namespace Glaives.Core.Graphics
                 }
             }
 
-            
+            // Set the local bounds
+            _localBounds = new FloatRect(minX, minY, maxX, maxY);
             return vertices;
         }
 

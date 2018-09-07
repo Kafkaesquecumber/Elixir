@@ -253,6 +253,7 @@ namespace Glaives.Core
                         _localPosition = result;
                         WorldMatrixIsDirty = true;
                         InverseWorldMatrixIsDirty = true;
+                        TryUpdateMatrices();
                     }
                 }
                 else
@@ -262,6 +263,7 @@ namespace Glaives.Core
                         _localPosition = value;
                         WorldMatrixIsDirty = true;
                         InverseWorldMatrixIsDirty = true;
+                        TryUpdateMatrices();
                     }
                 }
 
@@ -292,6 +294,7 @@ namespace Glaives.Core
                         _localRotation = result;
                         WorldMatrixIsDirty = true;
                         InverseWorldMatrixIsDirty = true;
+                        TryUpdateMatrices();
                     }
                 }
                 else
@@ -301,6 +304,7 @@ namespace Glaives.Core
                         _localRotation = clampedValue;
                         WorldMatrixIsDirty = true;
                         InverseWorldMatrixIsDirty = true;
+                        TryUpdateMatrices();
                     }
                 }
 
@@ -331,6 +335,7 @@ namespace Glaives.Core
                         _localScale = result;
                         WorldMatrixIsDirty = true;
                         InverseWorldMatrixIsDirty = true;
+                        TryUpdateMatrices();
                     }
                 }
                 else
@@ -340,6 +345,7 @@ namespace Glaives.Core
                         _localScale = value;
                         WorldMatrixIsDirty = true;
                         InverseWorldMatrixIsDirty = true;
+                        TryUpdateMatrices();
                     }
                 }
 
