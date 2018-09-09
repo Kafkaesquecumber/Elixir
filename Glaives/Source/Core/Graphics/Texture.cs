@@ -42,7 +42,7 @@ namespace Glaives.Core.Graphics
         /// The maximum width/height that a texture supports
         /// </summary>
         public static int MaxTextureSize => GL.GetInteger(GetPName.MaxTextureSize);
-
+        
         /// <summary>
         /// The gl handle 
         /// </summary>
@@ -56,18 +56,27 @@ namespace Glaives.Core.Graphics
         internal override bool IsDisposed => Handle == 0;
         
         private readonly TextureCreateOptions _createOptions;
-        
+
         /// <summary>
-        /// Create a new empty texture without any initial pixel data
+        /// Create a new empty texture 
         /// </summary>
         /// <param name="width">The width of the texture</param>
         /// <param name="height">The height of the texture</param>
+        /// <param name="color">The color for all pixels in the texture</param>
         /// <param name="createOptions">The create options</param>
-        public Texture(int width, int height, TextureCreateOptions createOptions)
+        public Texture(int width, int height, Color color, TextureCreateOptions createOptions)
         {
             _createOptions = createOptions;
             Size = new IntVector2(width, height);
-            LoadTexture(new byte[Size.Y * Size.X * 4]);
+            if (color == Color.Transparent)
+            {
+                // No need to do the Enumerate.Repeat since transparent is (0, 0, 0, 0)
+                LoadTexture(new byte[Size.X * Size.Y * 4]);
+            }
+            else
+            {
+                LoadTexture(Enumerable.Repeat(color, Size.X * Size.Y).ToBytes());
+            }
         }
 
         /// <summary>

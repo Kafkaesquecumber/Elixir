@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using System.ComponentModel;
 using Glaives.Core.Input;
 
 namespace Glaives.Core.Internal.LevelManagment
@@ -63,7 +64,7 @@ namespace Glaives.Core.Internal.LevelManagment
             Level = (Level)Activator.CreateInstance(levelType);
             Level.LoadLevelInternal();
         }
-        
+
         internal void UnloadLevel()
         {
             if(Level != null)

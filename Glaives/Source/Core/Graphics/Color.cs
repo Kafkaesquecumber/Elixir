@@ -61,7 +61,7 @@ namespace Glaives.Core.Graphics
         /// <summary>
         /// (R=0, G=0, B=0, A=0);
         /// </summary>
-        public static Color Transparant => new Color(0.0f, 0.0f, 0.0f, 0.0f);
+        public static Color Transparent => new Color(0.0f, 0.0f, 0.0f, 0.0f);
 
         public float R { get; set; }
         public float G { get; set; }

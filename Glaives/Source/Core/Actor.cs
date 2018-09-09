@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using Glaives.Core.Coroutines;
 using Glaives.Core.Input;
 using Glaives.Core.Internal;
 using Glaives.Core.Internal.Input;
@@ -99,59 +100,7 @@ namespace Glaives.Core
                 }
             }
         }
-
-        /// <summary>
-        /// This is only part of the Parent.Set code, Do not call this function from outside the Parent.Set
-        /// </summary>
-        /// <param name="value"></param>
-        private void SetParentInternal(Actor value)
-        {
-            value.TryUpdateMatrices();
-
-            if (_parent != null)
-            {
-                #region Temporarely convert to local space
-
-                _localPosition = _parent.WorldMatrix.TransformPoint(_localPosition);
-
-                _localRotation += _parent._rotation;
-                _localRotation = Utils.MathEx.Clamp360(_localRotation);
-
-                Matrix tempScalMat = Matrix.Identity;
-                tempScalMat.Scale(_parent._scale);
-                _localScale = tempScalMat.TransformPoint(_localScale);
-
-                _position = _localPosition;
-                _rotation = _localRotation;
-                _scale = _localScale;
-
-                #endregion
-
-                Actor oldParent = _parent;
-                oldParent._children.Remove(this);
-            }
-            value._children.Add(this);
-
-            _localPosition = value.InverseWorldMatrix.TransformPoint(_localPosition);
-
-            _localRotation -= value._rotation;
-            _localRotation = Utils.MathEx.Clamp360(_localRotation);
-
-            Matrix scalMat = Matrix.Identity;
-            scalMat.Scale(value._scale);
-            _localScale = scalMat.GetInverse().TransformPoint(_localScale);
-
-            _position = _localPosition;
-            _rotation = _localRotation;
-            _scale = _localScale;
-
-            _parent = value;
-
-            WorldMatrixIsDirty = true;
-            InverseWorldMatrixIsDirty = true;
-            TryUpdateMatrices();
-        }
-
+        
         private Vector2 _localPosition;
         /// <summary>
         /// The position in local space
@@ -418,7 +367,7 @@ namespace Glaives.Core
                 return _inverseWorldMatrix;
             }
         }
-
+        
         /// <summary>
         /// Whether or not the actor should receive input events
         /// </summary>
@@ -428,7 +377,12 @@ namespace Glaives.Core
         /// A shorthand to the engine singleton
         /// </summary>
         protected Engine Engine => Engine.Get;
-        
+
+        /// <summary>
+        /// The coroutine runner for this actor
+        /// </summary>
+        public CoroutineRunner CoroutineRunner { get; private set; }
+
         /// <summary>
         /// <para>Contains functionality for binding input to function handlers</para>
         /// <para>Each actor has it's own input binder</para>
@@ -473,7 +427,9 @@ namespace Glaives.Core
             InverseWorldMatrixIsDirty = true;
             LocalMatrix = Matrix.Identity;
 
+            CoroutineRunner = new CoroutineRunner();
             InputEnabled = false;
+
             Engine.Get.OnActorConstruction(this);
         }
         
@@ -552,6 +508,7 @@ namespace Glaives.Core
                 }
             }
             Tick(deltaTime);
+            CoroutineRunner.Update();
         }
 
         internal void ReceiveInputActionInternal(KeyState keyState, Key key, int gamepadId)
@@ -562,6 +519,58 @@ namespace Glaives.Core
         internal void ReceiveInputAxisInternal(InputAxis axis, float value, int gamepadId)
         {
             ReceiveInputAxis(axis, value, gamepadId);
+        }
+
+        /// <summary>
+        /// This is only part of the Parent.Set code, Do not call this function from outside the Parent.Set
+        /// </summary>
+        /// <param name="value"></param>
+        private void SetParentInternal(Actor value)
+        {
+            value.TryUpdateMatrices();
+
+            if (_parent != null)
+            {
+                #region Temporarely convert to local space
+
+                _localPosition = _parent.WorldMatrix.TransformPoint(_localPosition);
+
+                _localRotation += _parent._rotation;
+                _localRotation = Utils.MathEx.Clamp360(_localRotation);
+
+                Matrix tempScalMat = Matrix.Identity;
+                tempScalMat.Scale(_parent._scale);
+                _localScale = tempScalMat.TransformPoint(_localScale);
+
+                _position = _localPosition;
+                _rotation = _localRotation;
+                _scale = _localScale;
+
+                #endregion
+
+                Actor oldParent = _parent;
+                oldParent._children.Remove(this);
+            }
+            value._children.Add(this);
+
+            _localPosition = value.InverseWorldMatrix.TransformPoint(_localPosition);
+
+            _localRotation -= value._rotation;
+            _localRotation = Utils.MathEx.Clamp360(_localRotation);
+
+            Matrix scalMat = Matrix.Identity;
+            scalMat.Scale(value._scale);
+            _localScale = scalMat.GetInverse().TransformPoint(_localScale);
+
+            _position = _localPosition;
+            _rotation = _localRotation;
+            _scale = _localScale;
+
+            _parent = value;
+
+            WorldMatrixIsDirty = true;
+            InverseWorldMatrixIsDirty = true;
+            TryUpdateMatrices();
         }
 
         private void UpdateWorldMatrix()
@@ -691,7 +700,7 @@ namespace Glaives.Core
         internal virtual void Transformed() { }
         
         /// <summary>
-        /// Initialization happens after the whole level is loaded or immediately if the actor is created after level loading (base call not needed)
+        /// Called after the load level coroutine is completed or immediately if the actor is created after level loading 
         /// </summary>
         protected virtual void Initialize() { }
 

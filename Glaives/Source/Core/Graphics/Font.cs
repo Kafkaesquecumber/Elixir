@@ -72,7 +72,7 @@ namespace Glaives.Core.Graphics
             }
 
             FontFace = new FontFace(File.OpenRead(file));
-            Texture = new Texture(128, 128, new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge));
+            Texture = new Texture(128, 128, Color.Transparent, new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge));
 
             // pixels in the top-left corner is used for strikeout/underlines... :)
             // This has to be the same texture because of the way we do vertex batching
@@ -223,7 +223,7 @@ namespace Glaives.Core.Graphics
         private void ResizeTexture(int width, int height)
         {
             // Create a new, bigger texture
-            Texture texture = new Texture(width, height,
+            Texture texture = new Texture(width, height, Color.Transparent, 
                 new TextureCreateOptions(TextureFilterMode.Smooth, TextureWrapMode.ClampToEdge));
 
             // Write bytes from the old texture into the new texture
@@ -245,5 +245,10 @@ namespace Glaives.Core.Graphics
             Texture?.Dispose();
             FontFace = null;
         }
+
+        /// <summary>
+        /// Consolas regular 32
+        /// </summary>
+        public static Font Default => Engine.Get.EngineContent.FontConsolasRegular32;
     }
 }

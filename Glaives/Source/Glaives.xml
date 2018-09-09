@@ -24,12 +24,6 @@
             Parent the actor to another actor (cannot be null, use Unparent to parent the actor to the level root)
             </summary>
         </member>
-        <member name="M:Glaives.Core.Actor.SetParentInternal(Glaives.Core.Actor)">
-            <summary>
-            This is only part of the Parent.Set code, Do not call this function from outside the Parent.Set
-            </summary>
-            <param name="value"></param>
-        </member>
         <member name="P:Glaives.Core.Actor.LocalPosition">
             <summary>
             The position in local space
@@ -95,6 +89,11 @@
             A shorthand to the engine singleton
             </summary>
         </member>
+        <member name="P:Glaives.Core.Actor.CoroutineRunner">
+            <summary>
+            The coroutine runner for this actor
+            </summary>
+        </member>
         <member name="P:Glaives.Core.Actor.InputBinder">
             <summary>
             <para>Contains functionality for binding input to function handlers</para>
@@ -133,9 +132,15 @@
             Destroy even when immutable (used to unload levels)
             </summary>
         </member>
+        <member name="M:Glaives.Core.Actor.SetParentInternal(Glaives.Core.Actor)">
+            <summary>
+            This is only part of the Parent.Set code, Do not call this function from outside the Parent.Set
+            </summary>
+            <param name="value"></param>
+        </member>
         <member name="M:Glaives.Core.Actor.Initialize">
             <summary>
-            Initialization happens after the whole level is loaded or immediately if the actor is created after level loading (base call not needed)
+            Called after the load level coroutine is completed or immediately if the actor is created after level loading 
             </summary>
         </member>
         <member name="M:Glaives.Core.Actor.Tick(System.Single)">
@@ -282,6 +287,74 @@
         <member name="M:Glaives.Core.ContentLoader.DisposeAllContent">
             <summary>
             Disposes all cached content
+            </summary>
+        </member>
+        <member name="T:Glaives.Core.Coroutines.Coroutine">
+            <summary>
+            <para>A coroutine contains the routine and it's callbacks</para>
+            <para>Also provides static utility methods for yield operations</para>
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Coroutines.Coroutine.Routine">
+            <summary>
+            The running routine
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Coroutines.Coroutine.CompletedCallback">
+            <summary>
+            The callback that gets invoked when the routine terminates or is stopped
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.Coroutines.Coroutine.WaitForSeconds(System.Single)">
+            <summary>
+            Yield return this method in a coroutine to make it wait for a specified amount of seconds
+            before continuing past the yield 
+            </summary>
+            <param name="seconds">The amount of seconds to wait</param>
+        </member>
+        <member name="M:Glaives.Core.Coroutines.Coroutine.WaitForTicks(System.UInt32)">
+            <summary>
+            Yield return this method in a coroutine to make it wait for a specified amount of ticks
+            before continuing past the yield
+            </summary>
+            <param name="ticks">The amount of ticks to wait</param>
+        </member>
+        <member name="T:Glaives.Core.Coroutines.CoroutineCallbacks">
+            <summary>
+            A collection of delegate declarations associated with coroutines
+            </summary>
+        </member>
+        <member name="T:Glaives.Core.Coroutines.CoroutineCallbacks.CoroutineCompletedCallback">
+            <summary>
+            The delegate declaration of the coroutine completed callback
+            </summary>
+        </member>
+        <member name="T:Glaives.Core.Coroutines.CoroutineRunner">
+            <summary>
+            Runs and stops coroutines
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Coroutines.CoroutineRunner.RunningCoroutines">
+            <summary>
+            The coroutines that are currently running on this coroutine runner
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.Coroutines.CoroutineRunner.RunCoroutine(System.Collections.IEnumerator,Glaives.Core.Coroutines.CoroutineCallbacks.CoroutineCompletedCallback)">
+            <summary>
+            Run a new coroutine
+            </summary>
+            <param name="routine">The routine to run</param>
+            <param name="completedCallback">The callback will be called after the routine has either terminates or is stopped</param>
+        </member>
+        <member name="M:Glaives.Core.Coroutines.CoroutineRunner.StopCoroutine(System.Collections.IEnumerator)">
+            <summary>
+            Stop a running routine
+            </summary>
+            <param name="routine">The routine to stop (does nothing if the routine is not running)</param>
+        </member>
+        <member name="M:Glaives.Core.Coroutines.CoroutineRunner.StopAllCoroutines">
+            <summary>
+            Stop all coroutines associated with this coroutine runner
             </summary>
         </member>
         <member name="M:Glaives.Core.Diagnostics.Debugger.Info(System.Object)">
@@ -615,7 +688,7 @@
             (R=1, G=0, B=1, A=1);
             </summary>
         </member>
-        <member name="P:Glaives.Core.Graphics.Color.Transparant">
+        <member name="P:Glaives.Core.Graphics.Color.Transparent">
             <summary>
             (R=0, G=0, B=0, A=0);
             </summary>
@@ -895,6 +968,11 @@
         <member name="M:Glaives.Core.Graphics.Font.Dispose">
             <inheritdoc />
         </member>
+        <member name="P:Glaives.Core.Graphics.Font.Default">
+            <summary>
+            Consolas regular 32
+            </summary>
+        </member>
         <member name="T:Glaives.Core.Graphics.FontCreateOptions">
             <inheritdoc />
             <summary>
@@ -1013,9 +1091,34 @@
             The styling applied to the text (flags)
             </summary>
         </member>
+        <member name="P:Glaives.Core.Graphics.Text.Alignment">
+            <summary>
+            The <see cref="T:Glaives.Core.Graphics.TextAlignment"/> anchors the lines to the left, center or right side of the text bounds
+            </summary>
+        </member>
         <member name="P:Glaives.Core.Graphics.Text.Font">
             <summary>
-            The font used to draw the text
+            The <see cref="P:Glaives.Core.Graphics.Text.Font"/> used to draw the text
+            </summary>
+        </member>
+        <member name="T:Glaives.Core.Graphics.TextAlignment">
+            <summary>
+            The text alignment anchors the lines to the left, center or right side of the text bounds
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Graphics.TextAlignment.Left">
+            <summary>
+            Align text left
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Graphics.TextAlignment.Center">
+            <summary>
+            Align text center
+            </summary>
+        </member>
+        <member name="F:Glaives.Core.Graphics.TextAlignment.Right">
+            <summary>
+            Align text right
             </summary>
         </member>
         <member name="T:Glaives.Core.Graphics.TextStyleFlags">
@@ -1069,12 +1172,13 @@
             The dimensions of the texture
             </summary>
         </member>
-        <member name="M:Glaives.Core.Graphics.Texture.#ctor(System.Int32,System.Int32,Glaives.Core.Graphics.TextureCreateOptions)">
+        <member name="M:Glaives.Core.Graphics.Texture.#ctor(System.Int32,System.Int32,Glaives.Core.Graphics.Color,Glaives.Core.Graphics.TextureCreateOptions)">
             <summary>
-            Create a new empty texture without any initial pixel data
+            Create a new empty texture 
             </summary>
             <param name="width">The width of the texture</param>
             <param name="height">The height of the texture</param>
+            <param name="color">The color for all pixels in the texture</param>
             <param name="createOptions">The create options</param>
         </member>
         <member name="M:Glaives.Core.Graphics.Texture.#ctor(System.Int32,System.Int32,System.Byte[],Glaives.Core.Graphics.TextureCreateOptions)">
@@ -1434,6 +1538,11 @@
             The currently active view
             </summary>
         </member>
+        <member name="P:Glaives.Core.Level.IsLoadComplete">
+            <summary>
+            Whether or not the load level coroutine has finished and all actors have been initialized
+            </summary>
+        </member>
         <member name="F:Glaives.Core.Level.PendingDestroyActors">
             <summary>
             Actors to be destroyed at the end of the frame
@@ -1445,9 +1554,9 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Glaives.Core.Level.LoadLevel">
+        <member name="M:Glaives.Core.Level.LoadLevelCoroutine">
             <summary>
-            Method for loading actors into the level
+            Load your level content in this coroutine
             </summary>
         </member>
         <member name="M:Glaives.Core.Level.Tick(System.Single)">

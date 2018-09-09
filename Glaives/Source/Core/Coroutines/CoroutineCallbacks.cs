@@ -1,4 +1,4 @@
-// MIT License
+﻿// MIT License
 // 
 // Copyright(c) 2018 Glaives Game Engine.
 // 
@@ -20,24 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Glaives.Core.Graphics;
-
-// Note: do not use the ContentLoader in this class, it has not been created yet (by design)
-
-namespace Glaives.Core.Internal.Content
+namespace Glaives.Core.Coroutines
 {
-    internal class EngineContent
+    /// <summary>
+    /// A collection of delegate declarations associated with coroutines
+    /// </summary>
+    public static class CoroutineCallbacks
     {
-        internal Texture TextureWhite32x32;
-        internal Font FontConsolasRegular32;
-        internal Shader ShaderTextured;
-
-        internal EngineContent()
-        {
-            TextureWhite32x32 = new Texture(32, 32, Color.White, new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge));
-            TextureWhite32x32.Update(Color.White);
-            FontConsolasRegular32 = new Font("EngineContent/F_ConsolasRegular.ttf", new FontCreateOptions(32));
-            ShaderTextured = new Shader("EngineContent/S_Textured.vs", "EngineContent/S_Textured.fs");
-        }
+        /// <summary>
+        /// The delegate declaration of the coroutine completed callback
+        /// </summary>
+        public delegate void CoroutineCompletedCallback();
     }
 }

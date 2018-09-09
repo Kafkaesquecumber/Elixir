@@ -22,6 +22,7 @@
 
 using System;
 using Glaives.Core.Configuration;
+using Glaives.Core.Coroutines;
 using Glaives.Core.Diagnostics;
 using Glaives.Core.Graphics;
 using Glaives.Core.Input;
@@ -128,6 +129,7 @@ namespace Glaives.Core
 
         internal Window Window { get; private set; }
         internal EngineTimer EngineTimer { get; private set; }
+        internal CoroutineRunner GlobalCoroutineRunner { get; private set; }
         internal InputManager InputManager { get; private set; }
         internal LevelManager LevelManager { get; private set; }
         internal EngineContent EngineContent { get; private set; }
@@ -189,6 +191,7 @@ namespace Glaives.Core
             AllowGameInstanceInstantiation = false;
 
             Debug = new Debugger(GameInstance);
+            GlobalCoroutineRunner = new CoroutineRunner();
             Settings = GameInstance.GetSettingsInternal();
             
             Window = new Window(new IntVector2(Settings.Video.Width, Settings.Video.Height), Settings.Video.Title);
@@ -206,9 +209,10 @@ namespace Glaives.Core
             LevelManager = new LevelManager();
 
             Initialized = true;
+            
             Run(initialLevelType); // Contains the program loop
         }
-
+        
         private void OnInputActionEvent(KeyState keyState, Key key, int gamepadId)
         {
             LevelManager.OnInputActionEvent(keyState, key, gamepadId);
@@ -218,7 +222,7 @@ namespace Glaives.Core
         {
             LevelManager.OnInputAxisEvent(axis, value, gamepadId);
         }
-        
+
         /// <summary>
         /// Load a new level and unload the current one
         /// </summary>
@@ -286,8 +290,9 @@ namespace Glaives.Core
                 if (!EngineTimer.FirstIteration) 
                 {
                     Level level = LevelManager.Level;
+                    GlobalCoroutineRunner.Update();                          // Update global coroutines
                     level?.TickInternal((float)EngineTimer.DeltaTime);  // TickInternal the level (with all its actors)
-                    level?.DestroyPendingActors();              // Destroy pending actors    
+                    level?.DestroyPendingActors();                      // Destroy pending actors    
                 }
                 else
                 {

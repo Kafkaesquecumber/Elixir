@@ -32,9 +32,12 @@ namespace Glaives.Core.Graphics
     /// The text drawable actor generates quads that represents characters from a font
     public class Text : DrawableActor
     {
-        internal struct LineInfo
+        private struct LineInfo
         {
             internal float X;
+            internal FloatRect LastCharRect;
+            internal int VerticesIndex;
+            internal int VerticesLength;
             internal float UnderlineY;
             internal float StrikeoutY;
             internal float LineWidth;
@@ -76,11 +79,28 @@ namespace Glaives.Core.Graphics
             }
         }
 
-        private Graphics.Font _font;
+        private TextAlignment _alignment;
         /// <summary>
-        /// The font used to draw the text
+        /// The <see cref="TextAlignment"/> anchors the lines to the left, center or right side of the text bounds
         /// </summary>
-        public Graphics.Font Font
+        public TextAlignment Alignment
+        {
+            get => _alignment;
+            set
+            {
+                if (_alignment != value)
+                {
+                    _alignment = value;
+                    ReconstructVertices();
+                }
+            }
+        }
+
+        private Font _font;
+        /// <summary>
+        /// The <see cref="Font"/> used to draw the text
+        /// </summary>
+        public Font Font
         {
             get => _font;
             set
@@ -94,22 +114,29 @@ namespace Glaives.Core.Graphics
         }
 
         public Text(Font font, string text)
-            : this(font, text, TextStyleFlags.Regular)
+            : this(font, text, TextStyleFlags.Regular, TextAlignment.Left)
         {
         }
 
         public Text(Font font, string text, TextStyleFlags styleFlags)
+            : this(font, text, styleFlags, TextAlignment.Left)
+        {
+            
+        }
+
+        public Text(Font font, string text, TextStyleFlags styleFlags, TextAlignment alignment)
         {
             StyleFlags = styleFlags;
+            Alignment = alignment;
             Font = font;
             String = text;
             Texture = font.Texture;
 
             // Override the origin to be top-left (text center is very volatile)
-            Origin = Vector2.Zero; 
+            Origin = Vector2.Zero;
 
             // Cache the vertices immediately so the bounds are valid after creation
-            ConstructVertices(); 
+            ConstructVertices();
         }
         
         private FloatRect _localBounds;
@@ -119,7 +146,9 @@ namespace Glaives.Core.Graphics
         {
             if (string.IsNullOrEmpty(String))
             {
-                vertices = null;
+                vertices = new Vertex[0];
+                _localBounds = FloatRect.Zero;
+                return;
             }
 
             int underline = StyleFlags.HasFlag(TextStyleFlags.Underline) ? 1 : 0;
@@ -149,6 +178,9 @@ namespace Glaives.Core.Graphics
             float bearingXFirstChar = 0.0f; // Bearing x for first char on the line
             float bearingXLastChar = 0.0f;  // Bearing x for last char on the line
             Matrix mat = WorldMatrix;       // The world matrix to be used for vertex construction
+            FloatRect lastCharRect = FloatRect.Zero; // The rect of the last char (stored when a line is terminated to use as last char on line)
+            int verticesLineLength = 0;
+            int verticesLineIndex = 0;
 
             // New line info will be added after a line terminates
             // Line info's are used later to draw strikeouts/underlines
@@ -175,6 +207,7 @@ namespace Glaives.Core.Graphics
             // If we do not do this, we will be left with a reference to the old, disposed texture 
             Texture = Font.Texture;
 
+            #region Fill Vertices
             // Create the vertices
             for (int i = 0; i < String.Length; i++)
             {
@@ -200,7 +233,6 @@ namespace Glaives.Core.Graphics
                         advance = 0.0f;
                         newLine = true;
                         bearingXLastChar = glyphInfo.BearingX;
-                        //maxY = Math.Max(maxY, (float)Math.Floor(faceMetrics.LineHeight * line));
                         break;
                     }
                     case '\t':
@@ -229,27 +261,30 @@ namespace Glaives.Core.Graphics
                         srcRect = glyphInfo.SourceRect;
                         bearingXLastChar = glyphInfo.SourceRect.Width;
                         if (advance == 0.0f)
-                        {
-                            // Used to determine underline/strikeout start locations on the x-axis
+                        {    
                             bearingXFirstChar = glyphInfo.BearingX;
                         }
-
                         break;
                     }
                 }
-                
+
                 // Calculate offsets from bearing
                 float offsetY = (float)Math.Ceiling(glyphInfo.BearingY);
-                float offsetX = (float)Math.Ceiling(glyphInfo.BearingX);
+                float offsetX = (float)Math.Floor(glyphInfo.BearingX);
                 
                 // Apply x and y offsets, line offset, and advance
                 float y = (float)Math.Floor((faceMetrics.XHeight - offsetY) + (float)Math.Floor(faceMetrics.LineHeight * line));
-                float x = (float)Math.Ceiling(offsetX + advance);
+                float x = (float)Math.Round(offsetX + advance);
                 
                 // Apply kerning
                 float kerning = Font.FontFace.GetKerning(prevChar, curChar, Font.FontSize);
                 x += (float)Math.Ceiling(kerning);
                 
+                // Advance
+                advance += (float)Math.Round(glyphInfo.Advance);
+                prevChar = curChar;
+                verticesLineLength += 4;
+
                 // New line added or last line
                 if (newLine || (i == String.Length - 1))
                 {
@@ -268,18 +303,20 @@ namespace Glaives.Core.Graphics
                     lines.Add(new LineInfo()
                     {
                         X = lineX,
+                        LastCharRect = lastCharRect,
+                        VerticesIndex = verticesLineIndex,
+                        VerticesLength = verticesLineLength,
                         UnderlineY = lineY - faceMetrics.UnderlinePosition,
                         StrikeoutY = lineY - faceMetrics.StrikeoutPosition,
                         LineWidth = currentLineWidth + bearingXLastChar,
                         StrikeoutThickness = faceMetrics.StrikeoutSize,
                         UnderlineThickness = faceMetrics.UnderlineSize
                     });
+
+                    verticesLineIndex = verticesLineLength;
                 }
-                
-                // Advance
-                advance += (float)Math.Round(glyphInfo.Advance);
+
                 currentLineWidth = advance;
-                prevChar = curChar;
 
                 float skew = 0.0f;
 
@@ -295,6 +332,9 @@ namespace Glaives.Core.Graphics
                 vertices[i1].Position = mat * new Vector2(x + srcRect.Width + skew, y);
                 vertices[i2].Position = mat * new Vector2(x + srcRect.Width, srcRect.Height + y);
                 vertices[i3].Position = mat * new Vector2(x, srcRect.Height + y);
+                
+
+                lastCharRect = new FloatRect(x, y, srcRect.Width + skew, srcRect.Height);
 
                 // for char 'space', x and y are max float, ignore this character
                 if (curChar != ' ')
@@ -324,17 +364,48 @@ namespace Glaives.Core.Graphics
                 vertices[i2].Color = Color;
                 vertices[i3].Color = Color;
             }
+            #endregion
             
-            // Position in the vertex used to insert underline/strikeout quads
-            int arrayPosition = vertices.Length - styleVerticesLength;
+            #region Apply Stlying and Alignment
 
-            // Add strikeout/underline lines
+            // Find the widest line (alignment positioning is based on the widest line)
+            LineInfo widestLine = lines.Aggregate((l0, l1) => l0.LineWidth > l1.LineWidth ? l0 : l1);
+
+            // Position in the vertex used to insert styling quads
+            int arrayPosition = vertices.Length - styleVerticesLength;
+            
+            // Apply styling and alignment on the lines
             foreach (LineInfo lineInfo in lines)
             {
+                float alignmentOffsetX = 0.0f;
+                float gap = widestLine.LineWidth - lineInfo.LineWidth;
+
+                switch (Alignment)
+                {
+                    case TextAlignment.Left: // No need to do anything, vertices are left-aligned by default
+                        break;
+                    case TextAlignment.Center:
+                    {        
+                        if (gap > 0.0f)
+                        {
+                            alignmentOffsetX = gap / 2;
+                        }
+
+                        break;
+                    }
+                    case TextAlignment.Right:
+                    {
+                        alignmentOffsetX = gap;
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
                 if (underline == 1)
                 {
                     AddQuad(arrayPosition,
-                        (float)Math.Ceiling(lineInfo.X), 
+                        (float)Math.Ceiling(lineInfo.X + alignmentOffsetX), 
                         (float)Math.Ceiling(lineInfo.UnderlineY),
                         (float)Math.Ceiling(lineInfo.LineWidth), 
                         (float)Math.Ceiling(lineInfo.UnderlineThickness), 
@@ -346,7 +417,7 @@ namespace Glaives.Core.Graphics
                 if (strikeout == 1)
                 {
                     AddQuad(arrayPosition,
-                        (float)Math.Ceiling(lineInfo.X), 
+                        (float)Math.Ceiling(lineInfo.X + alignmentOffsetX), 
                         (float)Math.Ceiling(lineInfo.StrikeoutY),
                         (float)Math.Ceiling(lineInfo.LineWidth), 
                         (float)Math.Ceiling(lineInfo.StrikeoutThickness),
@@ -354,7 +425,15 @@ namespace Glaives.Core.Graphics
                         ref vertices);
                     arrayPosition += 4;
                 }
+
+                // Align the vertices
+                for (int i = lineInfo.VerticesLength - 1; i >= lineInfo.VerticesIndex; i--)
+                {
+                    vertices[i].Position.X += alignmentOffsetX;
+                }
             }
+
+            #endregion
 
             // Set the local bounds
             _localBounds = new FloatRect(minX, minY, maxX, maxY);
