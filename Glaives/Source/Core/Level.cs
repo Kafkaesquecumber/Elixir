@@ -49,7 +49,7 @@ namespace Glaives.Core
         /// <summary>
         /// The total amount of actors in the level (not including the level root)
         /// </summary>
-        public int ActorCount { get; private set; }
+        public int ActorCount => Root.DoRecursive(actor => { }, false);
 
         /// <summary>
         /// The default view 
@@ -60,11 +60,6 @@ namespace Glaives.Core
         /// The currently active view
         /// </summary>
         public View CurrentView { get; set; }
-
-        /// <summary>
-        /// Whether or not the load level coroutine has finished and all actors have been initialized
-        /// </summary>
-        public bool IsLoadComplete { get; private set; }
 
         /// <summary>
         /// Actors to be destroyed at the end of the frame
@@ -85,22 +80,15 @@ namespace Glaives.Core
             CurrentView = DefaultView;
 
             // Run the load level coroutine and initialize actors when loading is fully completed
-            Engine.Get.GlobalCoroutineRunner.RunCoroutine(LoadLevelCoroutine(), () =>
-            {
-                ActorCount = Root.DoRecursive(actor => { }, false);
-                Root.DoRecursive(actor => actor.InitializeInternal());
-                IsLoadComplete = true;
-            });
+            LoadLevel();
+            Root.DoRecursive(actor => actor.InitializeInternal());
         }
 
         internal void TickInternal(float deltaTime)
         {
-            if (IsLoadComplete)
-            {
-                Tick(deltaTime);                                                            // Tick the level
-                ActorCount = Root.DoRecursive(actor => actor.TickInternal(deltaTime)) - 1;  // Tick the actors
-                Engine.Get.Graphics.DrawBatches();                                          // Draw the batches
-            }
+            Tick(deltaTime);                                            // Tick the level
+            Root.DoRecursive(actor => actor.TickInternal(deltaTime));   // Tick the actors
+            Engine.Get.Graphics.DrawBatches();                          // Draw the batches
         }
 
         internal void DestroyPendingActors()
@@ -154,30 +142,24 @@ namespace Glaives.Core
 
         internal void OnInputActionEvent(KeyState keyState, Key key, int gamepadId)
         {
-            if (IsLoadComplete)
+            Root.DoRecursive(x =>
             {
-                Root.DoRecursive(x =>
+                if (x.InputEnabled)
                 {
-                    if (x.InputEnabled)
-                    {
-                        x.ReceiveInputActionInternal(keyState, key, gamepadId);
-                    }
-                });
-            }
+                    x.ReceiveInputActionInternal(keyState, key, gamepadId);
+                }
+            });
         }
 
         internal void OnInputAxisEvent(InputAxis axis, float value, int gamepadId)
         {
-            if (IsLoadComplete)
+            Root.DoRecursive(x =>
             {
-                Root.DoRecursive(x =>
+                if (x.InputEnabled)
                 {
-                    if (x.InputEnabled)
-                    {
-                        x.ReceiveInputAxisInternal(axis, value, gamepadId);
-                    }
-                });
-            }
+                    x.ReceiveInputAxisInternal(axis, value, gamepadId);
+                }
+            });
         }
 
         private void BuildHierarchyString(ref StringBuilder stringBuilder, Actor parent, int depth = 0)
@@ -206,9 +188,9 @@ namespace Glaives.Core
         }
 
         /// <summary>
-        /// Load your level content in this coroutine
+        /// Load your level content here
         /// </summary>
-        protected abstract IEnumerator LoadLevelCoroutine();
+        protected abstract void LoadLevel();
         
         /// <summary>
         /// Called every tick 

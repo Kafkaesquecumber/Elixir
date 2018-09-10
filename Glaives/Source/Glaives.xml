@@ -1538,11 +1538,6 @@
             The currently active view
             </summary>
         </member>
-        <member name="P:Glaives.Core.Level.IsLoadComplete">
-            <summary>
-            Whether or not the load level coroutine has finished and all actors have been initialized
-            </summary>
-        </member>
         <member name="F:Glaives.Core.Level.PendingDestroyActors">
             <summary>
             Actors to be destroyed at the end of the frame
@@ -1554,9 +1549,9 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Glaives.Core.Level.LoadLevelCoroutine">
+        <member name="M:Glaives.Core.Level.LoadLevel">
             <summary>
-            Load your level content in this coroutine
+            Load your level content here
             </summary>
         </member>
         <member name="M:Glaives.Core.Level.Tick(System.Single)">
