@@ -24,8 +24,15 @@ using System;
 
 namespace Glaives.Core.Graphics
 {
+    /// <summary>
+    /// Not implemented yet
+    /// </summary>
     public class AnimatedSprite : Sprite
     {
+        /// <summary>
+        /// Not implemented yet
+        /// </summary>
+        /// <param name="texture"></param>
         public AnimatedSprite(Texture texture)
             : base(texture)
         {

@@ -69,6 +69,7 @@ namespace Glaives.Core.Internal.LevelManagment
         {
             if(Level != null)
             {
+                Level.CoroutineRunner.StopAllCoroutines();
                 Level.Root.ForceDestroy();
                 Level.DestroyPendingActors();
                 Level = null;

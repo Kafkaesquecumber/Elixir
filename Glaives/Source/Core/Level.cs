@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Glaives.Core.Coroutines;
 using Glaives.Core.Graphics;
 using Glaives.Core.Input;
 using Glaives.Core.Internal;
@@ -62,12 +63,18 @@ namespace Glaives.Core
         public View CurrentView { get; set; }
 
         /// <summary>
+        /// The coroutine runner associated with this level
+        /// </summary>
+        public CoroutineRunner CoroutineRunner { get; private set; }
+
+        /// <summary>
         /// Actors to be destroyed at the end of the frame
         /// </summary>
         internal readonly List<Actor> PendingDestroyActors = new List<Actor>();
 
         internal void LoadLevelInternal()
         {
+            CoroutineRunner = new CoroutineRunner();
             Root = new Actor(immutable: true)
             {
                 Name = new UniqueString(GetType().Name)
@@ -86,6 +93,7 @@ namespace Glaives.Core
 
         internal void TickInternal(float deltaTime)
         {
+            CoroutineRunner.Update();                                   // Update level coroutines
             Tick(deltaTime);                                            // Tick the level
             Root.DoRecursive(actor => actor.TickInternal(deltaTime));   // Tick the actors
             Engine.Get.Graphics.DrawBatches();                          // Draw the batches

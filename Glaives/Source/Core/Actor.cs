@@ -507,8 +507,9 @@ namespace Glaives.Core
                     }       
                 }
             }
-            Tick(deltaTime);
+
             CoroutineRunner.Update();
+            Tick(deltaTime);
         }
 
         internal void ReceiveInputActionInternal(KeyState keyState, Key key, int gamepadId)
@@ -693,6 +694,8 @@ namespace Glaives.Core
                 return;
             }
 
+            CoroutineRunner.StopAllCoroutines();
+            CoroutineRunner = null;
             Engine.CurrentLevel.PendingDestroyActors.Add(this);
             PendingDestruction = true;
         }
