@@ -1538,6 +1538,11 @@
             The currently active view
             </summary>
         </member>
+        <member name="P:Glaives.Core.Level.CoroutineRunner">
+            <summary>
+            The coroutine runner associated with this level
+            </summary>
+        </member>
         <member name="F:Glaives.Core.Level.PendingDestroyActors">
             <summary>
             Actors to be destroyed at the end of the frame

@@ -20,6 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+
 namespace Glaives.Core.Graphics
 {
     /// <inheritdoc />
@@ -76,7 +78,7 @@ namespace Glaives.Core.Graphics
                 }
             }
         }
-
+        
         /// <inheritdoc />
         public Sprite(Texture texture)
             : this(texture, new IntRect(0, 0, texture.Size.X, texture.Size.Y))
@@ -92,7 +94,7 @@ namespace Glaives.Core.Graphics
 
         /// <inheritdoc />
         public override FloatRect LocalBounds => new FloatRect(0, 0, SourceRect.Width, SourceRect.Height);
-
+        
         /// <inheritdoc />
         protected override void FillVertexArray(ref Vertex[] vertices)
         {

@@ -127,6 +127,7 @@ namespace Glaives.Core
         /// </summary>
         public Level CurrentLevel => LevelManager.Level;
 
+        
         internal Window Window { get; private set; }
         internal EngineTimer EngineTimer { get; private set; }
         internal CoroutineRunner GlobalCoroutineRunner { get; private set; }
