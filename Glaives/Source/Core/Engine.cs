@@ -22,23 +22,21 @@
 
 
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Glaives.Core.Configuration;
 using Glaives.Core.Coroutines;
 using Glaives.Core.Diagnostics;
 using Glaives.Core.Graphics;
+using Glaives.Core.Internal.EditorGui;
 using Glaives.Core.Input;
 using Glaives.Core.Internal;
-using Glaives.Core.Internal.Content;
 using Glaives.Core.Internal.Graphics;
 using Glaives.Core.Internal.Input;
 using Glaives.Core.Internal.LevelManagment;
 using Glaives.Core.Internal.Timing;
 using Glaives.Core.Internal.Windowing;
 using ImGuiNET;
-using OpenTK.Graphics.OpenGL;
-using NativeWindow = ImGuiNET.NativeWindow;
 
 [assembly: InternalsVisibleTo("Glaives.Editor", AllInternalsVisible = true)]
 namespace Glaives.Core
@@ -126,6 +124,11 @@ namespace Glaives.Core
         }
 
         /// <summary>
+        /// The path to the content root directory
+        /// </summary>
+        public string ContentFolder { get; private set; }
+
+        /// <summary>
         /// The handle to the native window
         /// </summary>
         public IntPtr WindowHandle => Window?.Handle ?? IntPtr.Zero;
@@ -139,6 +142,11 @@ namespace Glaives.Core
         /// Whether or not we should render ImGui stuff
         /// </summary>
         public bool RenderImGui { get; set; } = true;
+
+        /// <summary>
+        /// Whether or not we should show the default main menu bar and it's contents
+        /// </summary>
+        public bool ShowImGuiGlaivesMenuBar { get; set; } = true;
 
         internal Window Window { get; private set; }
         internal EngineTimer EngineTimer { get; private set; }
@@ -157,11 +165,12 @@ namespace Glaives.Core
         /// </summary>
         /// <typeparam name="TGameInstanceType">The type of your custom game instance (create a class and inherit from GameInstance)</typeparam>
         /// <typeparam name="TInitialLevelType">The type of your custom level to load as the first level (create a class and inherit from Level)</typeparam>
-        public void Initialize<TGameInstanceType, TInitialLevelType>() 
+        /// <param name="contentFolder">The relative path to your content root folder</param>
+        public void Initialize<TGameInstanceType, TInitialLevelType>(string contentFolder) 
             where TGameInstanceType : GameInstance, new() 
             where TInitialLevelType : Level
         {
-            Initialize(typeof(TGameInstanceType), typeof(TInitialLevelType));
+            Initialize(typeof(TGameInstanceType), typeof(TInitialLevelType), contentFolder);
         }
 
         /// <summary>
@@ -169,7 +178,8 @@ namespace Glaives.Core
         /// </summary>
         /// <param name="gameInstanceType">The type of your custom game instance (create a class and inherit from GameInstance)</param>
         /// <param name="initialLevelType">The type of your custom level to load as the first level (create a class and inherit from Level)</param>
-        public void Initialize(Type gameInstanceType, Type initialLevelType)
+        /// <param name="contentFolder">The relative path to your content root folder</param>
+        public void Initialize(Type gameInstanceType, Type initialLevelType, string contentFolder)
         {
             if (_initCalled)
             {
@@ -177,6 +187,12 @@ namespace Glaives.Core
             }
 
             _initCalled = true;
+
+            if (!Directory.Exists(contentFolder))
+            {
+                throw new GlaivesException($"Content folder '{contentFolder}' not found");
+            }
+            ContentFolder = contentFolder;
 
             if (gameInstanceType == null)
             {
@@ -290,7 +306,8 @@ namespace Glaives.Core
             EngineTimer.Initialize();
             
             ImGuiHelper.Init(Window);
-            
+            ImGuiInternal.SetupImGuiStyle(Settings.ImGui.Theme, Settings.ImGui.Alpha);
+
             while (Window.IsOpen())
             {
                 Window.PollEvents();
@@ -300,6 +317,10 @@ namespace Glaives.Core
                 Window.Clear(Color.Black);
 
                 ImGuiHelper.NewFrame(Window.Viewport.Size, Vector2.Unit, (float)EngineTimer.DeltaTime);
+                if (ShowImGuiGlaivesMenuBar)
+                {
+                    ImGuiInternal.GlaivesMainMenuBar();
+                }
 
                 // Tick after first iteration so delta time is set
                 if (!EngineTimer.FirstIteration) 
@@ -307,6 +328,7 @@ namespace Glaives.Core
                     Level level = LevelManager.Level;
                     GlobalCoroutineRunner.Update();  
                     
+                    GameInstance.ImGuiInternal();
                     if (level != null)
                     {
                         level.TickInternal((float) EngineTimer.DeltaTime);  // TickInternal the level (with all its actors)

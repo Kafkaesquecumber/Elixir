@@ -46,6 +46,20 @@ namespace Glaives.Core.Graphics
         /// </summary>
         public IntVector2 Size => new IntVector2(_bitmap.Width, _bitmap.Height);
 
+        /// <summary>
+        /// The pixel data pointer
+        /// </summary>
+        public unsafe IntPtr Ptr
+        {
+            get
+            {
+                fixed (Rgba32* ptr = &MemoryMarshal.GetReference(_bitmap.GetPixelSpan()))
+                {
+                    return new IntPtr(ptr);
+                }
+            }
+        }
+
         private readonly Image<Rgba32> _bitmap;
 
 
@@ -59,7 +73,7 @@ namespace Glaives.Core.Graphics
             {
                 throw new GlaivesException($"Failed to create dynamic texture: file '{file}' not found");
             }
-
+            
             // Load the bitmap
             _bitmap = Image.Load(file);
         }
@@ -160,13 +174,7 @@ namespace Glaives.Core.Graphics
             // Create RGBA byte array 
             byte[] bytes = new byte[region.Width * region.Height * 4];
 
-            unsafe
-            {
-                fixed(Rgba32* ptr = &MemoryMarshal.GetReference(_bitmap.GetPixelSpan()))
-                {
-                    Marshal.Copy(new IntPtr(ptr), bytes, 0, bytes.Length);
-                }
-            }
+            Marshal.Copy(Ptr, bytes, 0, bytes.Length);
 
             return bytes;
         }
@@ -256,19 +264,13 @@ namespace Glaives.Core.Graphics
             
             // The bitmap bytes to be blended with the input bytes and ultimately copied to the bitmap
             byte[] bmpBytes = new byte[_bitmap.Width * _bitmap.Height * 4];
-            
-            // Copy the full texture to the bitmap bytes
-            unsafe
-            {
-                fixed (Rgba32* ptr = &MemoryMarshal.GetReference(_bitmap.GetPixelSpan()))
-                {
-                    Marshal.Copy(new IntPtr(ptr), bmpBytes, 0, bmpBytes.Length);
-                }
-            }
 
-            
+            // Copy the full texture to the bitmap bytes
+            Marshal.Copy(Ptr, bmpBytes, 0, bmpBytes.Length);
+
+
             // The loops below blend the bitmap bytes and the input bytes together using alpha blending
-            
+
             int bytesOffsetY = 0;
             for (int y = region.Y; y < region.Y + region.Height; y++, bytesOffsetY++)
             {
@@ -309,15 +311,7 @@ namespace Glaives.Core.Graphics
                 }
             }
 
-            unsafe
-            {
-                fixed (Rgba32* pixelPtr = &MemoryMarshal.GetReference(_bitmap.GetPixelSpan()))
-                {
-                    // Copy the bitmap bytes to the bitmap
-                    Marshal.Copy(bmpBytes, 0, new IntPtr(pixelPtr), bmpBytes.Length);
-                }
-            }
-            
+            Marshal.Copy(bmpBytes, 0, Ptr, bmpBytes.Length);
         }
 
         /// <summary>

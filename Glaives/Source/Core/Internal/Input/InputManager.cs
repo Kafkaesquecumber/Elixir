@@ -97,6 +97,7 @@ namespace Glaives.Core.Internal.Input
 
         internal void Flush()
         {
+            Mouse.ScrollWheelDelta = 0;
             RawActionsBuffer.Clear();
             RawAxesBuffer.Clear();
         }

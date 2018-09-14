@@ -37,12 +37,14 @@ namespace Glaives.Core.Configuration
         public GeneralSettings General;
         public VideoSettings Video;
         public InputSettings Input;
+        public ImGuiSettings ImGui;
 
         public Settings()
         {
             General = new GeneralSettings();
             Video = new VideoSettings();
             Input = new InputSettings();
+            ImGui = new ImGuiSettings();
         }
         
         /// <summary>

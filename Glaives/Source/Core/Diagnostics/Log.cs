@@ -20,11 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Glaives.Core.Internal.Input
+namespace Glaives.Core.Diagnostics
 {
-    public static class Mouse
+    public struct Log
     {
-        public static Vector2 Position { get; internal set; }
-        public static int ScrollWheelDelta { get; internal set; }
+        public readonly LogType LogType;
+        public readonly string Message;
+        public readonly string ClassName;
+        public readonly string MethodName;
+        public readonly int Line;
+
+        public Log(LogType logType, string message, string className, string methodName, int line)
+        {
+            LogType = logType;
+            Message = message;
+            ClassName = className;
+            MethodName = methodName;
+            Line = line;
+        }
     }
 }

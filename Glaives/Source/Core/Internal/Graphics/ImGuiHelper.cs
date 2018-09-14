@@ -55,6 +55,7 @@ namespace Glaives.Core.Internal.Graphics
             Initialized = true;
 
             window.InputActionEvent += OnInputAction;
+            window.InputScrollWheel += OnInputScrollWheel;
 
             IO io = ImGui.GetIO();
             io.KeyMap[GuiKey.Tab] = (int)Key.Tab;
@@ -76,6 +77,7 @@ namespace Glaives.Core.Internal.Graphics
             io.KeyMap[GuiKey.X] = (int)Key.X;
             io.KeyMap[GuiKey.Y] = (int)Key.Y;
             io.KeyMap[GuiKey.Z] = (int)Key.Z;
+
             
             // Build texture atlas
             FontTextureData texData = io.FontAtlas.GetTexDataAsAlpha8();
@@ -104,6 +106,12 @@ namespace Glaives.Core.Internal.Graphics
             io.FontAtlas.ClearTexData();
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
+        }
+
+        private static void OnInputScrollWheel(int wheelY)
+        {
+            IO io = ImGui.GetIO();
+            io.MouseWheel = (float)wheelY/2;
         }
 
         private static void OnInputAction(KeyState keyState, Key key, int gamepadId)

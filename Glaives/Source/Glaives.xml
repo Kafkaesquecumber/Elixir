@@ -170,6 +170,16 @@
             General engine settings
             </summary>
         </member>
+        <member name="P:Glaives.Core.Configuration.ImGuiSettings.Theme">
+            <summary>
+            The appearance style of ImGui
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Configuration.ImGuiSettings.Alpha">
+            <summary>
+            The overall alpha used together with the theme
+            </summary>
+        </member>
         <member name="T:Glaives.Core.Configuration.InputSettings">
             <summary>
             Engine settings related to input
@@ -450,6 +460,11 @@
             The viewport of the window
             </summary>
         </member>
+        <member name="P:Glaives.Core.Engine.ContentFolder">
+            <summary>
+            The path to the content root directory
+            </summary>
+        </member>
         <member name="P:Glaives.Core.Engine.WindowHandle">
             <summary>
             The handle to the native window
@@ -465,19 +480,26 @@
             Whether or not we should render ImGui stuff
             </summary>
         </member>
-        <member name="M:Glaives.Core.Engine.Initialize``2">
+        <member name="P:Glaives.Core.Engine.ShowImGuiGlaivesMenuBar">
+            <summary>
+            Whether or not we should show the default main menu bar and it's contents
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.Engine.Initialize``2(System.String)">
             <summary>
             Initializes all modules and loads the initial level
             </summary>
             <typeparam name="TGameInstanceType">The type of your custom game instance (create a class and inherit from GameInstance)</typeparam>
             <typeparam name="TInitialLevelType">The type of your custom level to load as the first level (create a class and inherit from Level)</typeparam>
+            <param name="contentFolder">The relative path to your content root folder</param>
         </member>
-        <member name="M:Glaives.Core.Engine.Initialize(System.Type,System.Type)">
+        <member name="M:Glaives.Core.Engine.Initialize(System.Type,System.Type,System.String)">
             <summary>
             Initializes all modules and loads the initial level
             </summary>
             <param name="gameInstanceType">The type of your custom game instance (create a class and inherit from GameInstance)</param>
             <param name="initialLevelType">The type of your custom level to load as the first level (create a class and inherit from Level)</param>
+            <param name="contentFolder">The relative path to your content root folder</param>
         </member>
         <member name="M:Glaives.Core.Engine.LoadLevel``1">
             <summary>
@@ -522,6 +544,11 @@
         <member name="M:Glaives.Core.GameInstance.Initialize">
             <summary>
             Called after the engine modules have been initialized
+            </summary>
+        </member>
+        <member name="M:Glaives.Core.GameInstance.OnImGui">
+            <summary>
+            ImGui rendering 
             </summary>
         </member>
         <member name="M:Glaives.Core.GameInstance.ReceiveLogs(Glaives.Core.Diagnostics.LogType,System.String,System.String,System.String,System.Int32)">
@@ -698,6 +725,16 @@
             (R=0, G=0, B=0, A=0);
             </summary>
         </member>
+        <member name="P:Glaives.Core.Graphics.Color.Grey">
+            <summary>
+            (R=0.5, G=0.5, B=0.5, A=1);
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.Color.Yellow">
+            <summary>
+            (R=1, G=1, B=0, A=1);
+            </summary>
+        </member>
         <member name="M:Glaives.Core.Graphics.Color.ToRgbaBytes">
             <summary>
             Create a byte array of rgba values (between 0 and 255)
@@ -841,6 +878,11 @@
         <member name="P:Glaives.Core.Graphics.DynamicTexture.Size">
             <summary>
             The dimensions of the dynamic texture
+            </summary>
+        </member>
+        <member name="P:Glaives.Core.Graphics.DynamicTexture.Ptr">
+            <summary>
+            The pixel data pointer
             </summary>
         </member>
         <member name="M:Glaives.Core.Graphics.DynamicTexture.#ctor(System.String)">
@@ -1580,7 +1622,7 @@
         </member>
         <member name="M:Glaives.Core.Level.OnImGui">
             <summary>
-            Put your ImGui calls in here 
+            Per level ImGui rendering. for global gui, override game instance OnImGui
             </summary>
         </member>
         <member name="M:Glaives.Core.LoadableContent.Dispose">
@@ -1602,6 +1644,12 @@
             Potentially modifies the input str by adding a postfix to ensure it is unique to other UniqueStrings
             </summary>
             <param name="str"></param>
+        </member>
+        <member name="M:Glaives.Core.Utils.IOUtils.EnumerateFilesInDirectoryResursively(System.String)">
+            <summary>
+            Get a list of file paths for each file in the directory and all it's sub-directories recursively
+            </summary>
+            <param name="directory">The root directory</param>
         </member>
         <member name="T:Glaives.Core.Utils.MathEx">
             <summary>

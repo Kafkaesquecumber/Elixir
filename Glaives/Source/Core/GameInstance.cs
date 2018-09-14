@@ -53,6 +53,11 @@ namespace Glaives.Core
             ReceiveLogs(logType, message, className, methodName, lineNumber);
         }
 
+        internal void ImGuiInternal()
+        {
+            OnImGui();
+        }
+
         /// <summary>
         /// <para>The engine will obtain it's settings from this call when it initializes</para>
         /// <para>Called once before Initialize</para>
@@ -64,6 +69,11 @@ namespace Glaives.Core
         /// Called after the engine modules have been initialized
         /// </summary>
         protected virtual void Initialize() { }
+
+        /// <summary>
+        /// ImGui rendering 
+        /// </summary>
+        protected virtual void OnImGui() { }
 
         /// <summary>
         /// Receive engine log messages

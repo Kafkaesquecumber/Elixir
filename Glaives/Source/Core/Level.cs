@@ -217,7 +217,7 @@ namespace Glaives.Core
         protected virtual void Tick(float deltaTime) { }
 
         /// <summary>
-        /// Put your ImGui calls in here 
+        /// Per level ImGui rendering. for global gui, override game instance OnImGui
         /// </summary>
         protected virtual void OnImGui() { }
     }

@@ -20,25 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Glaives.Core;
-using Glaives.Core.Configuration;
-using Glaives.Core.Diagnostics;
-
-namespace Glaives.LevelEditor
+namespace Glaives.Core.Internal.EditorGui
 {
-    public class LevelEditorInstance : GameInstance
+    internal abstract class ImGuiWindow
     {
-        /// <inheritdoc />
-        protected override Settings InitializeSettings()
-        {
-            Settings settings = Settings.Default;
-            return settings;
-        }
-
-        /// <inheritdoc />
-        protected override void ReceiveLogs(LogType logType, string message, string className, string methodName, int lineNumber)
-        {
-            
-        }
+        internal bool IsOpen;
     }
 }

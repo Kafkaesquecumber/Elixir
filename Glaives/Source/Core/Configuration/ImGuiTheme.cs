@@ -20,47 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using Glaives.Core;
-using Glaives.Core.Graphics;
-using ImGuiNET;
-
-namespace Glaives.LevelEditor
+namespace Glaives.Core.Configuration
 {
-    public class MainLevel : Level
+    public enum ImGuiTheme
     {
-        /// <inheritdoc />
-        protected override void LoadLevel()
-        {
-            Sprite s = new Sprite(Engine.Content.LoadTexture("Content/Textures/spooky.png", TextureCreateOptions.Smooth));
-            s.Position = new Vector2(300, 300);
-            
-        }
-
-        /// <inheritdoc />
-        protected override void Tick(float deltaTime)
-        {
-            
-        }
-
-        float radians = (float)Math.PI / 4; // 45 deg
-        Color color = Color.Red;
-        /// <inheritdoc />
-        protected override void OnImGui()
-        {
-            
-            ImGui.BeginWindow("Window", WindowFlags.AlwaysAutoResize);
-            if (ImGui.Button("Im a button", new Vector2(100, 60)))
-            {
-                Console.WriteLine("Button pressed!");
-            }
-
-            
-            ImGui.ColorPicker4("Pick color", ref color);
-
-            
-            ImGui.SliderAngle("Angle", ref radians, 0.0f, 360.0f);
-            ImGui.EndWindow();
-        }
+        Dark,
+        Light
     }
 }

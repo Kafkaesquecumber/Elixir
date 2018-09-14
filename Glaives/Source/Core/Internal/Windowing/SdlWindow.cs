@@ -29,6 +29,7 @@ using OpenTK.Graphics.OpenGL;
 using SDL2;
 using Glaives.Core.Internal.Graphics;
 using Glaives.Core.Internal;
+using ImGuiNET;
 using OpenTK.Input;
 using Key = Glaives.Core.Input.Key;
 using Mouse = Glaives.Core.Internal.Input.Mouse;
@@ -153,7 +154,10 @@ namespace Glaives.Core.Internal.Windowing
                     case SDL.SDL_EventType.SDL_TEXTEDITING:
                         break;
                     case SDL.SDL_EventType.SDL_TEXTINPUT:
+                    {
+                        
                         break;
+                    }
                     case SDL.SDL_EventType.SDL_MOUSEMOTION:
                         Mouse.Position = new Vector2(ev.motion.x, ev.motion.y);
                         break;
@@ -162,7 +166,6 @@ namespace Glaives.Core.Internal.Windowing
                         if (ev.key.repeat == 0)
                         {
                             OnInputActionEvent(KeyState.Pressed, MouseButtonToKey(ev.button.button), 0);
-                            Console.WriteLine(MouseButtonToKey(ev.button.button));
                         }
                         break;
                     }
@@ -172,7 +175,11 @@ namespace Glaives.Core.Internal.Windowing
                         break;
                     }
                     case SDL.SDL_EventType.SDL_MOUSEWHEEL:
+                    {
+                        Mouse.ScrollWheelDelta = ev.wheel.y;
+                        OnScrollWheelEvent(ev.wheel.y);
                         break;
+                    }
                     case SDL.SDL_EventType.SDL_JOYAXISMOTION:
                         OnInputAxisEvent((InputAxis)ev.jaxis.axis, ((float)ev.jaxis.axisValue / short.MaxValue), ev.jaxis.which);
                         break;

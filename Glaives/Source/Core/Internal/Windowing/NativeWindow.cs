@@ -31,6 +31,8 @@ namespace Glaives.Core.Internal.Windowing
         internal event Action<IntVector2, IntVector2> Resized = delegate { };
         internal event Action<KeyState, Key, int> InputActionEvent = delegate { };
         internal event Action<InputAxis, float, int> InputAxisEvent = delegate { };
+        internal event Action<int> InputScrollWheel = delegate { };
+
         internal abstract IntPtr OpenWindow(IntVector2 size, string title);
         internal abstract void ResizeWindow(int width, int height);
         internal abstract void GetWindowSize(out int width, out int height);
@@ -52,6 +54,11 @@ namespace Glaives.Core.Internal.Windowing
         internal abstract IntVector2 GetPosition();
         internal abstract void Center();
         internal abstract Key ToKey(int nativeKey);
+
+        protected void OnScrollWheelEvent(int wheelY)
+        {
+            InputScrollWheel(wheelY);
+        }
 
         protected void OnResized(IntVector2 windowSize, IntVector2 viewportSize)
         {

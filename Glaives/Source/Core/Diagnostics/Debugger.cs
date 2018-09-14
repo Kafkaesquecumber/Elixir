@@ -31,8 +31,9 @@ namespace Glaives.Core.Diagnostics
 {
     public class Debugger
     {
+        internal Action<Log> OnLog = delegate { };
         private readonly GameInstance _gameInstance;
-        private readonly List<string> _issueLogs = new List<string>();
+        private readonly List<string> _issueLogs = new List<string>(); // Only errors and warnings
 
         internal Debugger(GameInstance gameInstance)
         {
@@ -104,13 +105,12 @@ namespace Glaives.Core.Diagnostics
             string methodName = method.Name;
             int line = lastFrame.GetFileLineNumber();
             _gameInstance.LogInternal(logType, logMsg.ToString(), className, methodName, line);
+            OnLog.Invoke(new Log(logType, logMsg.ToString(), className, methodName, line));
 
             if (logType == LogType.Error || logType == LogType.Warning)
             {
                 _issueLogs.Add($"[{logType}] {logMsg} <{className}.{methodName} ({line})>");
-            }
+            }   
         }
-
-        
     }
 }
