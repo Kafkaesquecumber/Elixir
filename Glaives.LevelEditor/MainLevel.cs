@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright(c) 2018 Glaives Game Engine.
+// Copyright (c) 2018 Glaives Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using Glaives.Core;
 using Glaives.Core.Graphics;
+using ImGuiNET;
 
-// Note: do not use the ContentLoader in this class, it has not been created yet (by design)
-
-namespace Glaives.Core.Internal.Content
+namespace Glaives.LevelEditor
 {
-    internal class EngineContent
+    public class MainLevel : Level
     {
-        internal Texture TextureWhite32x32;
-        internal Font FontConsolasRegular32;
-        internal Shader ShaderTextured;
-
-        internal EngineContent()
+        /// <inheritdoc />
+        protected override void LoadLevel()
         {
-            TextureWhite32x32 = new Texture(32, 32, Color.White, new TextureCreateOptions(TextureFilterMode.Sharp, TextureWrapMode.ClampToEdge));
-            TextureWhite32x32.Update(Color.White);
-            FontConsolasRegular32 = new Font("EngineContent/F_ConsolasRegular.ttf", new FontCreateOptions(32));
-            ShaderTextured = new Shader("EngineContent/S_Textured.vs", "EngineContent/S_Textured.fs");
+            Sprite s = new Sprite(Engine.Content.LoadTexture("Content/Textures/spooky.png", TextureCreateOptions.Smooth));
+            s.Position = new Vector2(300, 300);
+            
+        }
+
+        /// <inheritdoc />
+        protected override void Tick(float deltaTime)
+        {
+            
+        }
+
+        float radians = (float)Math.PI / 4; // 45 deg
+        Color color = Color.Red;
+        /// <inheritdoc />
+        protected override void OnImGui()
+        {
+            
+            ImGui.BeginWindow("Window", WindowFlags.AlwaysAutoResize);
+            if (ImGui.Button("Im a button", new Vector2(100, 60)))
+            {
+                Console.WriteLine("Button pressed!");
+            }
+
+            
+            ImGui.ColorPicker4("Pick color", ref color);
+
+            
+            ImGui.SliderAngle("Angle", ref radians, 0.0f, 360.0f);
+            ImGui.EndWindow();
         }
     }
 }

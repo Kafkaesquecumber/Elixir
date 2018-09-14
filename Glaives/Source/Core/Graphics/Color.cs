@@ -233,6 +233,17 @@ namespace Glaives.Core.Graphics
 
     public static class ColorExtensions
     {
+        public static System.Numerics.Vector4 ToNumericsVector4(this Color color)
+        {
+            return new System.Numerics.Vector4(color.R, color.G, color.B, color.A);
+        }
+
+        public static System.Numerics.Vector3 ToNumericsVector3(this Color color)
+        {
+            return new System.Numerics.Vector3(color.R, color.G, color.B);
+        }
+
+        
         /// <summary>
         /// <para>Create an RGBA byte array of rgba values (between 0 and 255)</para>
         /// <para>The RGBA byte array will be 4 times the length of the color collection</para>

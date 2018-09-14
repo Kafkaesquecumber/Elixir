@@ -46,9 +46,6 @@ namespace Glaives.Core.Graphics
                 }
             }
         }
-
-        //TODO: view determines frame buffer texture sample mode?
-        
         
         private Matrix _projectionMatrix;
         /// <summary>

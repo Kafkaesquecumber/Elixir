@@ -119,7 +119,7 @@ namespace Glaives.Core.Internal.Graphics
             _begun = true;
         }
         
-        internal void End(GraphicsDevice device, RenderTarget renderTarget) 
+        internal void End(IntRect viewport, Matrix projectionMatrix) 
         {
             if(!_begun)
             {
@@ -128,9 +128,9 @@ namespace Glaives.Core.Internal.Graphics
             
             GL.PolygonMode(MaterialFace.Back, PolygonMode.Fill);
 
-            device.Draw(PrimitiveType.Quads, renderTarget.Size, _shaderProgram, _vertexArray, VertexArrayPosition, _vbo, 
+            GraphicsDeviceBase.Draw(viewport, _shaderProgram, _vertexArray, VertexArrayPosition, _vbo, 
                 _positionAttributeLocation, _colorAttributeLocation, _texCoordAttributeLocation, 
-                RenderProgram, Engine.Get.LevelManager.Level.CurrentView.ProjectionMatrix);
+                RenderProgram, projectionMatrix);
             
             _begun = false;
         }
@@ -139,9 +139,6 @@ namespace Glaives.Core.Internal.Graphics
         {
             GL.DetachShader(_shaderProgram, _vertexShader);
             GL.DetachShader(_shaderProgram, _fragmentShader);
-
-            GL.DeleteShader(_vertexShader);
-            GL.DeleteShader(_fragmentShader);
             GL.DeleteBuffer(_vbo);
             GL.DeleteBuffer(_vao);
             GL.DeleteProgram(_shaderProgram);

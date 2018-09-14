@@ -99,6 +99,16 @@ namespace Glaives.Core
             Engine.Get.Graphics.DrawBatches();                          // Draw the batches
         }
 
+        internal void ImGuiInternal()
+        {
+            if (!Engine.Get.RenderImGui)
+            {
+                return;
+            }
+
+            OnImGui();
+        }
+
         internal void DestroyPendingActors()
         {
             int actorsDestroyed = 0;
@@ -205,5 +215,10 @@ namespace Glaives.Core
         /// </summary>
         /// <param name="deltaTime">The elapsed time in seconds since the last tick</param>
         protected virtual void Tick(float deltaTime) { }
+
+        /// <summary>
+        /// Put your ImGui calls in here 
+        /// </summary>
+        protected virtual void OnImGui() { }
     }
 }

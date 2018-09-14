@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Glaives.Core;
+using Glaives.Core.Internal.Content;
 
 namespace Glaives.Core.Graphics
 {
@@ -247,6 +248,6 @@ namespace Glaives.Core.Graphics
             GL.DeleteTexture(Handle);
         }
 
-        public static Texture Default => Engine.Get.EngineContent.TextureWhite32x32;
+        public static Texture Default => GlobalContent.Get.TextureWhite32x32;
     }
 }

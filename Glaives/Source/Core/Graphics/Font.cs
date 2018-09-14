@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using Glaives.Core.Internal;
 using Glaives.Core.Internal.Graphics;
 using Glaives.Core;
+using Glaives.Core.Internal.Content;
 using SharpFont;
 
 namespace Glaives.Core.Graphics
@@ -249,6 +250,6 @@ namespace Glaives.Core.Graphics
         /// <summary>
         /// Consolas regular 32
         /// </summary>
-        public static Font Default => Engine.Get.EngineContent.FontConsolasRegular32;
+        public static Font Default => GlobalContent.Get.FontConsolasRegular32;
     }
 }

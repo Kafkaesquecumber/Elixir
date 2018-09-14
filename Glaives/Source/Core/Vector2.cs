@@ -166,4 +166,12 @@ namespace Glaives.Core
         /// </summary>
         public static Vector2 Zero => new Vector2(0.0f, 0.0f);
     }
+
+    public static class Vector2Extensions
+    {
+        public static System.Numerics.Vector2 ToNumericsVector2(this Vector2 vector)
+        {
+            return new System.Numerics.Vector2(vector.X, vector.Y);
+        }
+    }
 }

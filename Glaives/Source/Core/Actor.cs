@@ -694,8 +694,6 @@ namespace Glaives.Core
                 return;
             }
 
-            CoroutineRunner.StopAllCoroutines();
-            CoroutineRunner = null;
             Engine.CurrentLevel.PendingDestroyActors.Add(this);
             PendingDestruction = true;
         }

@@ -29,6 +29,9 @@ using OpenTK.Graphics.OpenGL;
 using SDL2;
 using Glaives.Core.Internal.Graphics;
 using Glaives.Core.Internal;
+using OpenTK.Input;
+using Key = Glaives.Core.Input.Key;
+using Mouse = Glaives.Core.Internal.Input.Mouse;
 
 namespace Glaives.Core.Internal.Windowing
 {
@@ -39,6 +42,9 @@ namespace Glaives.Core.Internal.Windowing
         private bool _isOpen;
 
         private readonly Dictionary<int, IntPtr> _gamepads = new Dictionary<int, IntPtr>();
+        private OpenTK.Platform.IWindowInfo _windowInfo;
+
+        private static bool _isSdlInitialized;
 
         internal override bool IsOpen()
         {
@@ -47,9 +53,15 @@ namespace Glaives.Core.Internal.Windowing
 
         internal override IntPtr OpenWindow(IntVector2 size, string title)
         {
-            if (SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) < 0)
+            // init check for multi-window purposes
+            if (!_isSdlInitialized)
             {
-                throw new GlaivesException($"Failed to initialize SDL: {SDL.SDL_GetError()}");
+                if (SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) < 0)
+                {
+                    throw new GlaivesException($"Failed to initialize SDL: {SDL.SDL_GetError()}");
+                }
+
+                _isSdlInitialized = true;
             }
 
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -70,16 +82,16 @@ namespace Glaives.Core.Internal.Windowing
 
             _isOpen = true;
             
-            OpenTK.Platform.IWindowInfo windowInfo =
+            _windowInfo =
                 OpenTK.Platform.Utilities.CreateSdl2WindowInfo(NativeWindowHandle);
             GraphicsMode graphicsMode = GraphicsMode.Default;
             
-            GlContext = new GraphicsContext(graphicsMode, windowInfo)
+            GlContext = new GraphicsContext(graphicsMode, _windowInfo)
             {
                 SwapInterval = 1
             };
 
-            GlContext.MakeCurrent(windowInfo);
+            MakeContextCurrent();
             GlContext.LoadAll();
 
             string glVersion = GL.GetString(StringName.Version);
@@ -101,6 +113,11 @@ namespace Glaives.Core.Internal.Windowing
             return NativeWindowHandle;
         }
 
+        internal void MakeContextCurrent()
+        {
+            GlContext.MakeCurrent(_windowInfo);
+        }
+
         internal override void PollEvents()
         {
             while (SDL.SDL_PollEvent(out SDL.SDL_Event ev) != 0)
@@ -110,7 +127,6 @@ namespace Glaives.Core.Internal.Windowing
                     case SDL.SDL_EventType.SDL_FIRSTEVENT:
                         break;
                     case SDL.SDL_EventType.SDL_QUIT:
-                        Engine.Get.Quit();
                         break;
                     case SDL.SDL_EventType.SDL_WINDOWEVENT:
                         if (ev.window.windowEvent == SDL.SDL_WindowEventID.SDL_WINDOWEVENT_SIZE_CHANGED)
@@ -139,11 +155,22 @@ namespace Glaives.Core.Internal.Windowing
                     case SDL.SDL_EventType.SDL_TEXTINPUT:
                         break;
                     case SDL.SDL_EventType.SDL_MOUSEMOTION:
+                        Mouse.Position = new Vector2(ev.motion.x, ev.motion.y);
                         break;
                     case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
+                    {
+                        if (ev.key.repeat == 0)
+                        {
+                            OnInputActionEvent(KeyState.Pressed, MouseButtonToKey(ev.button.button), 0);
+                            Console.WriteLine(MouseButtonToKey(ev.button.button));
+                        }
                         break;
+                    }
                     case SDL.SDL_EventType.SDL_MOUSEBUTTONUP:
+                    {
+                        OnInputActionEvent(KeyState.Released, MouseButtonToKey(ev.button.button), 0);
                         break;
+                    }
                     case SDL.SDL_EventType.SDL_MOUSEWHEEL:
                         break;
                     case SDL.SDL_EventType.SDL_JOYAXISMOTION:
@@ -357,7 +384,21 @@ namespace Glaives.Core.Internal.Windowing
         {
             GlContext.Dispose();
             SDL.SDL_DestroyWindow(NativeWindowHandle);
-            SDL.SDL_Quit();
+            //SDL.SDL_Quit(); this is not window specific (will break the multi-window editor) where should we put this??
+        }
+
+        private Key MouseButtonToKey(byte button)
+        {
+            switch (button)
+            {
+                case 1: return Key.LeftMouse;
+                case 2: return Key.MiddleMouse;
+                case 3: return Key.RightMouse;
+                case 4: return Key.XMouse1;
+                case 5: return Key.XMouse2;
+                default:
+                    return Key.Unknown;
+            }
         }
 
         private Key JHatToKey(byte jhat)

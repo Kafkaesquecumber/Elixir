@@ -21,18 +21,23 @@
 // SOFTWARE.
 
 using System;
-using Glaives.Core.Graphics;
+using System.Runtime.CompilerServices;
 
 namespace Glaives.Core.Internal.Windowing
 {
-    internal sealed class Window : SdlWindow
+    internal class Window : SdlWindow
     {
         internal IntPtr Handle { get; private set; }
         
         private IntVector2 _size;
         internal IntVector2 Size
         {
-            get => _size;
+            get
+            {
+                GetWindowSize(out int newWidth, out int newHeight);
+                _size = new IntVector2(newWidth, newHeight);
+                return _size;
+            }
             set
             {
                 ResizeWindow(value.X, value.Y);
@@ -40,7 +45,7 @@ namespace Glaives.Core.Internal.Windowing
                 _size = new IntVector2(newWidth, newHeight);
             }
         }
-        
+
         private string _title;
         internal string Title
         {
@@ -72,13 +77,16 @@ namespace Glaives.Core.Internal.Windowing
         
         internal Window(IntVector2 size, string title)
         {
-            _size = size;   // set private member on purpose
-            _title = title; // set private member on purpose
+            // setting/getting private properties on purpose since the window is not created yet
+
+            _size = size;   
+            _title = title; 
             
             Viewport = new Viewport();
 
-            Handle = OpenWindow(Size, title);
+            Handle = OpenWindow(_size, _title); 
             SetVSyncEnabled(VSync);
-        }        
+        }
+        
     }
 }

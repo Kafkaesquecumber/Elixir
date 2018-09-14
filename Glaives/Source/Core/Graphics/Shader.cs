@@ -22,6 +22,7 @@
 
 using System.IO;
 using Glaives.Core.Internal;
+using Glaives.Core.Internal.Content;
 using OpenTK.Graphics.OpenGL;
 
 namespace Glaives.Core.Graphics
@@ -51,7 +52,7 @@ namespace Glaives.Core.Graphics
         /// <summary>
         /// A simple textured vertex and fragment shader
         /// </summary>
-        public static Shader Default => Engine.Get.EngineContent.ShaderTextured;
+        public static Shader Default => GlobalContent.Get.ShaderTextured;
 
         /// <summary>
         /// Construct a new shader from memory directly

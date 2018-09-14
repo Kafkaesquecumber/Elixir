@@ -20,7 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+
 using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Glaives.Core.Configuration;
 using Glaives.Core.Coroutines;
 using Glaives.Core.Diagnostics;
@@ -28,11 +31,16 @@ using Glaives.Core.Graphics;
 using Glaives.Core.Input;
 using Glaives.Core.Internal;
 using Glaives.Core.Internal.Content;
+using Glaives.Core.Internal.Graphics;
 using Glaives.Core.Internal.Input;
 using Glaives.Core.Internal.LevelManagment;
 using Glaives.Core.Internal.Timing;
 using Glaives.Core.Internal.Windowing;
+using ImGuiNET;
+using OpenTK.Graphics.OpenGL;
+using NativeWindow = ImGuiNET.NativeWindow;
 
+[assembly: InternalsVisibleTo("Glaives.Editor", AllInternalsVisible = true)]
 namespace Glaives.Core
 {
     /// <summary>
@@ -127,13 +135,16 @@ namespace Glaives.Core
         /// </summary>
         public Level CurrentLevel => LevelManager.Level;
 
-        
+        /// <summary>
+        /// Whether or not we should render ImGui stuff
+        /// </summary>
+        public bool RenderImGui { get; set; } = true;
+
         internal Window Window { get; private set; }
         internal EngineTimer EngineTimer { get; private set; }
         internal CoroutineRunner GlobalCoroutineRunner { get; private set; }
         internal InputManager InputManager { get; private set; }
         internal LevelManager LevelManager { get; private set; }
-        internal EngineContent EngineContent { get; private set; }
         internal bool AllowGameInstanceInstantiation { get; private set; }
         internal  bool Initialized { get; private set; }
         
@@ -200,8 +211,7 @@ namespace Glaives.Core
             Window.InputAxisEvent += OnInputAxisEvent;
 
             Debug.Info($"OpenGL version {Window.OpenGlVersion}");
-
-            EngineContent = new EngineContent();
+            
             Stats = new Statistics();
 
             InputManager = new InputManager(Window, Settings.Input);
@@ -278,39 +288,50 @@ namespace Glaives.Core
         {
             EngineTimer = new EngineTimer(Window);
             EngineTimer.Initialize();
-
+            
+            ImGuiHelper.Init(Window);
+            
             while (Window.IsOpen())
             {
                 Window.PollEvents();
                 
                 EngineTimer.CaptureFrameStartTime();
-
+                
                 Window.Clear(Color.Black);
+
+                ImGuiHelper.NewFrame(Window.Viewport.Size, Vector2.Unit, (float)EngineTimer.DeltaTime);
 
                 // Tick after first iteration so delta time is set
                 if (!EngineTimer.FirstIteration) 
                 {
                     Level level = LevelManager.Level;
-                    GlobalCoroutineRunner.Update();                          // Update global coroutines
-                    level?.TickInternal((float)EngineTimer.DeltaTime);  // TickInternal the level (with all its actors)
-                    level?.DestroyPendingActors();                      // Destroy pending actors    
+                    GlobalCoroutineRunner.Update();  
+                    
+                    if (level != null)
+                    {
+                        level.TickInternal((float) EngineTimer.DeltaTime);  // TickInternal the level (with all its actors)
+                        level.ImGuiInternal();                              // Create ImGui layout
+                        level.DestroyPendingActors();                       // Destroy pending actors    
+                    }
                 }
                 else
                 {
                     GameInstance.InitializeInternal();          // Initialize game instance
                     LevelManager.LoadLevel(initialLevelType);   // Load the initial level
                 }
-
-                InputManager.Flush();
-
-                Window.Swap();
                 
+                ImGuiHelper.Render(Window.Viewport.Size);
+                
+                InputManager.Flush();
+                Window.Swap();
                 EngineTimer.Sleep(); 
                 EngineTimer.RefreshDeltaTime();
             }
 
+            ImGui.Shutdown();
             Window.Terminate();
         }
+
 
         private void EnsureInit()
         {
